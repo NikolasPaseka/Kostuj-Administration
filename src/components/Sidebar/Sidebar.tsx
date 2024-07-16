@@ -1,8 +1,11 @@
-import { HomeIcon, UserIcon, Cog6ToothIcon } from '@heroicons/react/24/solid';
+import { HomeIcon, UserIcon, Cog6ToothIcon, KeyIcon } from '@heroicons/react/24/solid';
 import { Button } from '@nextui-org/react';
 import SidebarItem from './SidebarItem';
+import { useAuth } from '../../context/AuthProvider';
 
 const Sidebar = () => {
+  const { logout, getUserData } = useAuth();
+
   return (
     <div className="h-screen w-64 flex flex-col bg-lightContainer rounded-xl">
       <div className="flex items-center justify-center h-16">
@@ -12,12 +15,18 @@ const Sidebar = () => {
         <SidebarItem path="/" text="Home" Icon={HomeIcon} />
         <SidebarItem path="/profile" text="Profile" Icon={UserIcon} />
         <SidebarItem path="/settings" text="Settings" Icon={Cog6ToothIcon} />
-        <SidebarItem path="/settings" text="Settings" Icon={Cog6ToothIcon} />
+        <SidebarItem path="/signIn" text="Sign In" Icon={KeyIcon} />
         <SidebarItem path="/settings" text="Settings" Icon={Cog6ToothIcon} />
         <SidebarItem path="/settings" text="Settings" Icon={Cog6ToothIcon} />
       </nav>
+      { getUserData() && <div className="p-4">
+          <p className="text-center">Logged in as {getUserData()?.email}</p>
+        </div>
+      }
       <div className="p-4">
-        <Button color="primary" className="w-full">
+        <Button color="primary" className="w-full" onPress={() => {
+            logout();
+        }}>
           Logout
         </Button>
       </div>
