@@ -1,12 +1,12 @@
-import React from 'react'
 import { isStateError, isStateLoading, UiState } from '../communication/UiState';
+import { Spinner } from '@nextui-org/react';
 
 type Props = { uiState: UiState };
 
 const UiStateHandler = ({ uiState }: Props) => {
   return (
     <>
-      {isStateLoading(uiState) && <p>Loading...</p>}
+      {isStateLoading(uiState) && <Spinner color="primary" />}
       {isStateError(uiState) && <p>Error: {uiState.message}</p>}
     </>
   )

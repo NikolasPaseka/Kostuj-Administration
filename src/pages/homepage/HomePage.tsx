@@ -14,8 +14,6 @@ const HomePage = () => {
     const fetchCatalogues = async () => {
       const result: CommunicationResult<Catalogue[]> = await axiosCall('/catalogues?page=1&limit=10', 'GET');
 
-      console.log(result);
-
       if (isSuccess(result)) {
         setUiState({ type: UiStateType.SUCCESS })
         setCatalogues(result.data);

@@ -5,10 +5,15 @@ import HomePage from './pages/homepage/HomePage'
 import SignInPage from './pages/SignInPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthProvider';
+import RegistrationPage from './pages/RegistrationPage';
+import FeastCataloguesPage from './pages/feastCatalogues/FeastCataloguesPage';
+import FeastCatalogueDetailPage from './pages/feastCatalogueDetail/FeastCatalogueDetailPage';
+import FeastCatalogueCreatePage from './pages/feastCatalogueCreate/FeastCatalogueCreatePage';
+import FeastCatalogueContentPage from './pages/feastCatalogueContent/FeastCatalogueContentPage';
 
 const AppLayout = () => {
   const location = useLocation();
-  const hideSidebarRoutes = ['/profile', '/settings', '/signIn'];
+  const hideSidebarRoutes = ['/profile', '/settings', '/signIn', '/register'];
 
   const isSidebarVisible = !hideSidebarRoutes.includes(location.pathname);
 
@@ -17,7 +22,6 @@ const AppLayout = () => {
       <AuthProvider>
         {isSidebarVisible && <Sidebar />}
         <div className="flex-1 p-4">
-        
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/profile" element={
@@ -25,8 +29,13 @@ const AppLayout = () => {
                   <HomePage /> 
                 </ProtectedRoute>} 
               />
+              <Route path="/feastCatalogues" element={<FeastCataloguesPage />} />
+              <Route path="/feastCatalogues/:id/detail" element={<FeastCatalogueDetailPage />} />
+              <Route path="/feastCatalogues/:id/content" element={<FeastCatalogueContentPage />} />
+              <Route path="/feastCatalogues/create" element={<FeastCatalogueCreatePage />} />
               <Route path="/settings" element={<HomePage />} />
               <Route path="/signIn" element={<SignInPage />} />
+              <Route path="/register" element={<RegistrationPage />} />
             </Routes>
         </div>
       </AuthProvider>

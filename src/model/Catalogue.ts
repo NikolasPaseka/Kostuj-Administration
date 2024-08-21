@@ -12,5 +12,8 @@ export type Catalogue = {
     imageUrl?: string[],
     published: boolean,
     locked: boolean,
-    maxWineRating: number
+    maxWineRating: number,
+    adminId: string,
+    price: number,
+    downloads: number
 }

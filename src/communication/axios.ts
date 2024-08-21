@@ -19,7 +19,7 @@ export const axiosCall = async<T> (path: string, method: string, body?: object, 
             url: path,
             method: method,
             headers: {
-                authorization: accessToken,
+                authorization: "Bearer " + accessToken,
             },
             data: body
         });
@@ -33,7 +33,7 @@ export const axiosCall = async<T> (path: string, method: string, body?: object, 
         } else {
             const resultError: CommunicationError = {
                 type: CommunicationResultType.ERROR,
-                message: response.statusText,
+                message: response.data.error,
                 code: response.status
             }
             return resultError;

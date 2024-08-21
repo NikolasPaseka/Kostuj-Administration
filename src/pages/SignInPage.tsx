@@ -21,7 +21,6 @@ const SignInPage = () => {
   }
 
   return (
-
     <div className="flex w-full justify-center h-screen">
       <div className="flex w-1/2 flex-col justify-center items-center gap-4">
       <Input type="email" label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -32,6 +31,7 @@ const SignInPage = () => {
         onPress={handleSubmit}
       >
         Sign In
+       
       </Button>
       </div>
     </div>
