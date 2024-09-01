@@ -1,7 +1,8 @@
 import { GrapeVarietal } from "./GrapeVarietal"
 import { Winery } from "./Winery"
 
-export type Wine = {
+export interface Wine {
+    id: string,
     name: string,
     color: string,
     description?: string,
@@ -12,7 +13,11 @@ export type Wine = {
     grapesSweetness?: number,
     tasteResult?: string,
     productionMethod?: string,
-    grapeVarietals?: [GrapeVarietal],
+    grapeVarietals?: GrapeVarietal[],
     imageUrl?: string,
-    winaryId: Winery
+    winaryId: Winery | string
+}
+
+export const getWineSearchName = (wine: Wine): string => {
+    return `${wine.name} - ${wine.year}`;
 }

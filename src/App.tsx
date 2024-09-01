@@ -32,6 +32,7 @@ const AppLayout = () => {
               <Route path="/feastCatalogues" element={<FeastCataloguesPage />} />
               <Route path="/feastCatalogues/:id/detail" element={<FeastCatalogueDetailPage />} />
               <Route path="/feastCatalogues/:id/content" element={<FeastCatalogueContentPage />} />
+              <Route path="/feastCatalogues/:id/edit" element={<FeastCatalogueCreatePage />} />
               <Route path="/feastCatalogues/create" element={<FeastCatalogueCreatePage />} />
               <Route path="/settings" element={<HomePage />} />
               <Route path="/signIn" element={<SignInPage />} />

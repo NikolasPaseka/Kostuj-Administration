@@ -10,10 +10,16 @@ import { Button, Card, CardBody, Switch, Image, Divider } from '@nextui-org/reac
 import CardInfoRow from './components/CardInfoRow';
 import { ArrowDownTrayIcon, CalendarDaysIcon, CurrencyDollarIcon, MapPinIcon, PencilSquareIcon, SparklesIcon, TrashIcon, UserIcon } from '@heroicons/react/24/solid';
 import PrimaryButton from '../../components/PrimaryButton';
+import { Winery } from '../../model/Winery';
+import WineryTable from '../../components/Tables/WineryTable';
 
 const FeastCatalogueDetailPage = () => {
   const [uiState, setUiState] = useState<UiState>({ type: UiStateType.LOADING });
+  const [wineriesUiState, setWineriesUiState] = useState<UiState>({ type: UiStateType.LOADING });
+
+
   const [catalogue, setCatalogue] = useState<Catalogue | null>(null);
+  const [participatedWineries, setParticipatedWineries] = useState<Winery[]>([]);
 
   const { id } = useParams();
   const { accessToken } = useAuth();
@@ -25,6 +31,7 @@ const FeastCatalogueDetailPage = () => {
       if (isSuccess(res)) {
         setUiState({ type: UiStateType.SUCCESS })
         setCatalogue(res.data);
+        fetchParticipatedWineries(res.data);
       } else {
         setUiState({ 
           type: UiStateType.ERROR,
@@ -35,6 +42,19 @@ const FeastCatalogueDetailPage = () => {
     
     fetchCatalogue();
   }, [id, accessToken]);
+
+  const fetchParticipatedWineries = async (catalogue: Catalogue) => {
+    const res: CommunicationResult<Winery[]> = await axiosCall(`/catalogues/${catalogue.id}/wineries`, "GET", undefined, accessToken ?? undefined);
+    if (isSuccess(res)) {
+      setParticipatedWineries(res.data);
+      setWineriesUiState({ type: UiStateType.SUCCESS });
+    } else {
+      setWineriesUiState({ 
+        type: UiStateType.ERROR,
+        message: res.message
+      })
+    }
+  }
 
   const deleteCatalogue = async () => {
     if (catalogue == null) { return; }
@@ -62,7 +82,9 @@ const FeastCatalogueDetailPage = () => {
             <Switch isSelected={catalogue?.published} onValueChange={(state: boolean) => updatePublishState(state)}>
               Publish
             </Switch>
-            <PrimaryButton className="mx-2" EndContent={PencilSquareIcon}>Edit</PrimaryButton>
+            <Link to={`/feastCatalogues/${catalogue.id}/edit`}>
+              <PrimaryButton className="mx-2" EndContent={PencilSquareIcon}>Edit</PrimaryButton>
+            </Link>
             <PrimaryButton onClick={deleteCatalogue} className="mx-2" EndContent={TrashIcon}>Delete</PrimaryButton>
           </div>
 
@@ -95,6 +117,7 @@ const FeastCatalogueDetailPage = () => {
           <Link to={`/feastCatalogues/${catalogue.id}/content`}>
             <Button color="primary" className="mt-4">Show Content</Button>
           </Link>
+          <WineryTable wineries={participatedWineries} uiState={wineriesUiState} />
         </>
       }
       <UiStateHandler uiState={uiState} />

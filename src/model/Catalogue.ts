@@ -15,5 +15,6 @@ export type Catalogue = {
     maxWineRating: number,
     adminId: string,
     price: number,
-    downloads: number
+    downloads: number,
+    participatedWineries: string[]
 }

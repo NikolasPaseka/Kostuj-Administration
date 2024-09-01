@@ -1,4 +1,5 @@
 export type Winery = {
+    id: string,
     name: string,
     description?: string,
     phoneNumber?: string,
@@ -9,5 +10,7 @@ export type Winery = {
     location?: {
         latitude: number,
         longitude: number
-    }
+    },
+    adminId: string,
+    isPublic: boolean
 }
