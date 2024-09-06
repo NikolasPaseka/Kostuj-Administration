@@ -13,16 +13,22 @@
     "@heroicons/react": "^2.1.4",
     "@internationalized/date": "^3.5.5",
     "@nextui-org/react": "^2.4.2",
+    "@types/react-speech-recognition": "^3.9.5",
     "axios": "^1.7.2",
     "framer-motion": "^11.2.12",
+    "i18next": "^23.14.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-i18next": "^15.0.1",
     "react-router-dom": "^6.24.0",
-    "react-toastify": "^10.0.5"
+    "react-speech-recognition": "^3.10.0",
+    "react-toastify": "^10.0.5",
+    "regenerator-runtime": "^0.14.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@types/regenerator-runtime": "^0.13.7",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
     "@vitejs/plugin-react": "^4.3.1",

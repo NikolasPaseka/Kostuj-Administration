@@ -100,7 +100,7 @@ const FeastCatalogueCreatePage = () => {
         <CreatePageContent2 catalogue={catalogue} />
       )}
       
-      {page == 1 && catalogue != null && (
+      {page == 3 && catalogue != null && (
         <CreatePageContent3 catalogue={catalogue} />
       )}
       <ToastContainer />

@@ -5,6 +5,8 @@ import PrimaryButton from "../../components/PrimaryButton";
 import { CalendarDaysIcon, ChevronDownIcon, ClipboardDocumentIcon, MapPinIcon, PencilSquareIcon, SparklesIcon } from "@heroicons/react/24/solid";
 import { Catalogue } from "../../model/Catalogue";
 import { getLocalTimeZone, today } from "@internationalized/date";
+import ImageUploader from "../../components/ImageUploader";
+import ImageSlider from "../../components/ImageSlider";
 
 export type CatalogueData = {
   title: string;
@@ -101,6 +103,9 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, sendCatalogueData, is
       >
         {isEditing || isCatalogueCreated() ? "Edit" : "Create"}
       </PrimaryButton>
+
+      <ImageUploader />
+      <ImageSlider imageUrls={["https://picsum.photos/200/300", "https://www.bradleysofflicence.ie/wp-content/uploads/2023/10/IMG-0482__69566-scaled.jpg"]} />
     </div>
   )
 }

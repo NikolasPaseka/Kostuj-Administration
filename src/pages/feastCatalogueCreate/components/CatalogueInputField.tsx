@@ -27,6 +27,12 @@ const CatalogueInputField = ({ value, onValueChange, isRequired = false, isDisab
       label={label}
       placeholder={placeholder}
       labelPlacement="outside"
+      classNames={{
+          inputWrapper: [
+            "data-[hover=true]:border-secondary",
+            "data-[focus=true]:border-secondary",
+          ]
+        }}
       startContent={StartContent ? <StartContent className="w-5 h-5 text-gray-600" /> : <></> }
     />
   )

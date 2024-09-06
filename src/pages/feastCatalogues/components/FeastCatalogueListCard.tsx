@@ -2,10 +2,14 @@ import { Card, CardBody, Chip, Image } from '@nextui-org/react'
 import { Catalogue } from '../../../model/Catalogue'
 import { ArrowDownTrayIcon, CheckCircleIcon, ChevronRightIcon, CurrencyDollarIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { TranslationNS } from '../../../translations/i18n';
 
 type Props = { catalogue: Catalogue; navPath: string };
 
 const FeastCatalogueListCard = ({ catalogue, navPath }: Props, key: React.Key) => {
+  const { t } = useTranslation();
+
   return (
     <Link to={navPath}>
     <Card 
@@ -40,7 +44,7 @@ const FeastCatalogueListCard = ({ catalogue, navPath }: Props, key: React.Key) =
                 className="px-2"
                 startContent={ <CheckCircleIcon className="h-5 w-5"/> }
               >
-                Published
+                {t("published", { ns: TranslationNS.catalogues })}
               </Chip>
               :
               <Chip 
@@ -49,7 +53,7 @@ const FeastCatalogueListCard = ({ catalogue, navPath }: Props, key: React.Key) =
                 className="px-2"
                 startContent={ <CheckCircleIcon className="h-5 w-5"/> }
               >
-                Not Published
+                {t("notPublished", { ns: TranslationNS.catalogues })}
               </Chip>
             }
 

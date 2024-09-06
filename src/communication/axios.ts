@@ -39,7 +39,7 @@ export const axiosCall = async<T> (path: string, method: string, body?: object, 
             return resultError;
         }
     } catch (err: unknown) {
-        console.log(err);
+        console.log(err);   
         if (axios.isAxiosError(err)) {
             const axiosError = err as AxiosError;
 

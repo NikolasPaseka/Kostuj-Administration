@@ -10,10 +10,12 @@ import FeastCataloguesPage from './pages/feastCatalogues/FeastCataloguesPage';
 import FeastCatalogueDetailPage from './pages/feastCatalogueDetail/FeastCatalogueDetailPage';
 import FeastCatalogueCreatePage from './pages/feastCatalogueCreate/FeastCatalogueCreatePage';
 import FeastCatalogueContentPage from './pages/feastCatalogueContent/FeastCatalogueContentPage';
+import SettingsPage from './pages/SettingsPage';
+import VoiceTest from './pages/VoiceTest';
 
 const AppLayout = () => {
   const location = useLocation();
-  const hideSidebarRoutes = ['/profile', '/settings', '/signIn', '/register'];
+  const hideSidebarRoutes = ['/profile', '/signIn', '/register'];
 
   const isSidebarVisible = !hideSidebarRoutes.includes(location.pathname);
 
@@ -34,9 +36,11 @@ const AppLayout = () => {
               <Route path="/feastCatalogues/:id/content" element={<FeastCatalogueContentPage />} />
               <Route path="/feastCatalogues/:id/edit" element={<FeastCatalogueCreatePage />} />
               <Route path="/feastCatalogues/create" element={<FeastCatalogueCreatePage />} />
-              <Route path="/settings" element={<HomePage />} />
+              <Route path="/settings" element={<SettingsPage />} />
               <Route path="/signIn" element={<SignInPage />} />
               <Route path="/register" element={<RegistrationPage />} />
+              {/* TODO: Delete later */}
+              <Route path="/voiceTest" element={<VoiceTest />} />
             </Routes>
         </div>
       </AuthProvider>

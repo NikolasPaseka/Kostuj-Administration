@@ -1,10 +1,13 @@
-import { HomeIcon, UserIcon, Cog6ToothIcon, KeyIcon } from '@heroicons/react/24/solid';
+import { HomeIcon, UserIcon, Cog6ToothIcon, KeyIcon, MicrophoneIcon } from '@heroicons/react/24/solid';
 import { Button } from '@nextui-org/react';
 import SidebarItem from './SidebarItem';
 import { useAuth } from '../../context/AuthProvider';
+import { useTranslation } from 'react-i18next';
+import { TranslationNS } from "../../translations/i18n";
 
 const Sidebar = () => {
   const { logout, getUserData } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <div className="h-screen w-64 flex flex-col bg-lightContainer rounded-xl sticky top-0">
@@ -12,11 +15,12 @@ const Sidebar = () => {
         <h1 className="text-2xl font-bold">Koštuj</h1>
       </div>
       <nav className="flex-1 flex items-center flex-col mt-4">
-        <SidebarItem path="/" text="Home" Icon={HomeIcon} />
-        <SidebarItem path="/profile" text="Profile" Icon={UserIcon} />
-        <SidebarItem path="/feastCatalogues" text="Catalogues" Icon={Cog6ToothIcon} />
-        <SidebarItem path="/signIn" text="Sign In" Icon={KeyIcon} />
-        <SidebarItem path="/settings" text="Settings" Icon={Cog6ToothIcon} />
+        <SidebarItem path="/" text={t("home", { ns: TranslationNS.sidebar })} Icon={HomeIcon} />
+        <SidebarItem path="/profile" text={t("profile", { ns: TranslationNS.sidebar })} Icon={UserIcon} />
+        <SidebarItem path="/feastCatalogues" text={t("catalogues", { ns: TranslationNS.sidebar })} Icon={Cog6ToothIcon} />
+        <SidebarItem path="/signIn" text={t("signIn", { ns: TranslationNS.sidebar })} Icon={KeyIcon} />
+        <SidebarItem path="/voiceTest" text={t("home", { ns: TranslationNS.sidebar })} Icon={MicrophoneIcon} />
+        <SidebarItem path="/settings" text={t("settings", { ns: TranslationNS.sidebar })} Icon={Cog6ToothIcon} />
       </nav>
       { getUserData() && <div className="p-4">
           <p className="text-center">Logged in as {getUserData()?.email}</p>

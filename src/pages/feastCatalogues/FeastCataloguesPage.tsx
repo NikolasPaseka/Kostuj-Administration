@@ -11,6 +11,8 @@ import FeastCatalogueListCard from './components/FeastCatalogueListCard';
 import { Link } from 'react-router-dom';
 import PrimaryButton from '../../components/PrimaryButton';
 import { PlusIcon } from '@heroicons/react/24/solid';
+import { useTranslation } from 'react-i18next';
+import { TranslationNS } from '../../translations/i18n';
 
 const FeastCataloguesPage = () => {
   const [uiState, setUiState] = useState<UiState>({ type: UiStateType.LOADING });
@@ -27,6 +29,7 @@ const FeastCataloguesPage = () => {
   );
 
   const { accessToken } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchUserCatalogues = async () => {
@@ -51,13 +54,13 @@ const FeastCataloguesPage = () => {
       <div className="flex items-center mt-8 mb-4 justify-end">
         <SearchInput onValueChange={setSearchValue} value={searchValue} />
         <Link to={"/feastCatalogues/create"}>
-          <PrimaryButton EndContent={PlusIcon}>New catalogue</PrimaryButton>
+          <PrimaryButton EndContent={PlusIcon}>{t("newCatalogue", { ns: TranslationNS.catalogues })}</PrimaryButton>
         </Link>
       </div>
 
       <div className="flex flex-col gap-4">
         <UiStateHandler uiState={uiState} />
-        <h2 className="text-2xl font-bold">Upcoming Catalogues</h2>
+        <h2 className="text-2xl font-bold">{t("upcomingCatalogues", { ns: TranslationNS.catalogues })}</h2>
         {upcomingCatalogues
           .filter((catalogue: Catalogue) => catalogue.title.toLowerCase().includes(searchValue.toLowerCase()))
           .map((catalogue: Catalogue) => (
@@ -69,7 +72,7 @@ const FeastCataloguesPage = () => {
           ))
         }
 
-        <h2 className="text-2xl font-bold">Past Catalogues</h2>
+        <h2 className="text-2xl font-bold">{t("pastCatalogues", { ns: TranslationNS.catalogues })}</h2>
         {pastCatalogues
           .filter((catalogue: Catalogue) => catalogue.title.toLowerCase().includes(searchValue.toLowerCase()))
           .map((catalogue: Catalogue) => (

@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react'
-import UiStateHandler from '../UiStateHandler';
 import SearchInput from '../SearchInput';
 import { Chip, ChipProps, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { isStateLoading, UiState } from '../../communication/UiState';
-import { Sample } from '../../model/WineSample';
+import { WineSample } from '../../model/WineSample';
 import { GrapeVarietal } from '../../model/GrapeVarietal';
+import { Wine } from '../../model/Wine';
 
 const tableColumns = [
   {name: "NAME", uid: "name"},
@@ -26,11 +26,11 @@ const getNestedValue = (obj: any, path: string) => {
   return path.split('.').reduce((acc, part) => acc && acc[part], obj);
 };
 
-type Props = { wineSamples: Sample[], uiState: UiState };
+type Props = { wineSamples: WineSample[], uiState: UiState };
 
 const WineTable = ({ wineSamples, uiState }: Props) => {
 
-  const renderCell = useCallback((sample: Sample, columnKey: React.Key) => {
+  const renderCell = useCallback((sample: WineSample, columnKey: React.Key) => {
     const cellValue = getNestedValue(sample, columnKey as string);
 
     switch (columnKey) {
@@ -46,7 +46,7 @@ const WineTable = ({ wineSamples, uiState }: Props) => {
         return cellValue?.map((grape: GrapeVarietal) => grape.grape).join(", ");
       case "wineId.color":
         return (
-          <Chip className="capitalize" color={wineColorMap[sample.wineId.color]} size="sm" variant="flat">
+          <Chip className="capitalize" color={wineColorMap[(sample.wineId as Wine).color]} size="sm" variant="flat">
             {cellValue}
           </Chip>
         );
@@ -60,7 +60,6 @@ const WineTable = ({ wineSamples, uiState }: Props) => {
 
   return (
     <div>
-      <UiStateHandler uiState={uiState} />
       <div className="flex items-center py-4">
         <p className="text-sm flex-1">Number of samples: {wineSamples.length}</p>
         <SearchInput value="" onValueChange={() => {}} />
