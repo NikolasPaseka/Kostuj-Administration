@@ -6,6 +6,7 @@
     "publish": "Publikovat",
     "newCatalogue": "Nový katalog",
     "edit": "Upravit",
+    "create": "Vytvořit",
     "delete": "Smazat",
     "feastYear": "Rok koštu",
     "feastYearPlaceholder": "Zadejte rok koštu",
@@ -24,7 +25,11 @@
     "wineryPlaceholder": "Vyberte nebo zadejte název vinařství",
     "wineryPlaceholderSelect": "Vyberte vinařství",
     "phoneNumber": "Telefonní číslo",
+    "phoneNumberPlaceholder": "Zadejte telefonní číslo",
     "emailAddress": "Emailová adresa",
+    "emailAddressPlaceholder": "Zadejte emailovou adresu",
+    "createAndAddWinery": "Vytvořit a přidat vinařství",
+    "addWinery": "Přidat vinařství",
     "wine": "Víno",
     "winePlaceholder": "Vyberte nebo zadejte název vína",
     "sampleName": "Název vzorku",
@@ -46,5 +51,5 @@
     "grapeSweetness": "Sladkost hroznů",
     "grapeSweetnessPlaceholder": "Zadejte sladkost hroznů",
     "createAndAddWine": "Vytvořit a přidat víno",
-    "addWine": "Přidat víno"
+    "addWineSample": "Přidat vzorek"
 }

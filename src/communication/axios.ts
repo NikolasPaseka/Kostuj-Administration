@@ -13,12 +13,13 @@ export const axiosInstance = axios.create({
     },
 });
 
-export const axiosCall = async<T> (path: string, method: string, body?: object, accessToken?: string): Promise<CommunicationResult<T>> => {
+export const axiosCall = async<T> (path: string, method: string, body?: object, accessToken?: string, contentType: string = 'application/json'): Promise<CommunicationResult<T>> => {
     try {
         const response = await axiosInstance({
             url: path,
             method: method,
             headers: {
+                "Content-Type": contentType,
                 authorization: "Bearer " + accessToken,
             },
             data: body

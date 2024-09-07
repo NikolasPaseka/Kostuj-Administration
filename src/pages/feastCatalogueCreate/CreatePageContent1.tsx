@@ -1,4 +1,4 @@
-import { DatePicker, DateValue, Textarea } from "@nextui-org/react";
+import { Button, DatePicker, DateValue, Textarea } from "@nextui-org/react";
 import CatalogueInputField from "./components/CatalogueInputField"
 import { useEffect, useState } from "react";
 import PrimaryButton from "../../components/PrimaryButton";
@@ -7,6 +7,11 @@ import { Catalogue } from "../../model/Catalogue";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import ImageUploader from "../../components/ImageUploader";
 import ImageSlider from "../../components/ImageSlider";
+import { useTranslation } from "react-i18next";
+import { TranslationNS } from "../../translations/i18n";
+import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
+import { axiosCall } from "../../communication/axios";
+import { useAuth } from "../../context/AuthProvider";
 
 export type CatalogueData = {
   title: string;
@@ -24,12 +29,15 @@ type Props = {
 }
 
 const CreatePageContent1 = ({ isEditing, catalogue = null, sendCatalogueData, isCatalogueCreated }: Props) => {
+  const { t } = useTranslation();
 
   const [title, setTitle] = useState<string>("");
   const [year, setYear] = useState<number | null>(null);
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState<DateValue | null>(null);
   const [address, setAddress] = useState<string>("");
+
+  const { accessToken } = useAuth();
 
   useEffect(() => {
     if (isEditing && catalogue != null) {
@@ -42,70 +50,108 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, sendCatalogueData, is
     }
   }, [catalogue, isEditing]);
 
+  const uploadImages = async (files: File[] | null) => {
+    if (files == null || files.length == 0 || !isEditing) {
+      alert('Please select a file first');
+      return;
+    }
+
+    const formData = new FormData();
+    files?.forEach(file => {
+      formData.append('catalogueImages', file);
+    });
+
+    const res: CommunicationResult<string> = await axiosCall(`/catalogues/${catalogue?.id}/images`, "POST", formData, accessToken ?? undefined, 'multipart/form-data');
+    if (isSuccess(res) && catalogue != null) {
+      //catalogue.imageUrl?.push(res.data);
+    }
+  };
+
+  const deleteImage = async (imageUrl: string) => {
+    if (catalogue == null) { return; }
+
+    const res: CommunicationResult<Catalogue> = await axiosCall(`/catalogues/${catalogue.id}/images`, "DELETE", { imageUrl }, accessToken ?? undefined);
+    if (isSuccess(res)) {
+      //catalogue.imageUrl?.splice(catalogue.imageUrl?.indexOf(imageUrl),
+    }
+  }
+
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-row gap-4">
-        <CatalogueInputField
-          value={title}
-          onValueChange={setTitle}
-          isRequired 
-          label="Catalogue Title" 
-          placeholder="Enter catalogue title" 
-          StartContent={ClipboardDocumentIcon}
-        />
-        <CatalogueInputField
-          value={year == null ? "" : year.toString()}
-          onValueChange={(val) => setYear(val == "" ? null : parseInt(val))}
-          isRequired 
-          label="Feast Year" 
-          placeholder="Enter feast year" 
-          type="number"
-          StartContent={SparklesIcon}
-        />
-      </div>
+    <div className="flex flex-row gap-4">
+      <div className="flex flex-1 flex-col gap-4">
+        <div className="flex flex-row gap-4">
+          <CatalogueInputField
+            value={title}
+            onValueChange={setTitle}
+            isRequired 
+            label={t("catalogueTitle", { ns: TranslationNS.catalogues })}
+            placeholder={t("catalogueTitlePlaceholder", { ns: TranslationNS.catalogues })}
+            StartContent={ClipboardDocumentIcon}
+          />
+          <CatalogueInputField
+            value={year == null ? "" : year.toString()}
+            onValueChange={(val) => setYear(val == "" ? null : parseInt(val))}
+            isRequired 
+            label={t("feastYear", { ns: TranslationNS.catalogues })}
+            placeholder={t("feastYearPlaceholder", { ns: TranslationNS.catalogues })}
+            type="number"
+            StartContent={SparklesIcon}
+          />
+        </div>
 
-      <Textarea 
-        value={description} 
-        onValueChange={setDescription} 
-        variant="faded" 
-        label="Catalogue Description" 
-        placeholder="Catalogue Content" 
-        labelPlacement="outside"
-        startContent={<PencilSquareIcon className="w-5 h-5 text-gray-600"/>}
-      />
-
-      <div className="flex flex-row gap-4">
-        <DatePicker 
-          value={date} 
-          onChange={setDate} 
+        <Textarea 
+          value={description} 
+          onValueChange={setDescription} 
           variant="faded" 
-          isRequired 
-          label="Date and Time" 
+          label={t("catalogueDescription", { ns: TranslationNS.catalogues })}
+          placeholder={t("catalogueDescriptionPlaceholder", { ns: TranslationNS.catalogues })}
           labelPlacement="outside"
-          startContent={<CalendarDaysIcon className="w-5 h-5 text-gray-600" />}
-          selectorIcon={<ChevronDownIcon />}
+          startContent={<PencilSquareIcon className="w-5 h-5 text-gray-600"/>}
         />
-        <CatalogueInputField 
-          value={address} 
-          onValueChange={setAddress} 
-          label="Address" 
-          placeholder="Input Address"
-          StartContent={MapPinIcon}
+
+        <div className="flex flex-row gap-4">
+          <DatePicker 
+            value={date} 
+            onChange={setDate} 
+            variant="faded" 
+            isRequired 
+            label={t("dateAndTime", { ns: TranslationNS.catalogues })}
+            labelPlacement="outside"
+            startContent={<CalendarDaysIcon className="w-5 h-5 text-gray-600" />}
+            selectorIcon={<ChevronDownIcon />}
+          />
+          <CatalogueInputField 
+            value={address} 
+            onValueChange={setAddress} 
+            label={t("placeAndAddress", { ns: TranslationNS.catalogues })}
+            placeholder={t("placeAndAddressPlaceholder", { ns: TranslationNS.catalogues })}
+            StartContent={MapPinIcon}
+          />
+        </div>
+
+        <PrimaryButton 
+          className="w-32 ml-auto" 
+          onClick={() => isEditing || isCatalogueCreated() 
+            ? sendCatalogueData({ title, year, description, date, address }, true)
+            : sendCatalogueData({ title, year, description, date, address }, false)
+          }
+        >
+          {isEditing || isCatalogueCreated() 
+          ? t("edit", { ns: TranslationNS.catalogues })
+          : t("create", { ns: TranslationNS.catalogues })
+          }
+        </PrimaryButton>
+
+        <ImageUploader onUpload={uploadImages} 
         />
+
       </div>
-
-      <PrimaryButton 
-        className="w-32 ml-auto" 
-        onClick={() => isEditing || isCatalogueCreated() 
-          ? sendCatalogueData({ title, year, description, date, address }, true)
-          : sendCatalogueData({ title, year, description, date, address }, false)
-        }
-      >
-        {isEditing || isCatalogueCreated() ? "Edit" : "Create"}
-      </PrimaryButton>
-
-      <ImageUploader />
-      <ImageSlider imageUrls={["https://picsum.photos/200/300", "https://www.bradleysofflicence.ie/wp-content/uploads/2023/10/IMG-0482__69566-scaled.jpg"]} />
+      <div className="basis-[25%] h-[30rem]">
+        <ImageSlider 
+         imageUrls={catalogue?.imageUrl ?? []} 
+         onDelete={deleteImage}
+         />
+      </div>
     </div>
   )
 }

@@ -10,10 +10,14 @@ import { useAuth } from "../../context/AuthProvider";
 import { Catalogue } from "../../model/Catalogue";
 import WineryTable from "../../components/Tables/WineryTable";
 import { UiStateType } from "../../communication/UiState";
+import { useTranslation } from "react-i18next";
+import { TranslationNS } from "../../translations/i18n";
 
 type Props = { catalogue: Catalogue }
 
 const CreatePageContent2 = ({ catalogue }: Props) => {
+  const { t } = useTranslation();
+
   const [adminsWineries, setAdminsWineries] = useState<Winery[]>([]);
   const [participatedWineries, setParticipatedWineries] = useState<Winery[]>([]);
 
@@ -102,8 +106,8 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
     <div className="flex flex-col gap-4">
       <Autocomplete 
         allowsCustomValue
-        label="Winery" 
-        placeholder="Select or enter winery name"
+        label={t("winery", { ns: TranslationNS.catalogues })}
+        placeholder={t("wineryPlaceholder", { ns: TranslationNS.catalogues })}
         inputValue={wineryTitle}
         onInputChange={setWineryTitle}
         selectedKey={wineryTitle}
@@ -129,8 +133,8 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
           value={email}
           isDisabled={!isWineryNew()}
           onValueChange={setEmail}
-          label="Feast Year" 
-          placeholder="Enter feast year" 
+          label={t("emailAddress", { ns: TranslationNS.catalogues })} 
+          placeholder={t("emailAddressPlaceholder", { ns: TranslationNS.catalogues })}
           StartContent={AtSymbolIcon}
         />
 
@@ -138,8 +142,8 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
           value={phoneNumber} 
           isDisabled={!isWineryNew()}
           onValueChange={setPhoneNumber} 
-          label="Phone Number" 
-          placeholder="Input Address"
+          label={t("phoneNumber", { ns: TranslationNS.catalogues })}
+          placeholder={t("phoneNumberPlaceholder", { ns: TranslationNS.catalogues })}
           StartContent={MapPinIcon}
         />
       </div>
@@ -157,18 +161,21 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
           value={address} 
           isDisabled={!isWineryNew()}
           onValueChange={setAddress} 
-          label="Address" 
-          placeholder="Input Address"
+          label={t("placeAndAddress", { ns: TranslationNS.catalogues })}
+          placeholder={t("placeAndAddressPlaceholder", { ns: TranslationNS.catalogues })}
           StartContent={MapPinIcon}
         />
       </div>
 
       {/* TODO CALL EDIT */}
       <PrimaryButton 
-        className="w-32 ml-auto" 
+        className="ml-auto"
         onClick={isWineryNew() ? createNewWinery : () => addParticipatedWinery(wineryEntry)}
       >
-        {isWineryNew() ? "Create and add" : "Add Winery"}
+        {isWineryNew() 
+          ? t("createAndAddWinery", { ns: TranslationNS.catalogues })
+          : t("addWinery", { ns: TranslationNS.catalogues })
+        }
       </PrimaryButton>
 
       <WineryTable wineries={participatedWineries} uiState={{ type: UiStateType.SUCCESS }} />

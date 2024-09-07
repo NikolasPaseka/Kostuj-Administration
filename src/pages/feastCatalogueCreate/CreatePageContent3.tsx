@@ -12,11 +12,14 @@ import { UiStateType } from "../../communication/UiState";
 import { WineSample } from "../../model/WineSample";
 import { getWineSearchName, Wine } from "../../model/Wine";
 import WineTable from "../../components/Tables/WineTable";
+import { useTranslation } from "react-i18next";
+import { TranslationNS } from "../../translations/i18n";
 
 type Props = { catalogue: Catalogue }
 
 const CreatePageContent3 = ({ catalogue }: Props) => {
-  //const [adminsWineries, setAdminsWineries] = useState<Winery[]>([]);
+  const { t } = useTranslation();
+
   const [participatedWineries, setParticipatedWineries] = useState<Winery[]>([]);
   const [selectedWinery, setSelectedWinery] = useState<Winery | null>(null);
   const [wineryWines, setWineryWines] = useState<Wine[]>([]);
@@ -130,8 +133,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   return (
     <div className="flex flex-col gap-4">
       <Autocomplete 
-        label="Winery" 
-        placeholder="Select winery"
+        label={t("winery", { ns: TranslationNS.catalogues })}
+        placeholder={t("wineryPlaceholderSelect", { ns: TranslationNS.catalogues })}
         onSelectionChange={onWinerySelectionChange}
         isRequired
         variant="faded"
@@ -143,8 +146,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       </Autocomplete>
 
       <Autocomplete 
-        label="Wine" 
-        placeholder="Select wine"
+        label={t("wine", { ns: TranslationNS.catalogues })}
+        placeholder={t("winePlaceholder", { ns: TranslationNS.catalogues })}
         inputValue={wineName}
         onInputChange={setWineName}
         allowsCustomValue
@@ -171,8 +174,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           value={sampleName}
           isDisabled={selectedWinery == null}
           onValueChange={setSampleName}
-          label="Sample name" 
-          placeholder="Enter sample name" 
+          label={t("sampleName", { ns: TranslationNS.catalogues })}
+          placeholder={t("sampleNamePlaceholder", { ns: TranslationNS.catalogues })}
           StartContent={PencilSquareIcon}
         />
 
@@ -181,14 +184,14 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           value={wineYear == null ? "" : wineYear.toString()} 
           isDisabled={selectedWinery == null}
           onValueChange={(val) => setWineYear(val == "" ? null : parseInt(val))} 
-          label="Wine Year" 
-          placeholder="Enter wine year"
+          label={t("wineYear", { ns: TranslationNS.catalogues })}
+          placeholder={t("wineYearPlaceholder", { ns: TranslationNS.catalogues })}
           StartContent={PencilSquareIcon}
         />
       </div>
       <div className="flex flex-row gap-4">
         <Slider 
-          label="Rating"
+          label={t("rating", { ns: TranslationNS.catalogues })}
           value={sampleRating ?? 0}
           isDisabled={selectedWinery == null}
           onChange={(value) => typeof value == "number" ? setSampleRating(value) : setSampleRating(value[0])} 
@@ -202,19 +205,21 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         />
 
         <RadioGroup
-          label="Wine Color"
+          label={t("wineColor", { ns: TranslationNS.catalogues })}
           isReadOnly={!isWineNew()}
           isDisabled={selectedWinery == null}
           orientation="horizontal"
           value={wineColor}
           onValueChange={setWineColor}
         >
-          <Radio value="red">Red</Radio>
-          <Radio value="white">White</Radio>
-          <Radio value="rose">Rose</Radio>
+          <Radio value="red">{t("redWineColor", { ns: TranslationNS.catalogues })}</Radio>
+          <Radio value="white">{t("whiteWineColor", { ns: TranslationNS.catalogues })}</Radio>
+          <Radio value="rose">{t("roseWineColor", { ns: TranslationNS.catalogues })}</Radio>
         </RadioGroup>
       </div> 
-      <h2 className="text-lg font-bold">Wine details</h2>
+      <h2 className="text-lg font-bold">
+        {t("wineDetails", { ns: TranslationNS.catalogues })}
+      </h2>
       <div className="flex flex-row gap-4">
         <CatalogueInputField 
           type="number"
@@ -222,8 +227,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           isReadOnly={!isWineNew()}
           isDisabled={selectedWinery == null}
           onValueChange={(val) => setResidualSugar(val == "" ? null : parseInt(val))}     
-          label="Residual Sugar"
-          placeholder="Enter residual sugar"
+          label={t("residualSugar", { ns: TranslationNS.catalogues })}
+          placeholder={t("residualSugarPlaceholder", { ns: TranslationNS.catalogues })}
           StartContent={PencilSquareIcon}
         />
 
@@ -233,8 +238,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           isReadOnly={!isWineNew()}
           isDisabled={selectedWinery == null}
           onValueChange={(val) => setAlcoholContent(val == "" ? null : parseInt(val))} 
-          label="Alcohol content" 
-          placeholder="Enter alcohol content"
+          label={t("alcoholContent", { ns: TranslationNS.catalogues })}
+          placeholder={t("alcoholContentPlaceholder", { ns: TranslationNS.catalogues })}
           StartContent={PencilSquareIcon}
         />
 
@@ -244,8 +249,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           isReadOnly={!isWineNew()}
           isDisabled={selectedWinery == null}
           onValueChange={(val) => setAcidity(val == "" ? null : parseInt(val))} 
-          label="Acidity" 
-          placeholder="Enter acidity"
+          label={t("acidity", { ns: TranslationNS.catalogues })}
+          placeholder={t("acidityPlaceholder", { ns: TranslationNS.catalogues })}
           StartContent={PencilSquareIcon}
         />
 
@@ -255,18 +260,21 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           isReadOnly={!isWineNew()}
           isDisabled={selectedWinery == null}
           onValueChange={(val) => setGrapeSweetness(val == "" ? null : parseInt(val))} 
-          label="Grape sweetness" 
-          placeholder="Enter grape sweetness"
+          label={t("grapeSweetness", { ns: TranslationNS.catalogues })}
+          placeholder={t("grapeSweetnessPlaceholder", { ns: TranslationNS.catalogues })}
           StartContent={PencilSquareIcon}
         />
       </div>
 
       {/* TODO CALL EDIT */}
       <PrimaryButton 
-        className="w-32 ml-auto" 
+        className="ml-auto" 
         onClick={createNewSample}
       >
-        {isWineNew() ? "Create and add" : "Add wine sample"}
+        {isWineNew() 
+          ? t("createAndAddWine", { ns: TranslationNS.catalogues })
+          : t("addWineSample", { ns: TranslationNS.catalogues })
+        }
       </PrimaryButton> 
 
       <WineTable wineSamples={wineSamples} uiState={{ type: UiStateType.SUCCESS }} />
