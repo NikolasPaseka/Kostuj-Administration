@@ -13,10 +13,10 @@ type Props = {
 const CardInfoRow = ({ headline, body, Icon }: Props) => {
   return (
     <>
-    <div className="py-3">
-      <RowInfo headline={headline} body={body} Icon={Icon} />
-    </div>
-    <Divider />
+      <div className="py-3">
+        <RowInfo headline={headline} body={body} Icon={Icon} />
+      </div>
+      <Divider />
     </>
   )
 }

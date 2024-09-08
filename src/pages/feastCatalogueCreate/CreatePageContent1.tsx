@@ -1,4 +1,4 @@
-import { Button, DatePicker, DateValue, Textarea } from "@nextui-org/react";
+import { DatePicker, DateValue, Textarea } from "@nextui-org/react";
 import CatalogueInputField from "./components/CatalogueInputField"
 import { useEffect, useState } from "react";
 import PrimaryButton from "../../components/PrimaryButton";
@@ -24,11 +24,12 @@ export type CatalogueData = {
 type Props = { 
   isEditing: boolean;
   catalogue: Catalogue | null;
-  sendCatalogueData: (catalogueData: CatalogueData, edit: boolean) => void;
+  setCatalogue: (catalogue: Catalogue) => void;
+  sendCatalogueData: (catalogueData: CatalogueData, edit: boolean) => Promise<Catalogue | null>;
   isCatalogueCreated: () => boolean
 }
 
-const CreatePageContent1 = ({ isEditing, catalogue = null, sendCatalogueData, isCatalogueCreated }: Props) => {
+const CreatePageContent1 = ({ isEditing, catalogue = null, setCatalogue, sendCatalogueData, isCatalogueCreated }: Props) => {
   const { t } = useTranslation();
 
   const [title, setTitle] = useState<string>("");
@@ -36,6 +37,8 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, sendCatalogueData, is
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState<DateValue | null>(null);
   const [address, setAddress] = useState<string>("");
+  const [images, setImages] = useState<string[]>([]);
+  const [imagesToUpload, setImagesToUpload] = useState<File[] | null>(null);
 
   const { accessToken } = useAuth();
 
@@ -50,8 +53,8 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, sendCatalogueData, is
     }
   }, [catalogue, isEditing]);
 
-  const uploadImages = async (files: File[] | null) => {
-    if (files == null || files.length == 0 || !isEditing) {
+  const uploadImages = async (files: File[] | null, catalogueId: string) => {
+    if (files == null || files.length == 0) {
       alert('Please select a file first');
       return;
     }
@@ -61,18 +64,26 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, sendCatalogueData, is
       formData.append('catalogueImages', file);
     });
 
-    const res: CommunicationResult<string> = await axiosCall(`/catalogues/${catalogue?.id}/images`, "POST", formData, accessToken ?? undefined, 'multipart/form-data');
+    const res: CommunicationResult<string[]> = await axiosCall(`/catalogues/${catalogueId}/images`, "POST", formData, accessToken ?? undefined, 'multipart/form-data');
+    console.log(res);
     if (isSuccess(res) && catalogue != null) {
-      //catalogue.imageUrl?.push(res.data);
+      const newImages = [...catalogue.imageUrl ?? [], ...res.data];
+      setCatalogue({ ...catalogue, imageUrl: newImages });
     }
   };
 
   const deleteImage = async (imageUrl: string) => {
-    if (catalogue == null) { return; }
+    if (catalogue == null) {
+      const imageIndex = images.findIndex(img => img == imageUrl);
+      setImagesToUpload(val => val?.filter((_, index) => index != imageIndex) ?? null);
+      setImages(val => val.filter(img => img != imageUrl));
+      return; 
+    }
 
     const res: CommunicationResult<Catalogue> = await axiosCall(`/catalogues/${catalogue.id}/images`, "DELETE", { imageUrl }, accessToken ?? undefined);
     if (isSuccess(res)) {
-      //catalogue.imageUrl?.splice(catalogue.imageUrl?.indexOf(imageUrl),
+      const images = catalogue.imageUrl?.filter(img => img != imageUrl);
+      setCatalogue({ ...catalogue, imageUrl: images });
     }
   }
 
@@ -133,7 +144,11 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, sendCatalogueData, is
           className="w-32 ml-auto" 
           onClick={() => isEditing || isCatalogueCreated() 
             ? sendCatalogueData({ title, year, description, date, address }, true)
-            : sendCatalogueData({ title, year, description, date, address }, false)
+            : (async () => {
+                const catalogueResponse = await sendCatalogueData({ title, year, description, date, address }, false);
+                if (catalogueResponse == null) { return; }
+                uploadImages(imagesToUpload, catalogueResponse.id);
+              })()
           }
         >
           {isEditing || isCatalogueCreated() 
@@ -142,15 +157,27 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, sendCatalogueData, is
           }
         </PrimaryButton>
 
-        <ImageUploader onUpload={uploadImages} 
-        />
-
       </div>
-      <div className="basis-[25%] h-[30rem]">
-        <ImageSlider 
-         imageUrls={catalogue?.imageUrl ?? []} 
-         onDelete={deleteImage}
-         />
+      <div className="flex flex-col gap-6 basis-[25%]">
+        <div className="h-[30rem]">
+          <ImageSlider 
+            imageUrls={catalogue == null ? images : catalogue.imageUrl ?? []} 
+            onDelete={deleteImage}
+            />
+        </div>
+        
+        <ImageUploader 
+          
+          onSelect={data => {
+            if (catalogue == null || !isEditing) { 
+              console.log("jsem tu");
+              setImages(data.previewUrls);
+              setImagesToUpload(data.files);
+            } else {
+              uploadImages(data.files, catalogue.id);
+            }
+          }}
+        />
       </div>
     </div>
   )

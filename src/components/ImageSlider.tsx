@@ -43,7 +43,10 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ imageUrls, onDelete }) => {
 
       { onDelete &&
         <Button
-          onClick={() => onDelete(imageUrls[currentIndex]) }
+          onClick={async () => { 
+            await onDelete(imageUrls[currentIndex]);
+            goToPrevious();
+          }}
           className="absolute top-0 right-0 bg-black bg-opacity-50 text-white border-none p-2 cursor-pointer z-10"
         >
           DEL

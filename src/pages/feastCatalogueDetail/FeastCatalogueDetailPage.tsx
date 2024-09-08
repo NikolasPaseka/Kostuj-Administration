@@ -96,8 +96,8 @@ const FeastCatalogueDetailPage = () => {
           </div>
 
           <Card>
-            <CardBody className="flex flex-row" style={{ height: "40rem" }}>
-              <div className="flex-1">
+            <CardBody className="flex flex-row min-h-[40rem]">
+              <div className="flex-1 overflow-hidden">
                 <p className="text-xl font-bold py-4">{catalogue.title}</p>
                 <Divider />
                 <CardInfoRow headline={t("feastYear", { ns: TranslationNS.catalogues })} body={catalogue.year.toString()} Icon={SparklesIcon} />
@@ -105,13 +105,23 @@ const FeastCatalogueDetailPage = () => {
                 <CardInfoRow headline={t("placeAndAddress", { ns: TranslationNS.catalogues })} body={catalogue.address} Icon={MapPinIcon} />
                 <CardInfoRow headline={t("organizer", { ns: TranslationNS.catalogues })} body={catalogue.adminId} Icon={UserIcon} />
                 {catalogue.description &&
-                  <CardInfoRow headline={null} body={catalogue.description} Icon={PencilSquareIcon} />
+                    // <>
+                    //   <div className="py-3">
+                    //     <RowInfo headline={headline} body={body} Icon={Icon} />
+                    //   </div>
+                    //   <Divider />
+                    // </>
+                  <CardInfoRow 
+                    headline={null} 
+                    body={catalogue.description}
+                    Icon={PencilSquareIcon} 
+                  />
                 }
                 <CardInfoRow headline={t("price", { ns: TranslationNS.catalogues })} body={catalogue.price.toString()} Icon={CurrencyDollarIcon} />
                 <CardInfoRow headline={t("downloads", { ns: TranslationNS.catalogues })} body={catalogue.downloads.toString()} Icon={ArrowDownTrayIcon} />
               </div>
               {catalogue.imageUrl && catalogue.imageUrl.length > 0 &&
-                <div style={{ flexBasis: '30%'}}>
+                <div className="basis-[30%] h-[40rem]">
                   {/* <Image
                     isZoomed={true}
                     src={catalogue.imageUrl[0]}

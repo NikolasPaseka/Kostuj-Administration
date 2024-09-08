@@ -58,10 +58,10 @@ const FeastCatalogueCreatePage = () => {
     }
   }
 
-  const sendCatalogueData = async (catalogueData: CatalogueData, edit: boolean = false) => {
+  const sendCatalogueData = async (catalogueData: CatalogueData, edit: boolean = false): Promise<Catalogue | null> => {
     if (catalogueData.title == "" || catalogueData.year == null || catalogueData.date == null) {
       console.log(`Please fill in all required fields.`);
-      return;
+      return null;
     }
 
     const catalogue: Catalogue = prepareCatalogueData(catalogueData);
@@ -77,8 +77,10 @@ const FeastCatalogueCreatePage = () => {
         setCatalogue(res.data);
       }
       notifySuccess(edit ? "Catalogue Edited" : "Catalogue created");
+      return res.data;
     } else {
       console.log(`Error: ${res.message}`);
+      return null;
     }
   }
 
@@ -94,7 +96,13 @@ const FeastCatalogueCreatePage = () => {
         <PrimaryButton onClick={() => setPage(p => p + 1)} isDisabled={ page == 3 || catalogue == null }>&gt;</PrimaryButton>
       </div>
       {page == 1 && (
-        <CreatePageContent1 isEditing={isEditing} catalogue={catalogue} sendCatalogueData={sendCatalogueData} isCatalogueCreated={isCatalogueCreated} />
+        <CreatePageContent1 
+          isEditing={isEditing} 
+          catalogue={catalogue}
+          setCatalogue={setCatalogue}
+          sendCatalogueData={sendCatalogueData} 
+          isCatalogueCreated={isCatalogueCreated} 
+        />
       )}
       {page == 2 && catalogue != null && (
         <CreatePageContent2 catalogue={catalogue} />

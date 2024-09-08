@@ -74,7 +74,7 @@ const FeastCatalogueListCard = ({ catalogue, navPath }: Props, key: React.Key) =
               {catalogue.downloads}
             </Chip>
           </div>
-          <small className="text-default-500">{catalogue.description}</small>
+          <small className="text-default-500 break-all">{catalogue.description}</small>
         </div>
 
         <div className="m-auto">
