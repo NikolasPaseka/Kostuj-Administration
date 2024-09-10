@@ -12,6 +12,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from "react-router-dom";
 import { notifySuccess } from "../../utils/toastNotify";
+import StepIndicator from "../../components/StepIndicator";
 
 const FeastCatalogueCreatePage = () => {
   const [page, setPage] = useState<number>(1);
@@ -89,9 +90,9 @@ const FeastCatalogueCreatePage = () => {
 
   return (
     <>
-      <div className="flex flex-row">
+      <div className="flex flex-row mb-8 items-center">
         <h1 className="text-2xl font-bold flex-1">Create Feast Catalogue</h1>
-        {page}
+        <StepIndicator currentStep={page} />
         <PrimaryButton onClick={() => setPage(p => p - 1)} isDisabled={ page == 1 }>&lt;</PrimaryButton>
         <PrimaryButton onClick={() => setPage(p => p + 1)} isDisabled={ page == 3 || catalogue == null }>&gt;</PrimaryButton>
       </div>

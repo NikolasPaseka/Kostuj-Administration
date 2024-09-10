@@ -8,15 +8,16 @@ type Props = {
   className?: string;
   onClick?: () => void;
   isDisabled?: boolean;
+  isSecondaryColor?: boolean;
 }
 
-const PrimaryButton = ({ children, EndContent = null, className, onClick = () => {}, isDisabled = false }: Props) => {
+const PrimaryButton = ({ children, EndContent = null, className, onClick = () => {}, isDisabled = false, isSecondaryColor = false }: Props) => {
   return (
     <>
       {EndContent != null ?
-        <Button onClick={onClick} color="primary" endContent={<EndContent className="w-4 h-4" />} className={className} isDisabled={isDisabled}>{children}</Button>
+        <Button onClick={onClick} color={isSecondaryColor ? "secondary" : "primary"} endContent={<EndContent className={`w-4 h-4 ${isSecondaryColor ? 'text-black' : 'text-white'}`} />} className={className} isDisabled={isDisabled}>{children}</Button>
         :
-        <Button onClick={onClick} color="primary" className={className} isDisabled={isDisabled}>{children}</Button>
+        <Button onClick={onClick} color={isSecondaryColor ? "secondary" : "primary"} className={className} isDisabled={isDisabled}>{children}</Button>
       }
     </>
   )

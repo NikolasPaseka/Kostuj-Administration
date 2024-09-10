@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button } from '@nextui-org/react';
+import IconButton from './IconButton';
+import { ChevronLeftIcon, ChevronRightIcon, TrashIcon } from '@heroicons/react/24/solid';
 
 interface ImageSliderProps {
   imageUrls: string[];
@@ -25,32 +26,32 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ imageUrls, onDelete }) => {
         className=" w-full h-full object-scale-down rounded-lg bg-secondary"
       />
       { imageUrls.length > 1 && <>
-          <Button
+          <IconButton 
+            icon={<ChevronLeftIcon /> }
             onClick={goToPrevious}
-            className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white border-none p-2 cursor-pointer z-10"
-          >
-           &#10094;
-          </Button>
-          <Button
+            className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white rounded-md p-2 cursor-pointer z-10"
+            iconColor="text-white"
+          />
+          <IconButton 
+            icon={<ChevronRightIcon /> }
             onClick={goToNext}
-            className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white border-none p-2 cursor-pointer z-10"
-          >
-            &#10095;
-          </Button>
+            className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white rounded-md p-2 cursor-pointer z-10"
+            iconColor="text-white"
+          />
         </>
       }
 
 
-      { onDelete &&
-        <Button
+      { onDelete && imageUrls.length > 0 &&
+        <IconButton
+          icon={<TrashIcon />}
           onClick={async () => { 
             await onDelete(imageUrls[currentIndex]);
             goToPrevious();
           }}
-          className="absolute top-0 right-0 bg-black bg-opacity-50 text-white border-none p-2 cursor-pointer z-10"
-        >
-          DEL
-        </Button>
+          className="absolute top-0 right-0 mt-2 mr-2 rounded-md bg-black bg-opacity-50 text-white border-none p-2 cursor-pointer z-10"
+          iconColor="text-white"
+        />
       }
 
       { imageUrls.length > 1 &&

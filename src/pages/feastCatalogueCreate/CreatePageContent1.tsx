@@ -170,7 +170,6 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, setCatalogue, sendCat
           
           onSelect={data => {
             if (catalogue == null || !isEditing) { 
-              console.log("jsem tu");
               setImages(data.previewUrls);
               setImagesToUpload(data.files);
             } else {

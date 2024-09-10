@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import PrimaryButton from "../../components/PrimaryButton"
 import CatalogueInputField from "./components/CatalogueInputField"
 import { ClipboardDocumentIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
-import { Autocomplete, AutocompleteItem, Radio, RadioGroup, Slider } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Divider, Radio, RadioGroup, Slider } from "@nextui-org/react";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { Winery } from "../../model/Winery";
 import { axiosCall } from "../../communication/axios";
@@ -276,6 +276,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           : t("addWineSample", { ns: TranslationNS.catalogues })
         }
       </PrimaryButton> 
+
+      <Divider />
 
       <WineTable wineSamples={wineSamples} uiState={{ type: UiStateType.SUCCESS }} />
     </div>

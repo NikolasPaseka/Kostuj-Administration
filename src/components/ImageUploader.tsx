@@ -1,4 +1,6 @@
 import React from 'react';
+import PrimaryButton from './PrimaryButton';
+import { PlusIcon } from '@heroicons/react/24/solid';
 
 type Props = {
   onSelect: (data: { previewUrls: string[], files: File[] }) => void;
@@ -30,7 +32,7 @@ const ImageUploader = ({ onSelect }: Props) => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="m-auto">
       <input
         id="file-upload"
         type="file"
@@ -39,21 +41,13 @@ const ImageUploader = ({ onSelect }: Props) => {
         onChange={handleFileChange}
         className="hidden"
       />
-      <label
-        htmlFor="file-upload"
-        className="cursor-pointer bg-secondary text-black py-2 px-4 rounded-lg"
+      <PrimaryButton 
+        onClick={() => document.getElementById("file-upload")?.click()}
+        EndContent={PlusIcon}
+        isSecondaryColor={true}
       >
         Select Images
-      </label>
-      {/* {previewUrls && previewUrls.map((previewUrl, index) =>
-        <img key={index} src={previewUrl} alt="Image Preview" style={{ width: '200px', height: '200px' }} />
-      )} */}
-      {/* <button 
-        onClick={() => onUpload(selectedFiles)}
-        className=""
-      >
-        Upload
-      </button> */}
+      </PrimaryButton>
     </div>
   );
 };

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import PrimaryButton from "../../components/PrimaryButton"
 import CatalogueInputField from "./components/CatalogueInputField"
 import { AtSymbolIcon, ClipboardDocumentIcon, MapPinIcon } from "@heroicons/react/24/solid";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Divider } from "@nextui-org/react";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { Winery } from "../../model/Winery";
 import { axiosCall } from "../../communication/axios";
@@ -166,7 +166,7 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
           StartContent={MapPinIcon}
         />
       </div>
-
+      
       {/* TODO CALL EDIT */}
       <PrimaryButton 
         className="ml-auto"
@@ -177,6 +177,8 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
           : t("addWinery", { ns: TranslationNS.catalogues })
         }
       </PrimaryButton>
+
+      <Divider />
 
       <WineryTable wineries={participatedWineries} uiState={{ type: UiStateType.SUCCESS }} />
     </div>

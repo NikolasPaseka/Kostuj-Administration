@@ -95,43 +95,36 @@ const FeastCatalogueDetailPage = () => {
             </PrimaryButton>
           </div>
 
-          <Card>
-            <CardBody className="flex flex-row min-h-[40rem]">
-              <div className="flex-1 overflow-hidden">
-                <p className="text-xl font-bold py-4">{catalogue.title}</p>
-                <Divider />
-                <CardInfoRow headline={t("feastYear", { ns: TranslationNS.catalogues })} body={catalogue.year.toString()} Icon={SparklesIcon} />
-                <CardInfoRow headline={t("dateAndTime", { ns: TranslationNS.catalogues })} body={catalogue.startDate.toString()} Icon={CalendarDaysIcon} />
-                <CardInfoRow headline={t("placeAndAddress", { ns: TranslationNS.catalogues })} body={catalogue.address} Icon={MapPinIcon} />
-                <CardInfoRow headline={t("organizer", { ns: TranslationNS.catalogues })} body={catalogue.adminId} Icon={UserIcon} />
-                {catalogue.description &&
-                    // <>
-                    //   <div className="py-3">
-                    //     <RowInfo headline={headline} body={body} Icon={Icon} />
-                    //   </div>
-                    //   <Divider />
-                    // </>
-                  <CardInfoRow 
-                    headline={null} 
-                    body={catalogue.description}
-                    Icon={PencilSquareIcon} 
-                  />
-                }
-                <CardInfoRow headline={t("price", { ns: TranslationNS.catalogues })} body={catalogue.price.toString()} Icon={CurrencyDollarIcon} />
-                <CardInfoRow headline={t("downloads", { ns: TranslationNS.catalogues })} body={catalogue.downloads.toString()} Icon={ArrowDownTrayIcon} />
-              </div>
-              {catalogue.imageUrl && catalogue.imageUrl.length > 0 &&
-                <div className="basis-[30%] h-[40rem]">
-                  {/* <Image
-                    isZoomed={true}
-                    src={catalogue.imageUrl[0]}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  /> */}
+          <div className="flex gap-4 h-max"> 
+            <Card className="flex-1 self-start">
+              <CardBody>
+                <div className="overflow-hidden">
+                  <p className="text-xl font-bold py-4">{catalogue.title}</p>
+                  <Divider />
+                  <CardInfoRow headline={t("feastYear", { ns: TranslationNS.catalogues })} body={catalogue.year.toString()} Icon={SparklesIcon} />
+                  <CardInfoRow headline={t("dateAndTime", { ns: TranslationNS.catalogues })} body={catalogue.startDate.toString()} Icon={CalendarDaysIcon} />
+                  <CardInfoRow headline={t("placeAndAddress", { ns: TranslationNS.catalogues })} body={catalogue.address} Icon={MapPinIcon} />
+                  <CardInfoRow headline={t("organizer", { ns: TranslationNS.catalogues })} body={catalogue.adminId} Icon={UserIcon} />
+                  {catalogue.description &&
+                    <CardInfoRow 
+                      headline={null} 
+                      body={catalogue.description}
+                      Icon={PencilSquareIcon} 
+                    />
+                  }
+                  <CardInfoRow headline={t("price", { ns: TranslationNS.catalogues })} body={catalogue.price.toString()} Icon={CurrencyDollarIcon} />
+                  <CardInfoRow headline={t("downloads", { ns: TranslationNS.catalogues })} body={catalogue.downloads.toString()} Icon={ArrowDownTrayIcon} />
+                </div>
+              </CardBody>
+            </Card>
+
+          {catalogue.imageUrl && catalogue.imageUrl.length > 0 &&
+                <div className="basis-[25%] h-[35rem]">
                   <ImageSlider imageUrls={catalogue.imageUrl} />
                 </div>
               }
-            </CardBody>
-          </Card>
+          </div>
+          
           <Link to={`/feastCatalogues/${catalogue.id}/content`}>
             <Button color="primary" className="mt-4">Show Content</Button>
           </Link>
