@@ -29,9 +29,20 @@ const FeastCatalogueContentPage = () => {
     fetchCatalogueSamples();
   }, [accessToken, id]);
 
+  const deleteWineSample = async (sample: WineSample) => {
+    const res: CommunicationResult<object> = await axiosCall(`/catalogues/samples/${sample.id}`, "DELETE", undefined, accessToken ?? undefined);
+    console.log(res);
+    if (isSuccess(res)) {
+      setSamples([...samples.filter(s => s.id !== sample.id)]);
+    }
+  }
 
   return (
-    <WineTable wineSamples={samples} uiState={uiState} />
+    <WineTable 
+      wineSamples={samples} 
+      uiState={uiState}
+      deleteWineSample={deleteWineSample}
+    />
   )
 }
 

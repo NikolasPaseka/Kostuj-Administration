@@ -4,9 +4,10 @@ import { PlusIcon } from '@heroicons/react/24/solid';
 
 type Props = {
   onSelect: (data: { previewUrls: string[], files: File[] }) => void;
+  isMultiple?: boolean;
 }
 
-const ImageUploader = ({ onSelect }: Props) => {
+const ImageUploader = ({ onSelect, isMultiple = true }: Props) => {
 
   const readFile = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -37,7 +38,7 @@ const ImageUploader = ({ onSelect }: Props) => {
         id="file-upload"
         type="file"
         accept="image/*"
-        multiple
+        multiple={isMultiple}
         onChange={handleFileChange}
         className="hidden"
       />

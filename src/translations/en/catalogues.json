@@ -24,6 +24,8 @@
     "winery": "Winery",
     "wineryPlaceholder": "Select or enter winery name",
     "wineryPlaceholderSelect": "Select winery",
+    "website": "Website",
+    "websitePlaceholder": "Enter website",
     "phoneNumber": "Phone number",
     "phoneNumberPlaceholder": "Enter phone number",
     "emailAddress": "Email address",

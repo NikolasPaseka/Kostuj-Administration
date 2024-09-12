@@ -1,77 +1,125 @@
 import React, { useCallback } from 'react'
 import UiStateHandler from '../UiStateHandler';
 import SearchInput from '../SearchInput';
-import { Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
-import { isStateLoading, UiState } from '../../communication/UiState';
-import { GrapeVarietal } from '../../model/GrapeVarietal';
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, User } from '@nextui-org/react';
+import { UiState } from '../../communication/UiState';
 import { Winery } from '../../model/Winery';
+import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
+import GenericTable, { getNestedValue } from './GenericTable';
+import { useTranslation } from 'react-i18next';
+import { TranslationNS } from '../../translations/i18n';
 
-const tableColumns = [
-  {name: "NAME", uid: "name"},
-  {name: "PHONENUMBER", uid: "phoneNumber"},
-  {name: "EMAIL", uid: "email"},
-  {name: "ADDRESS", uid: "address"}
-];
 
-const getNestedValue = (obj: any, path: string) => {
-  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+type Props = { 
+  wineries: Winery[], 
+  uiState: UiState,
+  removeWineryFromParticipated: (winery: Winery) => Promise<void>
 };
 
-type Props = { wineries: Winery[], uiState: UiState };
+const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props) => {
 
-const WineryTable = ({ wineries, uiState }: Props) => {
+  const { t } = useTranslation();
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+
+  const tableColumns = [
+    {name: t("winery", { ns: TranslationNS.catalogues }), uid: "name"},
+    {name: t("emailAddress", { ns: TranslationNS.catalogues }), uid: "email"},
+    {name: t("website", { ns: TranslationNS.catalogues }), uid: "websitesUrl"},
+    {name: t("phoneNumber", { ns: TranslationNS.catalogues }), uid: "phoneNumber"},
+    {name: t("placeAndAddress", { ns: TranslationNS.catalogues }), uid: "address"},
+    {name: t("actions", { ns: TranslationNS.common }), uid: "actions"}
+  ];
+  
+  
+  const [wineryToRemove, setWineryToRemove] = React.useState<Winery | null>(null);
 
   const renderCell = useCallback((winery: Winery, columnKey: React.Key) => {
     const cellValue = getNestedValue(winery, columnKey as string);
 
     switch (columnKey) {
+      case "name":
+        return (
+          <User
+            avatarProps={{radius: "lg", src: winery.imageUrl}}
+            description={""}
+            name={cellValue}
+          >
+            {winery.name}
+          </User>
+        );
       case "actions":
         return (
-          <div>
-            {/* Add your action buttons here */}
-            <button>Edit</button>
-            <button>Delete</button>
+          <div className="flex items-center gap-2">
+            <span className="cursor-pointer">
+              <Tooltip content="Details">
+                  <EyeIcon className='w-5 h-5 text-gray-600' />
+              </Tooltip>
+            </span>
+            <span className="cursor-pointer">
+              <Tooltip content="Edit">
+                  <PencilIcon className='w-5 h-5 text-gray-600' />
+              </Tooltip>
+            </span>
+            <span onClick={() => {
+              setWineryToRemove(winery);
+              onOpen() 
+            }} className="cursor-pointer">
+              <Tooltip color="danger" content="Delete">
+                  <TrashIcon className='w-5 h-5 text-danger' />
+              </Tooltip>
+            </span>
           </div>
         );
-      case "wineId.grapeVarietals":
-        return cellValue?.map((grape: GrapeVarietal) => grape.grape).join(", ");
-      // case "wineId.color":
-      //   return (
-      //     <Chip className="capitalize" color={wineColorMap[winery.wineId.color]} size="sm" variant="flat">
-      //       {cellValue}
-      //     </Chip>
-      //   );
-      // case "rating":
-      //   return winery.champion ? ("🏆 " + cellValue) : cellValue;
       default:
         return cellValue;
     }
   }, []);
 
-
   return (
     <div>
       <UiStateHandler uiState={uiState} />
+      
       <div className="flex items-center py-4">
         <p className="text-sm flex-1">Number of wineries: {wineries.length}</p>
         <SearchInput value="" onValueChange={() => {}} />
       </div>
-      <Table isStriped aria-label="Example table with custom cells">
-        <TableHeader columns={tableColumns}>
-          {(column) => (
-            <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
-              {column.name}
-            </TableColumn>
+
+      <GenericTable 
+        tableColumns={tableColumns}
+        data={wineries}
+        uiState={uiState}
+        renderCell={renderCell}
+      />
+
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+              <ModalBody>
+                <h1>{wineryToRemove?.name}</h1>
+                <p> 
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Nullam pulvinar risus non risus hendrerit venenatis.
+                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={async () => {
+                  if (wineryToRemove == null) { return; }
+                  await removeWineryFromParticipated(wineryToRemove);
+                  onClose(); 
+                }}>
+                  Action
+                </Button>
+              </ModalFooter>
+            </>
           )}
-        </TableHeader>
-        <TableBody isLoading={isStateLoading(uiState)} loadingContent={<Spinner color="primary"/>} items={wineries}>
-          {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+        </ModalContent>
+      </Modal>
     </div>
   )
 }

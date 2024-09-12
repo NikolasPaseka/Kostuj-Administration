@@ -78,8 +78,15 @@ const FeastCatalogueDetailPage = () => {
     }
   }
 
+  const removeWineryFromParticipated = async (winery: Winery) => {
+    const res: CommunicationResult<object> = await axiosCall(`/catalogues/${catalogue?.id}/wineries`, "DELETE", winery, accessToken ?? undefined);
+    if (isSuccess(res)) {
+      setParticipatedWineries([ ...participatedWineries.filter(w => w.id !== winery.id)]);
+    }
+  }
+
   return (
-    <div>
+    <div className="">
       { catalogue && <>
           <div className="flex flex-row items-center justify-end my-4">
             <Switch isSelected={catalogue?.published} onValueChange={(state: boolean) => updatePublishState(state)}>
@@ -90,12 +97,12 @@ const FeastCatalogueDetailPage = () => {
                 {t("edit", { ns: TranslationNS.catalogues })}
               </PrimaryButton>
             </Link>
-            <PrimaryButton onClick={deleteCatalogue} className="mx-2" EndContent={TrashIcon}>
+            <PrimaryButton onClick={deleteCatalogue} className="mx-2 bg-danger" EndContent={TrashIcon}>
               {t("delete", { ns: TranslationNS.catalogues })}
             </PrimaryButton>
           </div>
 
-          <div className="flex gap-4 h-max"> 
+          <div className="flex gap-4"> 
             <Card className="flex-1 self-start">
               <CardBody>
                 <div className="overflow-hidden">
@@ -128,7 +135,11 @@ const FeastCatalogueDetailPage = () => {
           <Link to={`/feastCatalogues/${catalogue.id}/content`}>
             <Button color="primary" className="mt-4">Show Content</Button>
           </Link>
-          <WineryTable wineries={participatedWineries} uiState={wineriesUiState} />
+          <WineryTable 
+            wineries={participatedWineries}
+            uiState={wineriesUiState}
+            removeWineryFromParticipated={removeWineryFromParticipated}
+          />
         </>
       }
       <UiStateHandler uiState={uiState} />

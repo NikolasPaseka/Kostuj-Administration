@@ -129,7 +129,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       }
     }
   }
-
+  
   return (
     <div className="flex flex-col gap-4">
       <Autocomplete 

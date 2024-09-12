@@ -23,7 +23,7 @@ const AppLayout = () => {
     <div className="flex">
       <AuthProvider>
         {isSidebarVisible && <Sidebar />}
-        <div className="flex-1 p-4">
+        <div className="flex-1 p-4 max-w-screen-2xl mx-auto">
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/profile" element={

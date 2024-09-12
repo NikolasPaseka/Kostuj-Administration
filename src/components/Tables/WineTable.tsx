@@ -1,10 +1,12 @@
 import React, { useCallback } from 'react'
 import SearchInput from '../SearchInput';
-import { Chip, ChipProps, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import { Button, Chip, ChipProps, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from '@nextui-org/react';
 import { isStateLoading, UiState } from '../../communication/UiState';
 import { WineSample } from '../../model/WineSample';
 import { GrapeVarietal } from '../../model/GrapeVarietal';
 import { Wine } from '../../model/Wine';
+import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { getNestedValue } from './GenericTable';
 
 const tableColumns = [
   {name: "NAME", uid: "name"},
@@ -14,6 +16,7 @@ const tableColumns = [
   {name: "YEAR", uid: "wineId.year"},
   {name: "WINERY", uid: "wineId.winaryId.name"},
   {name: "RATING", uid: "rating"},
+  {name: "ACTIONS", uid: "actions"}
 ];
 
 const wineColorMap: Record<string, ChipProps["color"]>  = {
@@ -22,13 +25,17 @@ const wineColorMap: Record<string, ChipProps["color"]>  = {
   rose: "warning",
 };
 
-const getNestedValue = (obj: any, path: string) => {
-  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+type Props = { 
+  wineSamples: WineSample[], 
+  uiState: UiState,
+  deleteWineSample?: (wineSample: WineSample) => Promise<void>
 };
 
-type Props = { wineSamples: WineSample[], uiState: UiState };
+const WineTable = ({ wineSamples, uiState, deleteWineSample }: Props) => {
 
-const WineTable = ({ wineSamples, uiState }: Props) => {
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+
+  const [sampleToRemove, setSampleToRemove] = React.useState<WineSample | null>(null);
 
   const renderCell = useCallback((sample: WineSample, columnKey: React.Key) => {
     const cellValue = getNestedValue(sample, columnKey as string);
@@ -36,10 +43,25 @@ const WineTable = ({ wineSamples, uiState }: Props) => {
     switch (columnKey) {
       case "actions":
         return (
-          <div>
-            {/* Add your action buttons here */}
-            <button>Edit</button>
-            <button>Delete</button>
+          <div className="flex items-center gap-2 w-0">
+            <span className="cursor-pointer">
+              <Tooltip content="Details">
+                  <EyeIcon className='w-5 h-5 text-gray-600' />
+              </Tooltip>
+            </span>
+            <span className="cursor-pointer">
+              <Tooltip content="Edit">
+                  <PencilIcon className='w-5 h-5 text-gray-600' />
+              </Tooltip>
+            </span>
+            <span onClick={() => {
+              setSampleToRemove(sample);
+              onOpen() 
+            }} className="cursor-pointer">
+              <Tooltip color="danger" content="Delete">
+                  <TrashIcon className='w-5 h-5 text-danger' />
+              </Tooltip>
+            </span>
           </div>
         );
       case "wineId.grapeVarietals":
@@ -67,7 +89,7 @@ const WineTable = ({ wineSamples, uiState }: Props) => {
       <Table isStriped aria-label="Example table with custom cells">
         <TableHeader columns={tableColumns}>
           {(column) => (
-            <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
+            <TableColumn key={column.uid} align={"start"}>
               {column.name}
             </TableColumn>
           )}
@@ -80,6 +102,38 @@ const WineTable = ({ wineSamples, uiState }: Props) => {
           )}
         </TableBody>
       </Table>
+
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+              <ModalBody>
+                <h1>{sampleToRemove?.name}</h1>
+                <p> 
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Nullam pulvinar risus non risus hendrerit venenatis.
+                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={async () => {
+                  if (sampleToRemove == null) { return; }
+                  if (deleteWineSample) {
+                    await deleteWineSample(sampleToRemove);
+                  }
+                  onClose(); 
+                }}>
+                  Action
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   )
 }
