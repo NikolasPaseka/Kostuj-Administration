@@ -32,7 +32,7 @@ const CatalogueInputField = ({ value, onValueChange, isRequired = false, isDisab
             "data-[hover=true]:border-secondary",
             "data-[focus=true]:border-secondary",
           ]
-        }}
+      }}
       startContent={StartContent ? <StartContent className="w-5 h-5 text-gray-600" /> : <></> }
     />
   )

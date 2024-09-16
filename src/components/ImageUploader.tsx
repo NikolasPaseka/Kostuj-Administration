@@ -45,7 +45,7 @@ const ImageUploader = ({ onSelect, isMultiple = true }: Props) => {
       <PrimaryButton 
         onClick={() => document.getElementById("file-upload")?.click()}
         EndContent={PlusIcon}
-        isSecondaryColor={true}
+        isSecondary={true}
       >
         Select Images
       </PrimaryButton>

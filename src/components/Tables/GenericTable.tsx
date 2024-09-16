@@ -1,5 +1,5 @@
 import React from 'react'
-import { Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import { SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { isStateLoading, UiState } from '../../communication/UiState';
 
 export const getNestedValue = (obj: any, path: string) => {
@@ -7,24 +7,31 @@ export const getNestedValue = (obj: any, path: string) => {
 };
 
 interface ItemObject {
-  id: string;
+  id?: string;
 }
 
 type Props<T> = { 
-  tableColumns: {name: string, uid: string}[],
+  tableColumns: {name: string, uid: string, allowSorting?: boolean}[],
   data: T[], 
   uiState: UiState,
+  sortDescriptor?: SortDescriptor,
+  setSortDescriptor?: React.Dispatch<React.SetStateAction<SortDescriptor | undefined>>,
   renderCell: (item: T, columnKey: React.Key) => React.ReactNode;
 };
 
-const GenericTable = <T extends ItemObject>({ tableColumns, data, uiState, renderCell }: Props<T>) => {
+const GenericTable = <T extends ItemObject>({ tableColumns, data, uiState, sortDescriptor, setSortDescriptor, renderCell }: Props<T>) => {
 
   return (
     <div>
-      <Table isStriped aria-label="Example table with custom cells">
+      <Table
+        sortDescriptor={sortDescriptor}
+        onSortChange={setSortDescriptor}
+        isStriped 
+        aria-label="Example table with custom cells"
+        >
         <TableHeader columns={tableColumns}>
           {(column) => (
-            <TableColumn key={column.uid} align={"start"}>
+            <TableColumn key={column.uid} align={"start"} allowsSorting={column.allowSorting}>
               <b>{column.name}</b>
             </TableColumn>
           )}

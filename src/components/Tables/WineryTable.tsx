@@ -21,6 +21,9 @@ const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props)
   const { t } = useTranslation();
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
+  const [searchValue, setSearchValue] = React.useState<string>(""); 
+  const [wineryToRemove, setWineryToRemove] = React.useState<Winery | null>(null);
+
   const tableColumns = [
     {name: t("winery", { ns: TranslationNS.catalogues }), uid: "name"},
     {name: t("emailAddress", { ns: TranslationNS.catalogues }), uid: "email"},
@@ -29,9 +32,6 @@ const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props)
     {name: t("placeAndAddress", { ns: TranslationNS.catalogues }), uid: "address"},
     {name: t("actions", { ns: TranslationNS.common }), uid: "actions"}
   ];
-  
-  
-  const [wineryToRemove, setWineryToRemove] = React.useState<Winery | null>(null);
 
   const renderCell = useCallback((winery: Winery, columnKey: React.Key) => {
     const cellValue = getNestedValue(winery, columnKey as string);
@@ -81,12 +81,12 @@ const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props)
       
       <div className="flex items-center py-4">
         <p className="text-sm flex-1">Number of wineries: {wineries.length}</p>
-        <SearchInput value="" onValueChange={() => {}} />
+        <SearchInput value={searchValue} onValueChange={setSearchValue} />
       </div>
 
       <GenericTable 
         tableColumns={tableColumns}
-        data={wineries}
+        data={wineries.filter((winery: Winery) => winery.name.toLowerCase().includes(searchValue.toLowerCase()))}
         uiState={uiState}
         renderCell={renderCell}
       />

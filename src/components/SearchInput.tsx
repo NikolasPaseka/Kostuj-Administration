@@ -5,9 +5,10 @@ import IconButton from './IconButton';
 type Props = { 
   value: string,
   onValueChange: (newValue: string) => void
+  className?: string;
 };
 
-const SearchInput = ({ value, onValueChange }: Props) => {
+const SearchInput = ({ value, onValueChange, className }: Props) => {
   return (
     <Input 
       placeholder="Search"
@@ -20,7 +21,13 @@ const SearchInput = ({ value, onValueChange }: Props) => {
       endContent={
         <IconButton icon={<XMarkIcon/>} onClick={() => onValueChange("")} />
       }
-      className="w-1/4 mx-4"
+      className={`w-1/4 ${className}`}
+      // classNames={{
+      //   inputWrapper: [
+      //     "data-[hover=true]:border-secondary",
+      //     "data-[focus=true]:border-secondary",
+      //   ]
+      // }}
     />
   )
 }
