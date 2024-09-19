@@ -17,9 +17,10 @@ type Props<T> = {
   sortDescriptor?: SortDescriptor,
   setSortDescriptor?: React.Dispatch<React.SetStateAction<SortDescriptor | undefined>>,
   renderCell: (item: T, columnKey: React.Key) => React.ReactNode;
+  bottomContent?: React.ReactNode;
 };
 
-const GenericTable = <T extends ItemObject>({ tableColumns, data, uiState, sortDescriptor, setSortDescriptor, renderCell }: Props<T>) => {
+const GenericTable = <T extends ItemObject>({ tableColumns, data, uiState, sortDescriptor, setSortDescriptor, renderCell, bottomContent }: Props<T>) => {
 
   return (
     <div>
@@ -27,6 +28,7 @@ const GenericTable = <T extends ItemObject>({ tableColumns, data, uiState, sortD
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
         isStriped 
+        bottomContent={bottomContent}
         aria-label="Example table with custom cells"
         >
         <TableHeader columns={tableColumns}>

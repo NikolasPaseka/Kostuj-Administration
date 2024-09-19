@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import SearchInput from '../SearchInput';
-import { Button, Chip, ChipProps, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, Selection, Spacer, Tabs, Tab, Badge, SortDescriptor } from '@nextui-org/react';
+import { Button, Chip, ChipProps, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, Selection, Spacer, Tabs, Tab, Badge, SortDescriptor, Pagination, CircularProgress } from '@nextui-org/react';
 import { UiState } from '../../communication/UiState';
 import { WineSample } from '../../model/WineSample';
 import { GrapeVarietal } from '../../model/GrapeVarietal';
@@ -47,18 +47,26 @@ type Props = {
 
 const WineTable = ({ wineSamples, uiState, deleteWineSample }: Props) => {
 
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  // Modals
+  const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalOpenChange} = useDisclosure();
+  const {isOpen: isFilterModalOpen, onOpen: onFilterModalOpen, onOpenChange: onFilterModalOpenChange} = useDisclosure();
+  const {isOpen: isAutoLabelingModalOpen, onOpen: onAutoLabelingModalOpen, onOpenChange: onAutoLabelingModalOpenChange} = useDisclosure();
 
+  // Table Filtering and sorting
   const [searchValue, setSearchValue] = React.useState<string>("");
   const [colorFilter, setColorFilter] = React.useState<Selection>("all");
   const [groupSelection, setGroupSelection] = React.useState<string>("wineriesOrder");
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor | undefined>(undefined);
+  // Optional pagination
+  const [page, setPage] = React.useState<number>(1);
+  const rowsPerPage = 30;
 
   const [sampleToRemove, setSampleToRemove] = React.useState<WineSample | null>(null);
 
   // first filter items and then sort them for final result
   const filteredSamples = React.useMemo(() => {
     let filteredSamples = [...wineSamples];
+    setPage(1); // reset page when filtering
 
     if (searchValue.length > 0) {
       filteredSamples = filteredSamples.filter((sample) =>
@@ -78,6 +86,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample }: Props) => {
 
   // sort items for final result -- this is passed to the GenericTable
   const sortedItems = React.useMemo(() => {
+    // sorting helper functions
     const sortByWinery = (a: WineSample, b: WineSample) => {
       const aWinery = (a.wineId as Wine).winaryId as Winery;
       const bWinery = (b.wineId as Wine).winaryId as Winery;
@@ -118,6 +127,17 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample }: Props) => {
     });
   }, [filteredSamples, groupSelection, sortDescriptor]);
 
+  // optionaly paginate items
+  const pages = Math.ceil(sortedItems.length / rowsPerPage);
+  const usePagination = pages > 2;
+  const finalItems = React.useMemo(() => {
+    if (usePagination) {
+      return sortedItems.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+    } else {
+      return sortedItems;
+    }
+  }, [page, sortedItems, rowsPerPage]);
+
   const renderCell = useCallback((sample: WineSample, columnKey: React.Key) => {
     const cellValue = getNestedValue(sample, columnKey as string);
 
@@ -137,7 +157,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample }: Props) => {
             </span>
             <span onClick={() => {
               setSampleToRemove(sample);
-              onOpen() 
+              onDeleteModalOpen() 
             }} className="cursor-pointer">
               <Tooltip color="danger" content="Delete">
                   <TrashIcon className='w-5 h-5 text-danger' />
@@ -154,7 +174,20 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample }: Props) => {
           </Chip>
         );
       case "rating":
-        return sample.champion ? ("🏆 " + cellValue) : cellValue;
+        //return sample.champion ? ("🏆 " + cellValue) : cellValue;
+        return (
+          <CircularProgress
+            aria-label="Loading..."
+            size="md"
+            value={cellValue}
+            color={cellValue > 80 ? "success" : cellValue > 60 ? "warning" : "danger"}
+            showValueLabel={true}
+            formatOptions={{ style: "decimal", maximumFractionDigits: 0 }}
+            classNames={{
+              value: "text-sm font-semibold",
+            }}
+          />
+        )
       default:
         return cellValue;
     }
@@ -210,7 +243,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample }: Props) => {
         </Badge>
         <Button 
           endContent={<AdjustmentsHorizontalIcon className="w-7 h-7 text-secondary" />}
-          onClick={() => {}}
+          onClick={onFilterModalOpen}
           color="secondary"
           variant="bordered"
           className="min-w-10"
@@ -221,6 +254,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample }: Props) => {
         <PrimaryButton
           isSecondary
           EndContent={ClipboardDocumentCheckIcon}
+          onClick={onAutoLabelingModalOpen}
         >
           Auto numbering
         </PrimaryButton>
@@ -230,28 +264,41 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample }: Props) => {
           Add New
         </PrimaryButton>
       </div>
-      <p className="text-sm pb-4">Number of samples: {sortedItems.length}</p>
+      <p className="text-sm pb-4">Number of samples: {filteredSamples.length}</p>
 
       <GenericTable 
         tableColumns={tableColumns}
-        data={sortedItems}
+        data={finalItems}
         uiState={uiState}
         sortDescriptor={sortDescriptor}
         setSortDescriptor={setSortDescriptor}
         renderCell={renderCell}
+        bottomContent={
+          usePagination &&
+            <div className="flex w-full justify-center">
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                color="secondary"
+                page={page}
+                total={pages}
+                onChange={(page) => setPage(page)}
+              />
+            </div>
+        }
       />
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      {/* Modal - Delete Wine Sample */}
+      <Modal isOpen={isDeleteModalOpen} onOpenChange={onDeleteModalOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">Delete Wine Sample</ModalHeader>
               <ModalBody>
                 <h1>{sampleToRemove?.name}</h1>
                 <p> 
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
+                  Are you sure you want to delete this wine sample?
                 </p>
               </ModalBody>
               <ModalFooter>
@@ -265,7 +312,57 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample }: Props) => {
                   }
                   onClose(); 
                 }}>
-                  Action
+                  Delete
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* Modal - Filter table */}
+      <Modal isOpen={isFilterModalOpen} onOpenChange={onFilterModalOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Filter settings</ModalHeader>
+              <ModalBody>
+                <h1>Filters</h1>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={async () => {
+                  // TODO: apply filters
+                  onClose(); 
+                }}>
+                  Apply
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* Modal - Filter table */}
+      <Modal isOpen={isAutoLabelingModalOpen} onOpenChange={onAutoLabelingModalOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Auto labeling of wine samples</ModalHeader>
+              <ModalBody>
+                <h1>Auto Labeling</h1>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={async () => {
+                  // TODO: apply filters
+                  onClose(); 
+                }}>
+                  Confirm
                 </Button>
               </ModalFooter>
             </>
