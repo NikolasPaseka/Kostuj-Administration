@@ -4,7 +4,7 @@ import { CommunicationResult, isSuccess } from '../../communication/Communicatio
 import { Catalogue } from '../../model/Catalogue';
 import { useAuth } from '../../context/AuthProvider';
 import { axiosCall } from '../../communication/axios';
-import { UiState, UiStateType } from '../../communication/UiState';
+import { resolveUiState, UiState, UiStateType } from '../../communication/UiState';
 import UiStateHandler from '../../components/UiStateHandler';
 import { Button, Card, CardBody, Switch, Divider } from '@nextui-org/react';
 import CardInfoRow from './components/CardInfoRow';
@@ -15,6 +15,7 @@ import WineryTable from '../../components/Tables/WineryTable';
 import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../translations/i18n';
 import ImageSlider from '../../components/ImageSlider';
+import { CatalogueRepository } from '../../communication/repositories/CatalogueRepository';
 
 const FeastCatalogueDetailPage = () => {
   const [uiState, setUiState] = useState<UiState>({ type: UiStateType.LOADING });
@@ -30,34 +31,17 @@ const FeastCatalogueDetailPage = () => {
 
   useEffect(() => {
     const fetchCatalogue = async () => {
-      const res: CommunicationResult<Catalogue> = await axiosCall(`/catalogues/${id}`, "GET", undefined, accessToken ?? undefined);
-      if (isSuccess(res)) {
-        setUiState({ type: UiStateType.SUCCESS })
-        setCatalogue(res.data);
-        fetchParticipatedWineries(res.data);
-      } else {
-        setUiState({ 
-          type: UiStateType.ERROR,
-          message: res.message
-        })
+      const res = await CatalogueRepository.getCatalogueDetail(id ?? "");
+      const catalogue = resolveUiState(res, setUiState);
+      setCatalogue(catalogue);
+      if (catalogue != null) {
+        const wineriesRes = await CatalogueRepository.getParticipatedWineries(catalogue);
+        setParticipatedWineries(resolveUiState(wineriesRes, setWineriesUiState) ?? []);
       }
     }
     
     fetchCatalogue();
-  }, [id, accessToken]);
-
-  const fetchParticipatedWineries = async (catalogue: Catalogue) => {
-    const res: CommunicationResult<Winery[]> = await axiosCall(`/catalogues/${catalogue.id}/wineries`, "GET", undefined, accessToken ?? undefined);
-    if (isSuccess(res)) {
-      setParticipatedWineries(res.data);
-      setWineriesUiState({ type: UiStateType.SUCCESS });
-    } else {
-      setWineriesUiState({ 
-        type: UiStateType.ERROR,
-        message: res.message
-      })
-    }
-  }
+  }, [id]);
 
   const deleteCatalogue = async () => {
     if (catalogue == null) { return; }

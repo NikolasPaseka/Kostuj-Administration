@@ -1,3 +1,6 @@
+import { Dispatch } from "react";
+import { CommunicationResult, isSuccess } from "./CommunicationsResult";
+
 export enum UiStateType {
     SUCCESS,
     LOADING,
@@ -30,4 +33,17 @@ export function isStateLoading(state: UiState): state is Loading {
 
 export function isStateError(state: UiState): state is Error {
     return state.type == UiStateType.ERROR;
+}
+
+export const resolveUiState = <T>(
+    communicationResult: CommunicationResult<T>,
+    setUiState: Dispatch<UiState>,
+): T | null => {
+    if (isSuccess(communicationResult)) {
+        setUiState({ type: UiStateType.SUCCESS });
+        return communicationResult.data;
+    } else {
+        setUiState({ type: UiStateType.ERROR, message: communicationResult.message });
+        return null;
+    }
 }

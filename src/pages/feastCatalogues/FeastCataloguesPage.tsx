@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react'
-import { UiState, UiStateType } from '../../communication/UiState';
+import { resolveUiState, UiState, UiStateType } from '../../communication/UiState';
 import { Catalogue } from '../../model/Catalogue';
-import { CommunicationResult, isSuccess } from '../../communication/CommunicationsResult';
-import { axiosCall } from '../../communication/axios';
-import { useAuth } from '../../context/AuthProvider';
 import UiStateHandler from '../../components/UiStateHandler';
 import SearchInput from '../../components/SearchInput';
 import { convertDateToTimestamp } from '../../utils/conversionUtils';
@@ -13,9 +10,12 @@ import PrimaryButton from '../../components/PrimaryButton';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../translations/i18n';
+import { CatalogueRepository } from '../../communication/repositories/CatalogueRepository';
 
 const FeastCataloguesPage = () => {
+  const { t } = useTranslation();
   const [uiState, setUiState] = useState<UiState>({ type: UiStateType.LOADING });
+  
   const [catalogues, setCatalogues] = useState<Catalogue[]>([]);
   const [searchValue, setSearchValue] = useState("");
 
@@ -28,26 +28,14 @@ const FeastCataloguesPage = () => {
     catalogue.startDate <= currentDate
   );
 
-  const { accessToken } = useAuth();
-  const { t } = useTranslation();
-
   useEffect(() => {
     const fetchUserCatalogues = async () => {
-      const res: CommunicationResult<Catalogue[]> = await axiosCall("/catalogues/byAdmin", "GET", undefined, accessToken ?? undefined);
-
-      if (isSuccess(res)) {
-        setUiState({ type: UiStateType.SUCCESS })
-        setCatalogues(res.data);
-      } else {
-        setUiState({ 
-          type: UiStateType.ERROR,
-          message: res.message
-        })
-      }
+      const res = await CatalogueRepository.getCataloguesByAdmin();
+      setCatalogues(resolveUiState(res, setUiState) ?? []);
     }
 
     fetchUserCatalogues();
-  }, [accessToken]);
+  }, []);
 
   return (
     <div className="flex flex-col">

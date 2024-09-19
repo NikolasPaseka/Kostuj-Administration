@@ -1,8 +1,16 @@
 import axios, { AxiosError } from "axios";
 import { CommunicationError, CommunicationResult, CommunicationResultType, CommunicationSuccess } from "./CommunicationsResult";
 
-export enum AxiosMethod{
+export enum AxiosMethod {
+    GET = "GET",
+    POST = "POST",
+    PUT = "PUT",
+    DELETE = "DELETE"
+}
 
+type BackendError = {
+    message: string;
+    responseCode: number;
 }
 
 export const axiosInstance = axios.create({
@@ -13,14 +21,23 @@ export const axiosInstance = axios.create({
     },
 });
 
-export const axiosCall = async<T> (path: string, method: string, body?: object, accessToken?: string, contentType: string = 'application/json'): Promise<CommunicationResult<T>> => {
+const userAccessToken = localStorage.getItem("accessToken")
+
+export const axiosCall = async<T> (
+    method: string,
+    path: string, 
+    body: object | null = null, 
+    accessToken: string | null = userAccessToken, 
+    contentType: string = 'application/json'
+): Promise<CommunicationResult<T>> => {
+
     try {
         const response = await axiosInstance({
             url: path,
             method: method,
             headers: {
                 "Content-Type": contentType,
-                authorization: "Bearer " + accessToken,
+                authorization: "Bearer " + accessToken || userAccessToken,
             },
             data: body
         });
@@ -43,11 +60,12 @@ export const axiosCall = async<T> (path: string, method: string, body?: object, 
         console.log(err);   
         if (axios.isAxiosError(err)) {
             const axiosError = err as AxiosError;
+            const errorData = axiosError.response?.data as BackendError;
 
             const resultError: CommunicationError = {
                 type: CommunicationResultType.ERROR,
-                message: axiosError.response?.statusText || "Unknown error",
-                code: axiosError.response?.status || 500
+                message: errorData.message|| "Unknown error",
+                code: errorData.responseCode || 500
             }
             return resultError;
         } else {
