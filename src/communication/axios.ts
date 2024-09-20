@@ -26,8 +26,8 @@ const userAccessToken = localStorage.getItem("accessToken")
 export const axiosCall = async<T> (
     method: string,
     path: string, 
-    body: object | null = null, 
-    accessToken: string | null = userAccessToken, 
+    body: object | undefined = undefined, 
+    accessToken: string | undefined = userAccessToken ?? undefined, 
     contentType: string = 'application/json'
 ): Promise<CommunicationResult<T>> => {
 

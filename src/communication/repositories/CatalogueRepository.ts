@@ -1,5 +1,7 @@
 import { Catalogue } from "../../model/Catalogue";
+import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 import { Winery } from "../../model/Winery";
+import { WineSample } from "../../model/WineSample";
 import { axiosCall, AxiosMethod } from "../axios";
 import { CommunicationResult } from "../CommunicationsResult";
 
@@ -12,7 +14,55 @@ export const CatalogueRepository = {
         return await axiosCall(AxiosMethod.GET, `/catalogues/${id}`,)
     },
 
+    deleteCatalogue: async (catalogue: Catalogue): Promise<CommunicationResult<SuccessMessage>> => {
+        return await axiosCall(AxiosMethod.DELETE, `/catalogues/${catalogue.id}`);
+    },
+
+    createCatalogue: async (catalogue: Catalogue): Promise<CommunicationResult<Catalogue>> => {
+        return await axiosCall(AxiosMethod.POST, `/catalogues/`, catalogue);
+    },
+
+    editCatalogue: async (catalogue: Catalogue): Promise<CommunicationResult<Catalogue>> => {
+        return await axiosCall(AxiosMethod.PUT, `/catalogues/${catalogue.id}`, catalogue);
+    },
+
+    updatePublishState: async (catalogue: Catalogue, state: boolean): Promise<CommunicationResult<Catalogue>> => {
+        return await axiosCall(AxiosMethod.POST, `/catalogues/${catalogue.id}/publish`, { publish: state });
+    },
+
+    //Participated wineries
     getParticipatedWineries: async (catalogue: Catalogue): Promise<CommunicationResult<Winery[]>> => {
         return await axiosCall(AxiosMethod.GET, `/catalogues/${catalogue.id}/wineries`);
+    },
+
+    addParticipatedWinery: async (catalogue: Catalogue, winery: Winery): Promise<CommunicationResult<Winery>> => {
+        return await axiosCall(AxiosMethod.POST, `/catalogues/${catalogue.id}/wineries`, winery);
+    },
+
+    removeWineryFromParticipated: async (catalogue: Catalogue, winery: Winery): Promise<CommunicationResult<SuccessMessage>> => {
+        return await axiosCall(AxiosMethod.DELETE, `/catalogues/${catalogue.id}/wineries`, winery);
+    },
+
+    getSamples: async (catalogueId: string): Promise<CommunicationResult<WineSample[]>> => {
+        return await axiosCall(AxiosMethod.GET, `/catalogues/${catalogueId}/samples`);
+    },
+
+    deleteSample: async (sample: WineSample): Promise<CommunicationResult<SuccessMessage>> => {
+        console.log(sample);
+        const id = sample.id ?? "";
+        return await axiosCall(AxiosMethod.DELETE, `/catalogues/samples/${id}`);
+    },
+
+    //Images
+    uploadImages: async (catalogueId: string, images: File[]): Promise<CommunicationResult<string[]>> => {
+        const formData = new FormData();
+        images.forEach(file => {
+            formData.append('catalogueImages', file);
+        });
+        return await axiosCall(AxiosMethod.POST, `/catalogues/${catalogueId}/images`, formData, undefined, 'multipart/form-data');
+    },
+
+    deleteImage: async (catalogueId: string, imageUrl: string): Promise<CommunicationResult<SuccessMessage>> => {
+        return await axiosCall(AxiosMethod.DELETE, `/catalogues/${catalogueId}/images`, { imageUrl });
     }
 }

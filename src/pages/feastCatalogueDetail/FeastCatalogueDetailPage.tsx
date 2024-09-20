@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { CommunicationResult, isSuccess } from '../../communication/CommunicationsResult';
 import { Catalogue } from '../../model/Catalogue';
-import { useAuth } from '../../context/AuthProvider';
-import { axiosCall } from '../../communication/axios';
 import { resolveUiState, UiState, UiStateType } from '../../communication/UiState';
 import UiStateHandler from '../../components/UiStateHandler';
 import { Button, Card, CardBody, Switch, Divider } from '@nextui-org/react';
@@ -18,16 +16,15 @@ import ImageSlider from '../../components/ImageSlider';
 import { CatalogueRepository } from '../../communication/repositories/CatalogueRepository';
 
 const FeastCatalogueDetailPage = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const { t } = useTranslation();
+
   const [uiState, setUiState] = useState<UiState>({ type: UiStateType.LOADING });
   const [wineriesUiState, setWineriesUiState] = useState<UiState>({ type: UiStateType.LOADING });
 
   const [catalogue, setCatalogue] = useState<Catalogue | null>(null);
   const [participatedWineries, setParticipatedWineries] = useState<Winery[]>([]);
-
-  const { id } = useParams();
-  const { accessToken } = useAuth();
-  const { t } = useTranslation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCatalogue = async () => {
@@ -46,7 +43,7 @@ const FeastCatalogueDetailPage = () => {
   const deleteCatalogue = async () => {
     if (catalogue == null) { return; }
 
-    const res: CommunicationResult<Catalogue> = await axiosCall(`/catalogues/${catalogue?.id}`, "DELETE", undefined, accessToken ?? undefined);
+    const res = await CatalogueRepository.deleteCatalogue(catalogue);
     if (isSuccess(res)) {
       navigate("/feastCatalogues");
     }
@@ -56,14 +53,16 @@ const FeastCatalogueDetailPage = () => {
     if (catalogue === null) { return; }
     if (catalogue.published === state) { return; }
 
-    const res: CommunicationResult<Catalogue> = await axiosCall(`/catalogues/${catalogue?.id}/publish`, "POST", { publish: state }, accessToken ?? undefined);
+    const res: CommunicationResult<Catalogue> = await CatalogueRepository.updatePublishState(catalogue, state);
     if (isSuccess(res)) {
       setCatalogue({ ...catalogue, published: state });
     }
   }
 
   const removeWineryFromParticipated = async (winery: Winery) => {
-    const res: CommunicationResult<object> = await axiosCall(`/catalogues/${catalogue?.id}/wineries`, "DELETE", winery, accessToken ?? undefined);
+    if (catalogue == null) { return; }
+
+    const res = await CatalogueRepository.removeWineryFromParticipated(catalogue, winery);
     if (isSuccess(res)) {
       setParticipatedWineries([ ...participatedWineries.filter(w => w.id !== winery.id)]);
     }

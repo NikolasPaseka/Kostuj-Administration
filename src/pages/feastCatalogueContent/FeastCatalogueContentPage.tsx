@@ -1,36 +1,31 @@
 import { useParams } from "react-router-dom";
-import { useAuth } from "../../context/AuthProvider";
-import { UiState, UiStateType } from "../../communication/UiState";
+import { resolveUiState, UiState, UiStateType } from "../../communication/UiState";
 import { useEffect, useState } from "react";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { WineSample } from "../../model/WineSample";
-import { axiosCall } from "../../communication/axios";
 import WineTable from "../../components/Tables/WineTable";
+import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
+import UiStateHandler from "../../components/UiStateHandler";
+import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 
 const FeastCatalogueContentPage = () => {
+  const { id } = useParams();
+
   const [uiState, setUiState] = useState<UiState>({ type: UiStateType.LOADING });
   const [samples, setSamples] = useState<WineSample[]>([]);
-  const { id } = useParams();
-  const { accessToken } = useAuth();
 
   useEffect(() => {
     const fetchCatalogueSamples = async () => {
-      const res: CommunicationResult<WineSample[]> = await axiosCall(`/catalogues/${id}/samples`, "GET", undefined, accessToken ?? undefined);
-      if (isSuccess(res)) {
-        setUiState({ type: UiStateType.SUCCESS })
-        setSamples(res.data);
-      } else {
-        setUiState({ 
-          type: UiStateType.ERROR,
-          message: res.message
-        })
-      }
+      if (id == null) { return };
+      const res: CommunicationResult<WineSample[]> = await CatalogueRepository.getSamples(id);
+      setSamples(resolveUiState(res, setUiState) ?? []);
     }
+
     fetchCatalogueSamples();
-  }, [accessToken, id]);
+  }, [id]);
 
   const deleteWineSample = async (sample: WineSample) => {
-    const res: CommunicationResult<object> = await axiosCall(`/catalogues/samples/${sample.id}`, "DELETE", undefined, accessToken ?? undefined);
+    const res: CommunicationResult<SuccessMessage> = await CatalogueRepository.deleteSample(sample); 
     console.log(res);
     if (isSuccess(res)) {
       setSamples([...samples.filter(s => s.id !== sample.id)]);
@@ -38,11 +33,14 @@ const FeastCatalogueContentPage = () => {
   }
 
   return (
+    <>
+    <UiStateHandler uiState={uiState} />
     <WineTable 
       wineSamples={samples} 
       uiState={uiState}
       deleteWineSample={deleteWineSample}
     />
+    </>
   )
 }
 

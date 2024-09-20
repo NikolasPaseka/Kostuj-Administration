@@ -10,8 +10,8 @@ import ImageSlider from "../../components/ImageSlider";
 import { useTranslation } from "react-i18next";
 import { TranslationNS } from "../../translations/i18n";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
-import { axiosCall } from "../../communication/axios";
-import { useAuth } from "../../context/AuthProvider";
+import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
+import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 
 export type CatalogueData = {
   title: string;
@@ -40,8 +40,6 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, setCatalogue, sendCat
   const [images, setImages] = useState<string[]>([]);
   const [imagesToUpload, setImagesToUpload] = useState<File[] | null>(null);
 
-  const { accessToken } = useAuth();
-
   useEffect(() => {
     if (isEditing && catalogue != null) {
       setTitle(catalogue.title);
@@ -54,18 +52,9 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, setCatalogue, sendCat
   }, [catalogue, isEditing]);
 
   const uploadImages = async (files: File[] | null, catalogueId: string) => {
-    if (files == null || files.length == 0) {
-      alert('Please select a file first');
-      return;
-    }
+    if (files == null || files.length == 0) { return; }
 
-    const formData = new FormData();
-    files?.forEach(file => {
-      formData.append('catalogueImages', file);
-    });
-
-    const res: CommunicationResult<string[]> = await axiosCall(`/catalogues/${catalogueId}/images`, "POST", formData, accessToken ?? undefined, 'multipart/form-data');
-    console.log(res);
+    const res: CommunicationResult<string[]> = await CatalogueRepository.uploadImages(catalogueId, files);
     if (isSuccess(res) && catalogue != null) {
       const newImages = [...catalogue.imageUrl ?? [], ...res.data];
       setCatalogue({ ...catalogue, imageUrl: newImages });
@@ -80,7 +69,7 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, setCatalogue, sendCat
       return; 
     }
 
-    const res: CommunicationResult<Catalogue> = await axiosCall(`/catalogues/${catalogue.id}/images`, "DELETE", { imageUrl }, accessToken ?? undefined);
+    const res: CommunicationResult<SuccessMessage> = await CatalogueRepository.deleteImage(catalogue.id, imageUrl);
     if (isSuccess(res)) {
       const images = catalogue.imageUrl?.filter(img => img != imageUrl);
       setCatalogue({ ...catalogue, imageUrl: images });

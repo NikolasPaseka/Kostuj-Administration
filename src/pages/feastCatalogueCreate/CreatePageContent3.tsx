@@ -14,6 +14,8 @@ import { getWineSearchName, Wine } from "../../model/Wine";
 import WineTable from "../../components/Tables/WineTable";
 import { useTranslation } from "react-i18next";
 import { TranslationNS } from "../../translations/i18n";
+import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
+import { WineryRepository } from "../../communication/repositories/WineryRepository";
 
 type Props = { catalogue: Catalogue }
 
@@ -41,14 +43,14 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
 
   useEffect(() => {
     const fetchParticipatedWineries = async () => { 
-      const res: CommunicationResult<Winery[]> = await axiosCall(`/catalogues/${catalogue.id}/wineries`, "GET", undefined, accessToken ?? undefined);
+      const res: CommunicationResult<Winery[]> = await CatalogueRepository.getParticipatedWineries(catalogue);
       if (isSuccess(res)) {
         setParticipatedWineries(res.data);
       }
     }
 
     const fetchAddedWineSamples = async () => {
-      const res: CommunicationResult<WineSample[]> = await axiosCall(`/catalogues/${catalogue.id}/samples`, "GET", undefined);
+      const res: CommunicationResult<WineSample[]> = await CatalogueRepository.getSamples(catalogue.id);
       if (isSuccess(res)) {
         setWineSamples(res.data);
       }
@@ -59,7 +61,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   }, [accessToken, catalogue.id]);
 
   const fetchWineryWines = async (winery: Winery) => {
-    const res: CommunicationResult<Wine[]> = await axiosCall(`/wines/byWinery/${winery.id}`, "GET");
+    const res: CommunicationResult<Wine[]> = await WineryRepository.getWineryWines(winery.id);
     if (isSuccess(res)) {
       setWineryWines(res.data);
     }

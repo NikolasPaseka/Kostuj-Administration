@@ -5,20 +5,24 @@ import { AtSymbolIcon, ClipboardDocumentIcon, MapPinIcon } from "@heroicons/reac
 import { Autocomplete, AutocompleteItem, Divider } from "@nextui-org/react";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { Winery } from "../../model/Winery";
-import { axiosCall } from "../../communication/axios";
-import { useAuth } from "../../context/AuthProvider";
 import { Catalogue } from "../../model/Catalogue";
 import WineryTable from "../../components/Tables/WineryTable";
-import { UiStateType } from "../../communication/UiState";
+import { resolveUiState, UiStateType } from "../../communication/UiState";
 import { useTranslation } from "react-i18next";
 import { TranslationNS } from "../../translations/i18n";
 import ImageSlider from "../../components/ImageSlider";
 import ImageUploader from "../../components/ImageUploader";
+import { WineryRepository } from "../../communication/repositories/WineryRepository";
+import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
+import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
+import { useAuth } from "../../context/AuthProvider";
 
 type Props = { catalogue: Catalogue }
 
 const CreatePageContent2 = ({ catalogue }: Props) => {
   const { t } = useTranslation();
+  const { getUserData } = useAuth();
+  const [uiState, setUiState] = useState({ type: UiStateType.LOADING });
 
   const [adminsWineries, setAdminsWineries] = useState<Winery[]>([]);
   const [participatedWineries, setParticipatedWineries] = useState<Winery[]>([]);
@@ -32,25 +36,14 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
   const [image, setImage] = useState<string | null>();
   const [imageToUpload, setImageToUpload] = useState<File | null>(null);
 
-  const { accessToken, getUserData } = useAuth();
-
   useEffect(() => {
     const fetchAdminsWineries = async () => {
-      const res: CommunicationResult<Winery[]> = await axiosCall(`/wineries/byAdmin`, "GET", undefined, accessToken ?? undefined);
-      if (isSuccess(res)) {
-        //setUiState({ type: UiStateType.SUCCESS })
-        //setCatalogue(res.data);
-        setAdminsWineries(res.data);
-      } else {
-        // setUiState({ 
-        //   type: UiStateType.ERROR,
-        //   message: res.message
-        // })
-      }
+      const res: CommunicationResult<Winery[]> = await WineryRepository.getAdminsWineries();
+      setAdminsWineries(resolveUiState(res, setUiState) ?? []);
     }
 
     const fetchParticipatedWineries = async () => { 
-      const res: CommunicationResult<Winery[]> = await axiosCall(`/catalogues/${catalogue.id}/wineries`, "GET", undefined, accessToken ?? undefined);
+      const res: CommunicationResult<Winery[]> = await CatalogueRepository.getParticipatedWineries(catalogue);
       if (isSuccess(res)) {
         setParticipatedWineries(res.data);
       }
@@ -58,7 +51,7 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
     
     fetchAdminsWineries();
     fetchParticipatedWineries();
-  }, [accessToken, catalogue.id]);
+  }, [catalogue]);
 
   const onWinerySelectionChange = (key: React.Key | null) => {
     if (key === null) {
@@ -97,7 +90,7 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
   const addParticipatedWinery = async (winery: Winery | null) => {
     if (winery == null) { return; }
 
-    const res: CommunicationResult<Winery> = await axiosCall(`/catalogues/${catalogue.id}/wineries`, "POST", winery, accessToken ?? undefined);
+    const res: CommunicationResult<Winery> = await CatalogueRepository.addParticipatedWinery(catalogue, winery);
     if (isSuccess(res)) { 
       setParticipatedWineries([...participatedWineries, res.data]);
       if (isWineryNew()) {
@@ -113,10 +106,7 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('wineryImage', file);
-
-    const res: CommunicationResult<string> = await axiosCall(`/wineries/${wineryId}/image`, "POST", formData, accessToken ?? undefined, 'multipart/form-data');
+    const res: CommunicationResult<string> = await WineryRepository.uploadImage(wineryId, file);
     if (isSuccess(res) && wineryEntry != null) {
       setWineryEntry({ ...wineryEntry, imageUrl: res.data });
     }
@@ -129,14 +119,14 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
       return; 
     }
 
-    const res: CommunicationResult<string> = await axiosCall(`/wineries/${wineryEntry.id}/image`, "DELETE", { imageUrl }, accessToken ?? undefined);
+    const res: CommunicationResult<SuccessMessage> = await WineryRepository.deleteImage(wineryEntry.id, imageUrl);
     if (isSuccess(res)) {
       setWineryEntry({ ...wineryEntry, imageUrl: undefined});
     }
   }
 
   const removeWineryFromParticipated = async (winery: Winery) => {
-    const res: CommunicationResult<object> = await axiosCall(`/catalogues/${catalogue.id}/wineries`, "DELETE", winery, accessToken ?? undefined);
+    const res: CommunicationResult<SuccessMessage> = await CatalogueRepository.removeWineryFromParticipated(catalogue, winery);
     if (isSuccess(res)) {
       setParticipatedWineries([ ...participatedWineries.filter(w => w.id !== winery.id)]);
     }

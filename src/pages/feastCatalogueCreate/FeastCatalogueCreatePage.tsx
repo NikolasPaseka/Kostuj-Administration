@@ -2,8 +2,6 @@ import { useEffect, useState } from "react"
 import PrimaryButton from "../../components/PrimaryButton";
 import { Catalogue } from "../../model/Catalogue";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
-import { axiosCall } from "../../communication/axios";
-import { useAuth } from "../../context/AuthProvider";
 import CreatePageContent2 from "./CreatePageContent2";
 import CreatePageContent3 from "./CreatePageContent3";
 import CreatePageContent1, { CatalogueData } from "./CreatePageContent1";
@@ -13,28 +11,30 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from "react-router-dom";
 import { notifySuccess } from "../../utils/toastNotify";
 import StepIndicator from "../../components/StepIndicator";
+import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
+import { useAuth } from "../../context/AuthProvider";
 
 const FeastCatalogueCreatePage = () => {
   const [page, setPage] = useState<number>(1);
   const [catalogue, setCatalogue] = useState<Catalogue | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
+  const { getUserData } = useAuth();
   const { id } = useParams();
-  const { accessToken, getUserData } = useAuth();
 
   useEffect(() => {
     const fetchCatalogue = async () => {
       if (id == null) { return; } 
 
       setIsEditing(true);
-      const res: CommunicationResult<Catalogue> = await axiosCall(`/catalogues/${id}`, "GET", undefined, accessToken ?? undefined);
+      const res: CommunicationResult<Catalogue> = await CatalogueRepository.getCatalogueDetail(id);
       if (isSuccess(res)) {
         setCatalogue(res.data);
       }
     }
     
     fetchCatalogue();
-  }, [accessToken, id]);
+  }, [id]);
 
   const prepareCatalogueData = (catalogueData: CatalogueData): Catalogue => {
     return {
@@ -67,12 +67,9 @@ const FeastCatalogueCreatePage = () => {
 
     const catalogue: Catalogue = prepareCatalogueData(catalogueData);
 
-    const res: CommunicationResult<Catalogue> = await axiosCall(
-      edit ? `/catalogues/${catalogue.id}` : "/catalogues", 
-      edit ? "PUT" : "POST", 
-      { ...catalogue }, 
-      accessToken ?? undefined
-    );
+    const res: CommunicationResult<Catalogue> = 
+      edit ? await CatalogueRepository.editCatalogue(catalogue)
+           : await CatalogueRepository.createCatalogue(catalogue);
     if (isSuccess(res)) {
       if (!edit) {
         setCatalogue(res.data);
