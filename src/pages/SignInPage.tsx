@@ -14,9 +14,9 @@ const SignInPage = () => {
     if (isLoggedIn()) {
       navigate("/");
     }
-  }, []);
+  }, [isLoggedIn, navigate]);
 
-  const handleSubmit = async (e: any) => {  
+  const handleSubmit = async () => {  
     login(email, password);
   }
 
@@ -28,7 +28,7 @@ const SignInPage = () => {
       <Button 
         color="primary" 
         className="w-full" 
-        onPress={handleSubmit}
+        onClick={handleSubmit}
       >
         Sign In
        

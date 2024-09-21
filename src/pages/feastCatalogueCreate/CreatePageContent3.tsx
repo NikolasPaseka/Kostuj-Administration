@@ -5,8 +5,6 @@ import { ClipboardDocumentIcon, PencilSquareIcon } from "@heroicons/react/24/sol
 import { Autocomplete, AutocompleteItem, Divider, Radio, RadioGroup, Slider } from "@nextui-org/react";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { Winery } from "../../model/Winery";
-import { axiosCall } from "../../communication/axios";
-import { useAuth } from "../../context/AuthProvider";
 import { Catalogue } from "../../model/Catalogue";
 import { UiStateType } from "../../communication/UiState";
 import { WineSample } from "../../model/WineSample";
@@ -39,8 +37,6 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   const [acidity, setAcidity] = useState<number | null>(null);
   const [grapeSweetness, setGrapeSweetness] = useState<number | null>(null);
 
-  const { accessToken } = useAuth();
-
   useEffect(() => {
     const fetchParticipatedWineries = async () => { 
       const res: CommunicationResult<Winery[]> = await CatalogueRepository.getParticipatedWineries(catalogue);
@@ -58,7 +54,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     
     fetchParticipatedWineries();
     fetchAddedWineSamples();
-  }, [accessToken, catalogue.id]);
+  }, [catalogue]);
 
   const fetchWineryWines = async (winery: Winery) => {
     const res: CommunicationResult<Wine[]> = await WineryRepository.getWineryWines(winery.id);
@@ -120,12 +116,12 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         grapesSweetness: grapeSweetness ?? undefined,
         winaryId: selectedWinery.id
       }
-      const res: CommunicationResult<WineSample> = await axiosCall(`/wines?createWine=true`, "POST", { "wine": newWine, "sample": newSample }, accessToken ?? undefined);
+      const res: CommunicationResult<WineSample> = await CatalogueRepository.createSample(newSample, newWine);
       if (isSuccess(res)) {
         setWineSamples([...wineSamples, res.data]);
       }
     } else {
-      const res: CommunicationResult<WineSample> = await axiosCall(`/wines?createWine=false`, "POST", newSample, accessToken ?? undefined);
+      const res: CommunicationResult<WineSample> = await CatalogueRepository.createSample(newSample);
       if (isSuccess(res)) {
         setWineSamples([...wineSamples, res.data]);
       }

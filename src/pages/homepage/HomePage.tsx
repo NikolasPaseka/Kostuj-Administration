@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import {Button} from "@nextui-org/react";
-import { axiosCall } from '../../communication/axios';
+import { axiosCall, AxiosMethod } from '../../communication/axios';
 import { Catalogue } from '../../model/Catalogue';
 import { CommunicationResult, isSuccess } from '../../communication/CommunicationsResult';
 import { isStateSuccess, UiState, UiStateType } from '../../communication/UiState';
@@ -12,7 +12,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchCatalogues = async () => {
-      const result: CommunicationResult<Catalogue[]> = await axiosCall('/catalogues?page=1&limit=10', 'GET');
+      const result: CommunicationResult<Catalogue[]> = await axiosCall(AxiosMethod.GET, '/catalogues?page=1&limit=10');
 
       if (isSuccess(result)) {
         setUiState({ type: UiStateType.SUCCESS })
