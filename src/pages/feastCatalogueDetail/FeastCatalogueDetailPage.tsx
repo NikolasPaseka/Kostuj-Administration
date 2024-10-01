@@ -4,7 +4,7 @@ import { CommunicationResult, isSuccess } from '../../communication/Communicatio
 import { Catalogue } from '../../model/Catalogue';
 import { resolveUiState, UiState, UiStateType } from '../../communication/UiState';
 import UiStateHandler from '../../components/UiStateHandler';
-import { Button, Card, CardBody, Switch, Divider } from '@nextui-org/react';
+import { Button, Card, CardBody, Switch, Divider, useDisclosure } from '@nextui-org/react';
 import CardInfoRow from './components/CardInfoRow';
 import { ArrowDownTrayIcon, CalendarDaysIcon, CurrencyDollarIcon, MapPinIcon, PencilSquareIcon, SparklesIcon, TrashIcon, UserIcon } from '@heroicons/react/24/solid';
 import PrimaryButton from '../../components/PrimaryButton';
@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../translations/i18n';
 import ImageSlider from '../../components/ImageSlider';
 import { CatalogueRepository } from '../../communication/repositories/CatalogueRepository';
+import ImportDataModal from './components/ImportDataModal';
 
 const FeastCatalogueDetailPage = () => {
   const navigate = useNavigate();
@@ -26,19 +27,26 @@ const FeastCatalogueDetailPage = () => {
   const [catalogue, setCatalogue] = useState<Catalogue | null>(null);
   const [participatedWineries, setParticipatedWineries] = useState<Winery[]>([]);
 
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   useEffect(() => {
     const fetchCatalogue = async () => {
       const res = await CatalogueRepository.getCatalogueDetail(id ?? "");
       const catalogue = resolveUiState(res, setUiState);
       setCatalogue(catalogue);
-      if (catalogue != null) {
-        const wineriesRes = await CatalogueRepository.getParticipatedWineries(catalogue);
-        setParticipatedWineries(resolveUiState(wineriesRes, setWineriesUiState) ?? []);
-      }
+      fetchParticipatedWineries();
     }
     
     fetchCatalogue();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  const fetchParticipatedWineries = async () => {
+    if (catalogue == null) { return; }
+
+    const wineriesRes = await CatalogueRepository.getParticipatedWineries(catalogue);
+    setParticipatedWineries(resolveUiState(wineriesRes, setWineriesUiState) ?? []);
+  }
 
   const deleteCatalogue = async () => {
     if (catalogue == null) { return; }
@@ -118,6 +126,16 @@ const FeastCatalogueDetailPage = () => {
           <Link to={`/feastCatalogues/${catalogue.id}/content`}>
             <Button color="primary" className="mt-4">Show Content</Button>
           </Link>
+
+          <PrimaryButton isSecondary onClick={onOpen} >Import data</PrimaryButton>
+
+          <ImportDataModal 
+            isOpen={isOpen} 
+            onOpenChange={onOpenChange} 
+            catalogue={catalogue} 
+            onImportedDataLoaded={fetchParticipatedWineries}
+          />
+          
           <WineryTable 
             wineries={participatedWineries}
             uiState={wineriesUiState}

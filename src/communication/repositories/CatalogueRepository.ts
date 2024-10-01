@@ -31,6 +31,11 @@ export const CatalogueRepository = {
         return await axiosCall(AxiosMethod.POST, `/catalogues/${catalogue.id}/publish`, { publish: state });
     },
 
+    //Import data
+    importContentData: async (catalogue: Catalogue, data: { wineries: Winery[], samples: WineSample[]}): Promise<CommunicationResult<SuccessMessage>> => {
+        return await axiosCall(AxiosMethod.POST, `/catalogues/${catalogue.id}/importContentData`, data);
+    },
+
     //Participated wineries
     getParticipatedWineries: async (catalogue: Catalogue): Promise<CommunicationResult<Winery[]>> => {
         return await axiosCall(AxiosMethod.GET, `/catalogues/${catalogue.id}/wineries`);

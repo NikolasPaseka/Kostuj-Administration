@@ -10,7 +10,7 @@ export enum AxiosMethod {
 
 type BackendError = {
     message: string;
-    responseCode: number;
+    statusCode: number;
 }
 
 export const axiosInstance = axios.create({
@@ -65,7 +65,7 @@ export const axiosCall = async<T> (
             const resultError: CommunicationError = {
                 type: CommunicationResultType.ERROR,
                 message: errorData.message|| "Unknown error",
-                code: errorData.responseCode || 500
+                code: errorData.statusCode || 500
             }
             return resultError;
         } else {

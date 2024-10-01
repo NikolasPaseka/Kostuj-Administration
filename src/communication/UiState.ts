@@ -4,7 +4,8 @@ import { CommunicationResult, isSuccess } from "./CommunicationsResult";
 export enum UiStateType {
     SUCCESS,
     LOADING,
-    ERROR
+    ERROR,
+    IDLE
 }
 
 interface Success {
@@ -20,7 +21,11 @@ interface Error {
     message: string
 }
 
-export type UiState = Success | Loading | Error;
+interface Idle {
+    type: UiStateType.IDLE
+}
+
+export type UiState = Success | Loading | Error | Idle;
 
 // TypeGuard with type predicate as return type
 export function isStateSuccess(state: UiState): state is Success {
@@ -33,6 +38,10 @@ export function isStateLoading(state: UiState): state is Loading {
 
 export function isStateError(state: UiState): state is Error {
     return state.type == UiStateType.ERROR;
+}
+
+export function isStateIdle(state: UiState): state is Idle {
+    return state.type == UiStateType.IDLE;
 }
 
 export const resolveUiState = <T>(
