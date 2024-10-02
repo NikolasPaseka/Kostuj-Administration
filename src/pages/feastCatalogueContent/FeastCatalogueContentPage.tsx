@@ -5,7 +5,6 @@ import { CommunicationResult, isSuccess } from "../../communication/Communicatio
 import { WineSample } from "../../model/WineSample";
 import WineTable from "../../components/Tables/WineTable";
 import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
-import UiStateHandler from "../../components/UiStateHandler";
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 
 const FeastCatalogueContentPage = () => {
@@ -34,7 +33,6 @@ const FeastCatalogueContentPage = () => {
 
   return (
     <>
-    <UiStateHandler uiState={uiState} />
     <WineTable 
       wineSamples={samples} 
       uiState={uiState}

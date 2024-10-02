@@ -77,8 +77,6 @@ const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props)
 
   return (
     <div>
-      <UiStateHandler uiState={uiState} />
-      
       <div className="flex items-center py-4">
         <p className="text-sm flex-1">Number of wineries: {wineries.length}</p>
         <SearchInput value={searchValue} onValueChange={setSearchValue} />

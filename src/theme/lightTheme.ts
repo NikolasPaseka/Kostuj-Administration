@@ -14,5 +14,8 @@ export default {
     },
     onPrimary: "#FFFFFF",
     container: "#BBBBBB",
-    lightContainer: "#EAEAEA"
+    lightContainer: "#EAEAEA",
+    redWineColor: "#B53040",
+    whiteWineColor: "#F8E7B2",
+    roseWineColor: "#F4C4BB",
 }

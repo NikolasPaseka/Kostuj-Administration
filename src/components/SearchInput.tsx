@@ -1,6 +1,8 @@
 import { Input } from '@nextui-org/react';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import IconButton from './IconButton';
+import { useTranslation } from 'react-i18next';
+import { TranslationNS } from '../translations/i18n';
 
 type Props = { 
   value: string,
@@ -9,9 +11,11 @@ type Props = {
 };
 
 const SearchInput = ({ value, onValueChange, className }: Props) => {
+  const { t } = useTranslation();
+
   return (
     <Input 
-      placeholder="Search"
+      placeholder={`${t("search", { ns: TranslationNS.common })}`}
       size="md"
       onValueChange={onValueChange}
       value={value}

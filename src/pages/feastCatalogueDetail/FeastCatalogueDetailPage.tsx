@@ -4,9 +4,9 @@ import { CommunicationResult, isSuccess } from '../../communication/Communicatio
 import { Catalogue } from '../../model/Catalogue';
 import { resolveUiState, UiState, UiStateType } from '../../communication/UiState';
 import UiStateHandler from '../../components/UiStateHandler';
-import { Button, Card, CardBody, Switch, Divider, useDisclosure } from '@nextui-org/react';
+import { Card, CardBody, Switch, Divider, useDisclosure } from '@nextui-org/react';
 import CardInfoRow from './components/CardInfoRow';
-import { ArrowDownTrayIcon, CalendarDaysIcon, CurrencyDollarIcon, MapPinIcon, PencilSquareIcon, SparklesIcon, TrashIcon, UserIcon } from '@heroicons/react/24/solid';
+import { ArrowDownTrayIcon, CalendarDaysIcon, ChevronRightIcon, CurrencyDollarIcon, MapPinIcon, PencilSquareIcon, SparklesIcon, TrashIcon, UserIcon } from '@heroicons/react/24/solid';
 import PrimaryButton from '../../components/PrimaryButton';
 import { Winery } from '../../model/Winery';
 import WineryTable from '../../components/Tables/WineryTable';
@@ -15,6 +15,9 @@ import { TranslationNS } from '../../translations/i18n';
 import ImageSlider from '../../components/ImageSlider';
 import { CatalogueRepository } from '../../communication/repositories/CatalogueRepository';
 import ImportDataModal from './components/ImportDataModal';
+import WineGlassIcon from '../../components/Icons/WineGlassIcon';
+import StoreIcon from '../../components/Icons/StoreIcon';
+
 
 const FeastCatalogueDetailPage = () => {
   const navigate = useNavigate();
@@ -34,14 +37,14 @@ const FeastCatalogueDetailPage = () => {
       const res = await CatalogueRepository.getCatalogueDetail(id ?? "");
       const catalogue = resolveUiState(res, setUiState);
       setCatalogue(catalogue);
-      fetchParticipatedWineries();
+      fetchParticipatedWineries(catalogue);
     }
     
     fetchCatalogue();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const fetchParticipatedWineries = async () => {
+  const fetchParticipatedWineries = async (catalogue: Catalogue | null) => {
     if (catalogue == null) { return; }
 
     const wineriesRes = await CatalogueRepository.getParticipatedWineries(catalogue);
@@ -123,17 +126,73 @@ const FeastCatalogueDetailPage = () => {
               }
           </div>
           
-          <Link to={`/feastCatalogues/${catalogue.id}/content`}>
-            <Button color="primary" className="mt-4">Show Content</Button>
-          </Link>
+          <div className="flex items-center py-4 mt-4 px-6">
+            <h1 className="text-lg font-bold">Catalogue Content</h1>
+            <PrimaryButton onClick={onOpen} className="mx-8">Import data</PrimaryButton>
+          </div>
+          
+          <div className="flex gap-6 px-6">
+            <Card className="flex-1 py-4">
+              <CardBody>
+                <div className="flex flex-row items-center h-full gap-4 px-4">
+                  <StoreIcon color="black" size={38} />
+                  <div className="flex-1">
+                    <h4 className="text-base font-bold">Participated wineries</h4>
+                    <p>Number of participated: {participatedWineries.length}</p>
+                  </div>
+                  <Link to={`/feastCatalogues/${catalogue.id}/content`}>
+                    <PrimaryButton 
+                      size="sm" 
+                      isSecondary
+                      EndContent={ChevronRightIcon}
+                    >
+                      Show Content
+                    </PrimaryButton>
+                  </Link>
+                </div>
+              </CardBody>
+            </Card>
 
-          <PrimaryButton isSecondary onClick={onOpen} >Import data</PrimaryButton>
+            <Card className="flex-1">
+              <CardBody>
+                <div className="flex flex-row items-center h-full gap-4 px-4">
+                  <WineGlassIcon color="black" size={38} />
+                  <div className="flex-1">
+                    <h4 className="text-base font-bold">Wine Samples</h4>
+                    <div className="flex flex-row gap-2">
+                      <div className="flex items-center">
+                        <span className="w-3 h-3 bg-redWineColor rounded-full mr-2"></span>
+                        <span>23</span>
+                      </div>
+                      <div className="flex items-center">
+                        <span className="w-3 h-3 bg-whiteWineColor rounded-full mr-2"></span>
+                        <span>35</span>
+                      </div>
+                      <div className="flex items-center">
+                        <span className="w-3 h-3 bg-roseWineColor rounded-full mr-2"></span>
+                        <span>32</span>
+                      </div>
+                    </div>
+                  </div>
+                  <Link to={`/feastCatalogues/${catalogue.id}/content`}>
+                    <PrimaryButton 
+                      size="sm" 
+                      isSecondary
+                      EndContent={ChevronRightIcon}
+                    >
+                      Show Content
+                    </PrimaryButton>
+                  </Link>
+                </div>
+              </CardBody>
+            </Card>
+          </div>
 
           <ImportDataModal 
             isOpen={isOpen} 
             onOpenChange={onOpenChange} 
             catalogue={catalogue} 
-            onImportedDataLoaded={fetchParticipatedWineries}
+            onImportedDataLoaded={() => fetchParticipatedWineries(catalogue)}
           />
           
           <WineryTable 
