@@ -39,7 +39,7 @@ const FeastCataloguesPage = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex items-center mt-8 mb-4 justify-end">
+      <div className="flex items-center mt-8 mb-4 justify-end gap-4">
         <SearchInput onValueChange={setSearchValue} value={searchValue} />
         <Link to={"/feastCatalogues/create"}>
           <PrimaryButton EndContent={PlusIcon}>{t("newCatalogue", { ns: TranslationNS.catalogues })}</PrimaryButton>

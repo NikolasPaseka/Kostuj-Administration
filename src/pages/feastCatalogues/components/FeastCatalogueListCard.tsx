@@ -63,7 +63,7 @@ const FeastCatalogueListCard = ({ catalogue, navPath }: Props, key: React.Key) =
               className="px-2"
               startContent={ <CurrencyDollarIcon className="h-5 w-5"/> }
             >
-              {catalogue.price}
+              {catalogue.price} Kč
             </Chip>
             <Chip 
               color="secondary" 
