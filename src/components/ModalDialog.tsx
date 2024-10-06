@@ -6,12 +6,13 @@ type Props = {
   size?: "md" | "xs" | "sm" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full"
   header?: React.ReactNode
   children?: React.ReactNode,
+  scrollBehavior?: "inside" | "outside" | "default",
   onConfirm: () => void
 }
 
-const ModalDialog = ({ isOpen, onOpenChange, children, size="md", header, onConfirm }: Props) => {
+const ModalDialog = ({ isOpen, onOpenChange, children, size="md", header, onConfirm, scrollBehavior="default" }: Props) => {
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size={size} scrollBehavior='inside'
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size={size} scrollBehavior={scrollBehavior == "default" ? undefined : scrollBehavior}
      classNames={{
       body: 'py-0',
      }}>

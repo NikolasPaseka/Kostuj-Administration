@@ -31,12 +31,19 @@ const FeastCatalogueContentPage = () => {
     }
   }
 
+  const autoLabelSamples = async (prefix: string, orderType: string) => {
+    if (id == null) { return }; 
+    const res = await CatalogueRepository.autoLabelSamples(id, prefix, orderType);
+    setSamples(resolveUiState(res, setUiState) ?? []);
+  }
+
   return (
     <>
     <WineTable 
       wineSamples={samples} 
       uiState={uiState}
       deleteWineSample={deleteWineSample}
+      autoLabelSamples={autoLabelSamples}
     />
     </>
   )

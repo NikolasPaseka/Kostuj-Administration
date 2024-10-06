@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import SearchInput from '../SearchInput';
-import { Button, Chip, ChipProps, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, Selection, Spacer, Tabs, Tab, Badge, SortDescriptor, Pagination, CircularProgress } from '@nextui-org/react';
+import { Button, Chip, ChipProps, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, Selection, Spacer, Tabs, Tab, Badge, SortDescriptor, Pagination, CircularProgress, Radio, RadioGroup } from '@nextui-org/react';
 import { UiState } from '../../communication/UiState';
 import { WineSample } from '../../model/WineSample';
 import { GrapeVarietal } from '../../model/GrapeVarietal';
@@ -10,6 +10,8 @@ import GenericTable, { getNestedValue } from './GenericTable';
 import { WineColor } from '../../model/Domain/WineColor';
 import PrimaryButton from '../PrimaryButton';
 import { Winery } from '../../model/Winery';
+import ModalDialog from '../ModalDialog';
+import GenericInput from '../GenericInput';
 
 const tableColumns = [
   {name: "NAME", uid: "name"},
@@ -43,14 +45,19 @@ type Props = {
   wineSamples: WineSample[], 
   uiState: UiState,
   deleteWineSample?: (wineSample: WineSample) => Promise<void>
+  autoLabelSamples?: (prefix: string, orderType: string) => Promise<void>
 };
 
-const WineTable = ({ wineSamples, uiState, deleteWineSample }: Props) => {
+const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples }: Props) => {
 
   // Modals
   const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalOpenChange} = useDisclosure();
   const {isOpen: isFilterModalOpen, onOpen: onFilterModalOpen, onOpenChange: onFilterModalOpenChange} = useDisclosure();
   const {isOpen: isAutoLabelingModalOpen, onOpen: onAutoLabelingModalOpen, onOpenChange: onAutoLabelingModalOpenChange} = useDisclosure();
+
+  // Auto labeling
+  const [prefixValue, setPrefixValue] = React.useState<string>("");
+  const [orderType, setOrderType] = React.useState<string>("byWinery");
 
   // Table Filtering and sorting
   const [searchValue, setSearchValue] = React.useState<string>("");
@@ -345,30 +352,34 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample }: Props) => {
         </ModalContent>
       </Modal>
 
-      {/* Modal - Filter table */}
-      <Modal isOpen={isAutoLabelingModalOpen} onOpenChange={onAutoLabelingModalOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">Auto labeling of wine samples</ModalHeader>
-              <ModalBody>
-                <h1>Auto Labeling</h1>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={async () => {
-                  // TODO: apply filters
-                  onClose(); 
-                }}>
-                  Confirm
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+      {/* Modal - Auto label */}
+      <ModalDialog
+        header="Auto Labeling"
+        isOpen={isAutoLabelingModalOpen}
+        onOpenChange={onAutoLabelingModalOpenChange}
+        onConfirm={autoLabelSamples 
+          ? () => autoLabelSamples(prefixValue, orderType) 
+          : () => {}
+        }
+      >
+        <GenericInput 
+          label="Prefix"
+          placeholder="None"
+          value={prefixValue}
+          onChange={setPrefixValue}
+        />
+
+        <RadioGroup
+          label="Select your favorite city"
+          orientation="horizontal"
+          value={orderType}
+          onValueChange={setOrderType}
+          defaultValue={orderType}
+        >
+          <Radio value="byWinery">By Winery</Radio>
+          <Radio value="byGrape">By Grape</Radio>
+        </RadioGroup>
+      </ModalDialog>
     </div>
   )
 }

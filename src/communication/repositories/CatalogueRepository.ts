@@ -78,5 +78,10 @@ export const CatalogueRepository = {
 
     deleteImage: async (catalogueId: string, imageUrl: string): Promise<CommunicationResult<SuccessMessage>> => {
         return await axiosCall(AxiosMethod.DELETE, `/catalogues/${catalogueId}/images`, { imageUrl });
+    },
+
+    // Auto label
+    autoLabelSamples: async (catalogueId: string, prefix: string, orderType: string): Promise<CommunicationResult<WineSample[]>> => {
+        return await axiosCall(AxiosMethod.GET, `/catalogues/${catalogueId}/autoLabelSamples?prefix=${prefix}&order=${orderType}`);
     }
 }
