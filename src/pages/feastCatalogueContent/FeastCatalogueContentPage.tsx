@@ -39,12 +39,12 @@ const FeastCatalogueContentPage = () => {
 
   return (
     <>
-    <WineTable 
-      wineSamples={samples} 
-      uiState={uiState}
-      deleteWineSample={deleteWineSample}
-      autoLabelSamples={autoLabelSamples}
-    />
+      <WineTable 
+        wineSamples={samples} 
+        uiState={uiState}
+        deleteWineSample={deleteWineSample}
+        autoLabelSamples={autoLabelSamples}
+      />
     </>
   )
 }
