@@ -29,7 +29,7 @@ const CatalogueInputField = ({ value, onValueChange, isRequired = false, isDisab
       labelPlacement="outside"
       classNames={{
           inputWrapper: [
-            "data-[hover=true]:border-secondary",
+            "data-[hover=true]:border-tertiary",
             "data-[focus=true]:border-secondary",
           ]
       }}

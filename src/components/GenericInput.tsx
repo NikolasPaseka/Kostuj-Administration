@@ -20,7 +20,7 @@ const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=
       labelPlacement={labelPlacement}
       classNames={{
         inputWrapper: [
-          "data-[hover=true]:border-secondary",
+          "data-[hover=true]:border-tertiary",
           "data-[focus=true]:border-secondary",
           "after:bg-secondary",
           "group-data-[focus=true]:border-secondary",

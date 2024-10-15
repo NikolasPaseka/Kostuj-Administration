@@ -31,9 +31,9 @@ const FeastCatalogueContentPage = () => {
     }
   }
 
-  const autoLabelSamples = async (prefix: string, orderType: string) => {
+  const autoLabelSamples = async (prefix: string, orderType: string, colorOrder: string[]) => {
     if (id == null) { return }; 
-    const res = await CatalogueRepository.autoLabelSamples(id, prefix, orderType);
+    const res = await CatalogueRepository.autoLabelSamples(id, prefix, orderType, colorOrder);
     setSamples(resolveUiState(res, setUiState) ?? []);
   }
 

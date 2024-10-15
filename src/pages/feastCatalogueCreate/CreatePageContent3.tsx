@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { TranslationNS } from "../../translations/i18n";
 import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
 import { WineryRepository } from "../../communication/repositories/WineryRepository";
+import { WineColor } from "../../model/Domain/WineColor";
 
 type Props = { catalogue: Catalogue }
 
@@ -210,9 +211,9 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           value={wineColor}
           onValueChange={setWineColor}
         >
-          <Radio value="red">{t("redWineColor", { ns: TranslationNS.catalogues })}</Radio>
-          <Radio value="white">{t("whiteWineColor", { ns: TranslationNS.catalogues })}</Radio>
-          <Radio value="rose">{t("roseWineColor", { ns: TranslationNS.catalogues })}</Radio>
+          <Radio value={WineColor.RED}>{t("redWineColor", { ns: TranslationNS.catalogues })}</Radio>
+          <Radio value={WineColor.WHITE}>{t("whiteWineColor", { ns: TranslationNS.catalogues })}</Radio>
+          <Radio value={WineColor.ROSE}>{t("roseWineColor", { ns: TranslationNS.catalogues })}</Radio>
         </RadioGroup>
       </div> 
       <h2 className="text-lg font-bold">

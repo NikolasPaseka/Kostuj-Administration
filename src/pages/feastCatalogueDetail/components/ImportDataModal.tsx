@@ -48,6 +48,7 @@ const ImportDataModal = ({ isOpen, onOpenChange, catalogue, onImportedDataLoaded
         size="3xl"
         header={"Import Data"}
         onConfirm={sendImportedData}
+        scrollBehavior="inside"
       >
         <div className="sticky top-0 bg-white z-10">
         <FileUploader onDataImport={(data) => {

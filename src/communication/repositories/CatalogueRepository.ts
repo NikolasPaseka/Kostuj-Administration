@@ -81,7 +81,12 @@ export const CatalogueRepository = {
     },
 
     // Auto label
-    autoLabelSamples: async (catalogueId: string, prefix: string, orderType: string): Promise<CommunicationResult<WineSample[]>> => {
-        return await axiosCall(AxiosMethod.GET, `/catalogues/${catalogueId}/autoLabelSamples?prefix=${prefix}&order=${orderType}`);
+    autoLabelSamples: async (
+        catalogueId: string, 
+        prefix: string, 
+        orderType: string,
+        colorOrder: string[] = [],
+    ): Promise<CommunicationResult<WineSample[]>> => {
+        return await axiosCall(AxiosMethod.GET, `/catalogues/${catalogueId}/autoLabelSamples?prefix=${prefix}&order=${orderType}&colorOrder=${colorOrder.join(",")}`);
     }
 }

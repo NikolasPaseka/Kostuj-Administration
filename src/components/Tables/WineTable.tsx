@@ -44,7 +44,7 @@ type Props = {
   wineSamples: WineSample[], 
   uiState: UiState,
   deleteWineSample?: (wineSample: WineSample) => Promise<void>
-  autoLabelSamples?: (prefix: string, orderType: string) => Promise<void>
+  autoLabelSamples?: (prefix: string, orderType: string, colorOrder: string[]) => Promise<void>
 };
 
 const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples }: Props) => {
@@ -97,8 +97,8 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples }:
         : aWinery.name < bWinery.name ? -1 : 0;
     }
     const sortByGrape = (a: WineSample, b: WineSample) => {
-      const aGrapeVarietal = (a.wineId as Wine).grapeVarietals?.[0]?.grape ?? "zzz"; // leave empty grapes for the end
-      const bGrapeVarietal = (b.wineId as Wine).grapeVarietals?.[0]?.grape ?? "zzz";
+      const aGrapeVarietal = (a.wineId as Wine).name ?? "zzz"; // leave empty grapes for the end
+      const bGrapeVarietal = (b.wineId as Wine).name ?? "zzz";
       return aGrapeVarietal > bGrapeVarietal 
         ? 1 
         : aGrapeVarietal < bGrapeVarietal ? -1 : 0;

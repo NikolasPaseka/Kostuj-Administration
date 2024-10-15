@@ -8,6 +8,10 @@ export default {
         DEFAULT: "#C55461",
         foreground: "#FFFFFF"
     },
+    tertiary: {
+        DEFAULT: "#EFB8C8",
+        foreground: "#000000"
+    },
     danger: {
         DEFAULT: "#B80D22",
         foreground: "#FFFFFF"
