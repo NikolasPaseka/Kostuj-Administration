@@ -12,6 +12,7 @@ import FeastCatalogueCreatePage from './pages/feastCatalogueCreate/FeastCatalogu
 import FeastCatalogueContentPage from './pages/feastCatalogueContent/FeastCatalogueContentPage';
 import SettingsPage from './pages/SettingsPage';
 import VoiceTest from './pages/VoiceTest';
+import UsersManagementPage from './pages/usersManagement/UsersManagementPage';
 
 const AppLayout = () => {
   const location = useLocation();
@@ -36,6 +37,7 @@ const AppLayout = () => {
               <Route path="/feastCatalogues/:id/content" element={<FeastCatalogueContentPage />} />
               <Route path="/feastCatalogues/:id/edit" element={<FeastCatalogueCreatePage />} />
               <Route path="/feastCatalogues/create" element={<FeastCatalogueCreatePage />} />
+              <Route path="/usersManagement" element={<UsersManagementPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/signIn" element={<SignInPage />} />
               <Route path="/register" element={<RegistrationPage />} />

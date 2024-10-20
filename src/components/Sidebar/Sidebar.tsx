@@ -9,6 +9,8 @@ const Sidebar = () => {
   const { logout, getUserData } = useAuth();
   const { t } = useTranslation();
 
+  const userData = getUserData();
+
   return (
     <div className="h-screen w-64 flex flex-col bg-lightContainer rounded-xl sticky top-0">
       <div className="flex items-center justify-center h-16">
@@ -21,9 +23,12 @@ const Sidebar = () => {
         <SidebarItem path="/signIn" text={t("signIn", { ns: TranslationNS.sidebar })} Icon={KeyIcon} />
         <SidebarItem path="/voiceTest" text={t("home", { ns: TranslationNS.sidebar })} Icon={MicrophoneIcon} />
         <SidebarItem path="/settings" text={t("settings", { ns: TranslationNS.sidebar })} Icon={Cog6ToothIcon} />
+        { userData?.authorizations.includes(100) && 
+          <SidebarItem path="/usersManagement" text={t("usersManagement", { ns: TranslationNS.sidebar })} Icon={UserIcon} />
+        }
       </nav>
-      { getUserData() && <div className="p-4">
-          <p className="text-center">Logged in as {getUserData()?.email}</p>
+      { userData&& <div className="p-4">
+          <p className="text-center">Logged in as {userData?.email}</p>
         </div>
       }
       <div className="p-4">

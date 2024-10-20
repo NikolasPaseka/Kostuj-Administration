@@ -21,23 +21,23 @@ export const axiosInstance = axios.create({
     },
 });
 
-const userAccessToken = localStorage.getItem("accessToken")
-
 export const axiosCall = async<T> (
     method: string,
     path: string, 
     body: object | undefined = undefined, 
-    accessToken: string | undefined = userAccessToken ?? undefined, 
+    accessToken: string | undefined = undefined, 
     contentType: string = 'application/json'
 ): Promise<CommunicationResult<T>> => {
-
+    if (accessToken == undefined) {
+        accessToken = localStorage.getItem("accessToken") ?? undefined;
+    }
     try {
         const response = await axiosInstance({
             url: path,
             method: method,
             headers: {
                 "Content-Type": contentType,
-                authorization: "Bearer " + accessToken || userAccessToken,
+                authorization: "Bearer " + accessToken,
             },
             data: body
         });

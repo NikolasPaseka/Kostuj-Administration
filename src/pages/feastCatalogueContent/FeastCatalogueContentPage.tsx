@@ -15,7 +15,7 @@ const FeastCatalogueContentPage = () => {
 
   useEffect(() => {
     const fetchCatalogueSamples = async () => {
-      if (id == null) { return };
+      if (id == null) { return }
       const res: CommunicationResult<WineSample[]> = await CatalogueRepository.getSamples(id);
       setSamples(resolveUiState(res, setUiState) ?? []);
     }
@@ -32,7 +32,7 @@ const FeastCatalogueContentPage = () => {
   }
 
   const autoLabelSamples = async (prefix: string, orderType: string, colorOrder: string[]) => {
-    if (id == null) { return }; 
+    if (id == null) { return }
     const res = await CatalogueRepository.autoLabelSamples(id, prefix, orderType, colorOrder);
     setSamples(resolveUiState(res, setUiState) ?? []);
   }

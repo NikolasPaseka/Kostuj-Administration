@@ -17,6 +17,8 @@ import { CatalogueRepository } from '../../communication/repositories/CatalogueR
 import ImportDataModal from './components/ImportDataModal';
 import WineGlassIcon from '../../components/Icons/WineGlassIcon';
 import StoreIcon from '../../components/Icons/StoreIcon';
+import { convertUnixToDateString } from '../../utils/conversionUtils';
+import { TypeChecker } from '../../utils/TypeChecker';
 
 
 const FeastCatalogueDetailPage = () => {
@@ -103,9 +105,13 @@ const FeastCatalogueDetailPage = () => {
                   <p className="text-xl font-bold py-4">{catalogue.title}</p>
                   <Divider />
                   <CardInfoRow headline={t("feastYear", { ns: TranslationNS.catalogues })} body={catalogue.year.toString()} Icon={SparklesIcon} />
-                  <CardInfoRow headline={t("dateAndTime", { ns: TranslationNS.catalogues })} body={catalogue.startDate.toString()} Icon={CalendarDaysIcon} />
+                  <CardInfoRow headline={t("dateAndTime", { ns: TranslationNS.catalogues })} body={convertUnixToDateString(catalogue.startDate)} Icon={CalendarDaysIcon} />
                   <CardInfoRow headline={t("placeAndAddress", { ns: TranslationNS.catalogues })} body={catalogue.address} Icon={MapPinIcon} />
-                  <CardInfoRow headline={t("organizer", { ns: TranslationNS.catalogues })} body={catalogue.adminId} Icon={UserIcon} />
+                  <CardInfoRow 
+                    headline={t("organizer", { ns: TranslationNS.catalogues })} 
+                    body={TypeChecker.isString(catalogue.adminId) ? catalogue.adminId : `${catalogue.adminId.firstName} ${catalogue.adminId.lastName}`} 
+                    Icon={UserIcon} 
+                  />
                   {catalogue.description &&
                     <CardInfoRow 
                       headline={null} 

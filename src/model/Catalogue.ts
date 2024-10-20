@@ -1,3 +1,5 @@
+import { UserData } from "./UserData"
+
 export type Catalogue = {
     id: string,
     title: string,
@@ -13,7 +15,7 @@ export type Catalogue = {
     published: boolean,
     locked: boolean,
     maxWineRating: number,
-    adminId: string,
+    adminId: string | UserData,
     price: number,
     downloads: number,
     participatedWineries: string[]

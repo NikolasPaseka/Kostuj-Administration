@@ -41,7 +41,6 @@ export const AuthProvider = ({ children }: Props) => {
         console.log(res)
 
         const userAuth: UserAuth = res.data;
-        console.log(userAuth);
     
         if (res.status === 200) {
             setAccessToken(userAuth.accessToken);

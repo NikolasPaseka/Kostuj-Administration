@@ -4,12 +4,13 @@ type Props = {
   label: string,
   value: string,
   placeholder?: string,
+  type?: "text" | "password",
   onChange: (value: string) => void,
   variant?: "flat" | "bordered" | "underlined" | "faded",
   labelPlacement?: "inside" | "outside"
 }
 
-const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=undefined, labelPlacement="inside" }: Props) => {
+const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=undefined, labelPlacement="inside", type="text" }: Props) => {
   return (
     <Input 
       variant={variant}
@@ -18,6 +19,7 @@ const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=
       onValueChange={onChange}
       placeholder={placeholder}
       labelPlacement={labelPlacement}
+      type={type}
       classNames={{
         inputWrapper: [
           "data-[hover=true]:border-tertiary",

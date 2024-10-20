@@ -2,5 +2,6 @@ export type UserAuth = {
     id: string,
     email: string,
     accessToken: string,
-    refreshToken: string
+    refreshToken: string,
+    authorizations: number[]
 }

@@ -124,7 +124,7 @@ const AutoLabelModal = ({ isOpen, onOpenChange, autoLabelSamples }: Props) => {
                 label="Select an color"
                 defaultSelectedKeys={[color.value]}
                 onSelectionChange={(e) => {
-                  let newSelection = [...colorSelection]
+                  const newSelection = [...colorSelection]
                   newSelection[index] = e.target.value
                   setColorSelection(newSelection)
                 }}

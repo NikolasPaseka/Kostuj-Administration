@@ -1,10 +1,9 @@
-import { DatePicker, DateValue, Textarea } from "@nextui-org/react";
+import { Textarea } from "@nextui-org/react";
 import CatalogueInputField from "./components/CatalogueInputField"
 import { useEffect, useState } from "react";
 import PrimaryButton from "../../components/PrimaryButton";
-import { CalendarDaysIcon, ChevronDownIcon, ClipboardDocumentIcon, MapPinIcon, PencilSquareIcon, SparklesIcon } from "@heroicons/react/24/solid";
+import { ClipboardDocumentIcon, MapPinIcon, PencilSquareIcon, SparklesIcon } from "@heroicons/react/24/solid";
 import { Catalogue } from "../../model/Catalogue";
-import { getLocalTimeZone, today } from "@internationalized/date";
 import ImageUploader from "../../components/ImageUploader";
 import ImageSlider from "../../components/ImageSlider";
 import { useTranslation } from "react-i18next";
@@ -12,12 +11,14 @@ import { TranslationNS } from "../../translations/i18n";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
+import { convertUnixToDate } from "../../utils/conversionUtils";
+import DatePickerGeneric from "../../components/Controls/DatePickerGeneric";
 
 export type CatalogueData = {
   title: string;
   year: number | null;
   description: string;
-  date: DateValue | null;
+  date: Date | null;
   address: string;
 }
 
@@ -35,7 +36,7 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, setCatalogue, sendCat
   const [title, setTitle] = useState<string>("");
   const [year, setYear] = useState<number | null>(null);
   const [description, setDescription] = useState<string>("");
-  const [date, setDate] = useState<DateValue | null>(null);
+  const [date, setDate] = useState<Date | null>(null);
   const [address, setAddress] = useState<string>("");
   const [images, setImages] = useState<string[]>([]);
   const [imagesToUpload, setImagesToUpload] = useState<File[] | null>(null);
@@ -45,8 +46,7 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, setCatalogue, sendCat
       setTitle(catalogue.title);
       setYear(catalogue.year);
       setDescription(catalogue.description ?? "");
-      //TODO
-      setDate(today(getLocalTimeZone()));
+      setDate(convertUnixToDate(catalogue.startDate));
       setAddress(catalogue.address);
     }
   }, [catalogue, isEditing]);
@@ -107,19 +107,21 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, setCatalogue, sendCat
           placeholder={t("catalogueDescriptionPlaceholder", { ns: TranslationNS.catalogues })}
           labelPlacement="outside"
           startContent={<PencilSquareIcon className="w-5 h-5 text-gray-600"/>}
+          classNames={{
+            inputWrapper: [
+              "data-[hover=true]:border-tertiary",
+              "data-[focus=true]:border-secondary",
+            ]
+          }}
         />
 
         <div className="flex flex-row gap-4">
-          <DatePicker 
+          <DatePickerGeneric 
             value={date} 
             onChange={setDate} 
-            variant="faded" 
-            isRequired 
             label={t("dateAndTime", { ns: TranslationNS.catalogues })}
-            labelPlacement="outside"
-            startContent={<CalendarDaysIcon className="w-5 h-5 text-gray-600" />}
-            selectorIcon={<ChevronDownIcon />}
           />
+
           <CatalogueInputField 
             value={address} 
             onValueChange={setAddress} 

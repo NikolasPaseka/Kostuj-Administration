@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react'
-import UiStateHandler from '../UiStateHandler';
 import SearchInput from '../SearchInput';
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, User } from '@nextui-org/react';
 import { UiState } from '../../communication/UiState';
@@ -73,7 +72,7 @@ const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props)
       default:
         return cellValue;
     }
-  }, []);
+  }, [onOpen]);
 
   return (
     <div>
