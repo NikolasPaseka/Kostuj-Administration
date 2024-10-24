@@ -16,6 +16,9 @@ import { WineryRepository } from "../../communication/repositories/WineryReposit
 import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 import { useAuth } from "../../context/AuthProvider";
+import useVoiceControl from "../../hooks/useVoiceControl";
+import { axiosCall } from "../../communication/axios";
+import VoiceInputButton from "../../components/VoiceInputButton";
 
 type Props = { catalogue: Catalogue }
 
@@ -101,10 +104,7 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
   }
 
   const uploadImage = async (file: File | null, wineryId: string) => {
-    if (file == null) {
-      alert('Please select a file first');
-      return;
-    }
+    if (file == null) { return; }
 
     const res: CommunicationResult<string> = await WineryRepository.uploadImage(wineryId, file);
     if (isSuccess(res) && wineryEntry != null) {
@@ -131,6 +131,30 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
       setParticipatedWineries([ ...participatedWineries.filter(w => w.id !== winery.id)]);
     }
   }
+
+  const sendVoiceInput = async () => {
+    if (transcript.length == 0) { return; }
+    const resWinery = await axiosCall("POST", "/ner/winery", { sentence: transcript }, undefined, "application/json", "http://localhost:8000");
+    console.log(resWinery);
+    if (isSuccess(resWinery)) {
+      const winery: Winery = (resWinery.data as { entity: Winery }).entity;
+      if (winery.name != null) { setWineryTitle(winery.name); }
+      if (winery.email != null) { setEmail(winery.email); }
+      if (winery.phoneNumber != null) { setPhoneNumber(winery.phoneNumber); }
+      if (winery.websitesUrl != null) { setWebAddress(winery.websitesUrl); }
+      if (winery.address != null) { setAddress(winery.address); }
+    }
+  }
+
+  const {
+    transcript,
+    startListening,
+    stopListening,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+    isMicrophoneAvailable
+  } = useVoiceControl(sendVoiceInput);
 
   return (
     <div className="flex flex-col gap-4">
@@ -183,8 +207,8 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
             value={webAddress} 
             isDisabled={!isWineryNew()}
             onValueChange={setWebAddress} 
-            label="Phone Number" 
-            placeholder="Input Address"
+            label="Web Address" 
+            placeholder="Input Web Address"
             StartContent={MapPinIcon}
           />
 
@@ -197,7 +221,14 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
             StartContent={MapPinIcon}
           />
         </div>
-        
+
+        <VoiceInputButton 
+          startListening={startListening}
+          stopListening={stopListening}
+          listening={listening}
+        />
+
+        {transcript}
         {/* TODO CALL EDIT */}
         <PrimaryButton 
           className="ml-auto"

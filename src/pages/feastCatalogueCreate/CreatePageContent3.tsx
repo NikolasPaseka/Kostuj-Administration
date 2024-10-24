@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import PrimaryButton from "../../components/PrimaryButton"
 import CatalogueInputField from "./components/CatalogueInputField"
-import { ClipboardDocumentIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
+import { ClipboardDocumentIcon, MicrophoneIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
 import { Autocomplete, AutocompleteItem, Divider, Radio, RadioGroup, Slider } from "@nextui-org/react";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { Winery } from "../../model/Winery";
@@ -15,6 +15,9 @@ import { TranslationNS } from "../../translations/i18n";
 import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
 import { WineryRepository } from "../../communication/repositories/WineryRepository";
 import { WineColor } from "../../model/Domain/WineColor";
+import { axiosCall } from "../../communication/axios";
+import useVoiceControl from "../../hooks/useVoiceControl";
+import VoiceInputButton from "../../components/VoiceInputButton";
 
 type Props = { catalogue: Catalogue }
 
@@ -128,12 +131,41 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       }
     }
   }
+
+  const sendVoiceInput = async () => {
+    if (transcript.length == 0) { return; }
+    const resWine = await axiosCall("POST", "/ner", { sentence: transcript }, undefined, "application/json", "http://localhost:8000");
+    if (isSuccess(resWine)) {
+      const wine = (resWine.data as { entity: {
+        winery: string,
+        wine: string,
+        year: string,
+        color: string
+        rating: string
+      } }).entity
+      console.log(wine.color)
+      const foundWinery = participatedWineries.find(item => item.name == wine.winery) ?? null;
+      if (wine.winery != null) { setSelectedWinery(foundWinery); }
+      if (wine.wine != null) { setWineName(wine.wine); }
+      if (wine.year != null && !isNaN(parseInt(wine.year))) { setWineYear(parseInt(wine.year)); }
+      if (wine.rating != null && !isNaN(parseInt(wine.year))) { setSampleRating(parseInt(wine.rating)); }
+      if (wine.color != null) { setWineColor(wine.color); }
+    }
+  }
+
+  const {
+    transcript,
+    startListening,
+    stopListening,
+    listening,
+  } = useVoiceControl(sendVoiceInput);
   
   return (
     <div className="flex flex-col gap-4">
       <Autocomplete 
         label={t("winery", { ns: TranslationNS.catalogues })}
         placeholder={t("wineryPlaceholderSelect", { ns: TranslationNS.catalogues })}
+        inputValue={selectedWinery?.name ?? ""}
         onSelectionChange={onWinerySelectionChange}
         isRequired
         variant="faded"
@@ -151,7 +183,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         onInputChange={setWineName}
         allowsCustomValue
         onSelectionChange={onWineSelectionChange}
-        isDisabled={selectedWinery == null}
+        //isDisabled={selectedWinery == null}
         isRequired
         variant="faded"
         labelPlacement="outside"
@@ -171,7 +203,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       <div className="flex flex-row gap-4">
         <CatalogueInputField
           value={sampleName}
-          isDisabled={selectedWinery == null}
+          //isDisabled={selectedWinery == null}
           onValueChange={setSampleName}
           label={t("sampleName", { ns: TranslationNS.catalogues })}
           placeholder={t("sampleNamePlaceholder", { ns: TranslationNS.catalogues })}
@@ -181,7 +213,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         <CatalogueInputField 
           type="number"
           value={wineYear == null ? "" : wineYear.toString()} 
-          isDisabled={selectedWinery == null}
+          //isDisabled={selectedWinery == null}
           onValueChange={(val) => setWineYear(val == "" ? null : parseInt(val))} 
           label={t("wineYear", { ns: TranslationNS.catalogues })}
           placeholder={t("wineYearPlaceholder", { ns: TranslationNS.catalogues })}
@@ -192,7 +224,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         <Slider 
           label={t("rating", { ns: TranslationNS.catalogues })}
           value={sampleRating ?? 0}
-          isDisabled={selectedWinery == null}
+          //isDisabled={selectedWinery == null}
           onChange={(value) => typeof value == "number" ? setSampleRating(value) : setSampleRating(value[0])} 
           step={1} 
           // TODO: change only to catalogue rating
@@ -206,7 +238,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         <RadioGroup
           label={t("wineColor", { ns: TranslationNS.catalogues })}
           isReadOnly={!isWineNew()}
-          isDisabled={selectedWinery == null}
+          //isDisabled={selectedWinery == null}
           orientation="horizontal"
           value={wineColor}
           onValueChange={setWineColor}
@@ -224,7 +256,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           type="number"
           value={residualSugar == null ? "" : residualSugar.toString()} 
           isReadOnly={!isWineNew()}
-          isDisabled={selectedWinery == null}
+          //isDisabled={selectedWinery == null}
           onValueChange={(val) => setResidualSugar(val == "" ? null : parseInt(val))}     
           label={t("residualSugar", { ns: TranslationNS.catalogues })}
           placeholder={t("residualSugarPlaceholder", { ns: TranslationNS.catalogues })}
@@ -235,7 +267,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           type="number"
           value={alcoholContent == null ? "" : alcoholContent.toString()} 
           isReadOnly={!isWineNew()}
-          isDisabled={selectedWinery == null}
+          //isDisabled={selectedWinery == null}
           onValueChange={(val) => setAlcoholContent(val == "" ? null : parseInt(val))} 
           label={t("alcoholContent", { ns: TranslationNS.catalogues })}
           placeholder={t("alcoholContentPlaceholder", { ns: TranslationNS.catalogues })}
@@ -246,7 +278,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           type="number"
           value={acidity == null ? "" : acidity.toString()} 
           isReadOnly={!isWineNew()}
-          isDisabled={selectedWinery == null}
+          //isDisabled={selectedWinery == null}
           onValueChange={(val) => setAcidity(val == "" ? null : parseInt(val))} 
           label={t("acidity", { ns: TranslationNS.catalogues })}
           placeholder={t("acidityPlaceholder", { ns: TranslationNS.catalogues })}
@@ -257,13 +289,19 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           type="number"
           value={grapeSweetness == null ? "" : grapeSweetness.toString()} 
           isReadOnly={!isWineNew()}
-          isDisabled={selectedWinery == null}
+          //isDisabled={selectedWinery == null}
           onValueChange={(val) => setGrapeSweetness(val == "" ? null : parseInt(val))} 
           label={t("grapeSweetness", { ns: TranslationNS.catalogues })}
           placeholder={t("grapeSweetnessPlaceholder", { ns: TranslationNS.catalogues })}
           StartContent={PencilSquareIcon}
         />
       </div>
+
+      <VoiceInputButton 
+        startListening={startListening}
+        stopListening={stopListening}
+        listening={listening}
+      />
 
       {/* TODO CALL EDIT */}
       <PrimaryButton 

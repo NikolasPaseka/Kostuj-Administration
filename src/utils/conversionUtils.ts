@@ -5,7 +5,8 @@ export const convertDateToTimestamp = (date: Date): number => {
 }
 
 export const convertUnixToDateString = (unixTimestamp: number): string => {
-    return new Date(unixTimestamp * 1000).toLocaleString();
+    // Returns date in format "dd.mm.yyyy HH:MM"
+    return new Date(unixTimestamp * 1000).toLocaleString(["cs-CZ"]).slice(0, -3);
 }
 
 export const convertUnixToDate = (unixTimestamp: number): Date => {

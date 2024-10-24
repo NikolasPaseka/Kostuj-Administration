@@ -13,8 +13,9 @@ type BackendError = {
     statusCode: number;
 }
 
+const baseURL = "http://localhost:3000/";
 export const axiosInstance = axios.create({
-    baseURL: "http://localhost:3000/",
+    baseURL: baseURL,
     timeout: 10000,
     headers: {
       'Content-Type': 'application/json',
@@ -26,13 +27,15 @@ export const axiosCall = async<T> (
     path: string, 
     body: object | undefined = undefined, 
     accessToken: string | undefined = undefined, 
-    contentType: string = 'application/json'
+    contentType: string = 'application/json',
+    differentBaseURL: string | undefined = undefined
 ): Promise<CommunicationResult<T>> => {
     if (accessToken == undefined) {
         accessToken = localStorage.getItem("accessToken") ?? undefined;
     }
     try {
         const response = await axiosInstance({
+            baseURL: differentBaseURL || baseURL,
             url: path,
             method: method,
             headers: {
