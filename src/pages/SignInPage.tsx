@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../context/AuthProvider';
 import GenericInput from '../components/GenericInput';
 import PrimaryButton from '../components/PrimaryButton';
+import { AtSymbolIcon, LockClosedIcon } from '@heroicons/react/24/solid';
 
 const SignInPage = () => {
   const [email, setEmail] = useState("");
@@ -50,6 +51,7 @@ const SignInPage = () => {
           variant="bordered"
           value={email}
           onChange={setEmail}
+          startContent={<AtSymbolIcon />}
         />
         <GenericInput
           label="Password"
@@ -58,6 +60,7 @@ const SignInPage = () => {
           variant="bordered"
           value={password}
           onChange={setPassword}
+          startContent={<LockClosedIcon />}
         />
         <div className="flex py-2 px-1 justify-between">
           <Checkbox
@@ -69,7 +72,7 @@ const SignInPage = () => {
           </Checkbox>
           
           <Link to={""} className="text-primary">
-            Forgot password?
+            Create account here
           </Link>
         </div>
         <PrimaryButton 

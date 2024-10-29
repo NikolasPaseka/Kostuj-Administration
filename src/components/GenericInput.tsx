@@ -1,4 +1,6 @@
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import { Input } from "@nextui-org/react";
+import React from "react";
 
 type Props = {
   label?: string,
@@ -7,11 +9,18 @@ type Props = {
   type?: "text" | "password" | "number",
   onChange: (value: string) => void,
   variant?: "flat" | "bordered" | "underlined" | "faded",
-  labelPlacement?: "inside" | "outside"
+  labelPlacement?: "inside" | "outside",
+  startContent?: React.ReactNode,
   className?: string
 }
 
-const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=undefined, labelPlacement="inside", type="text", className }: Props) => {
+const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=undefined, labelPlacement="inside", type="text", startContent, className }: Props) => {
+
+  const [isVisible, setIsVisible] = React.useState(false);
+  const [isFocused, setIsFocused] = React.useState(false);
+
+  const toggleVisibility = () => setIsVisible(!isVisible);
+
   return (
     <Input 
       variant={variant}
@@ -20,7 +29,22 @@ const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=
       onValueChange={onChange}
       placeholder={placeholder}
       labelPlacement={labelPlacement}
-      type={type}
+      type={(type === "password" && isVisible) ? "text" : type}
+      onFocusChange={setIsFocused}
+      startContent={startContent && React.cloneElement(startContent as React.ReactElement, { className: `w-5 h-5 ${isFocused ? 'text-tertiary' : 'text-gray-600'}`})}
+      endContent={
+        type === "password" 
+        ?
+          <button onClick={toggleVisibility}>
+            {isVisible ? (
+                <EyeSlashIcon className="w-5 h-5 text-gray-600" />
+              ) : (
+                <EyeIcon className="w-5 h-5 text-gray-600" />
+              )
+            }
+          </button>
+        : undefined
+      }
       className={className}
       classNames={{
         inputWrapper: [
