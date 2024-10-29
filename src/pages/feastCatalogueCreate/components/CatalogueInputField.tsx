@@ -11,10 +11,11 @@ type Props = {
   type?: string; 
   StartContent?: React.ComponentType<{
     className?: string
-  }> | null;  
+  }> | null;
+  description?: string | React.ReactNode;
 };
 
-const CatalogueInputField = ({ value, onValueChange, isRequired = false, isDisabled = false, isReadOnly = false, label, placeholder, type = "text", StartContent = null }: Props) => {
+const CatalogueInputField = ({ value, onValueChange, isRequired = false, isDisabled = false, isReadOnly = false, label, placeholder, type = "text", StartContent = null, description }: Props) => {
   return (
     <Input
       value={value}
@@ -29,11 +30,12 @@ const CatalogueInputField = ({ value, onValueChange, isRequired = false, isDisab
       labelPlacement="outside"
       classNames={{
           inputWrapper: [
-            "data-[focus=true]:border-secondary",
+            "data-[focus=true]:border-tertiary",
             "data-[hover=true]:border-tertiary",
           ]
       }}
       startContent={StartContent ? <StartContent className="w-5 h-5 text-gray-600" /> : <></> }
+      description={description}
     />
   )
 }

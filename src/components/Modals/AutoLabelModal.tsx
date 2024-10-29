@@ -1,7 +1,7 @@
 import React from "react";
 import ModalDialog from "../ModalDialog"
 import GenericInput from "../GenericInput";
-import { CircularProgress, Radio, RadioGroup, Select, SelectItem } from "@nextui-org/react";
+import { CircularProgress, Radio, RadioGroup } from "@nextui-org/react";
 import { isStateError, isStateLoading, isStateSuccess, UiState, UiStateType } from "../../communication/UiState";
 import StateMessage from "../StateMessage";
 import SelectionField from "../Controls/SelectionField";
@@ -103,16 +103,7 @@ const AutoLabelModal = ({ isOpen, onOpenChange, autoLabelSamples }: Props) => {
         </RadioGroup>
 
         {orderType == OrderTypeOptions.BY_WINERY && (
-          <Select 
-            label="Select an animal"
-            variant="bordered"
-          >
-            {Object.values(additionalOrderOptions).map((orderType) => (
-              <SelectItem key={orderType.value}>
-                {orderType.label}
-              </SelectItem>
-            ))}
-          </Select>
+          <p>TODO</p>
         )}
 
         {orderType == OrderTypeOptions.BY_GRAPE_COLOR && (

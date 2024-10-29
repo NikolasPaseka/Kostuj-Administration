@@ -1,16 +1,17 @@
 import { Input } from "@nextui-org/react";
 
 type Props = {
-  label: string,
+  label?: string,
   value: string,
   placeholder?: string,
-  type?: "text" | "password",
+  type?: "text" | "password" | "number",
   onChange: (value: string) => void,
   variant?: "flat" | "bordered" | "underlined" | "faded",
   labelPlacement?: "inside" | "outside"
+  className?: string
 }
 
-const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=undefined, labelPlacement="inside", type="text" }: Props) => {
+const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=undefined, labelPlacement="inside", type="text", className }: Props) => {
   return (
     <Input 
       variant={variant}
@@ -20,12 +21,13 @@ const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=
       placeholder={placeholder}
       labelPlacement={labelPlacement}
       type={type}
+      className={className}
       classNames={{
         inputWrapper: [
           "data-[hover=true]:border-tertiary",
-          "data-[focus=true]:border-secondary",
-          "after:bg-secondary",
-          "group-data-[focus=true]:border-secondary",
+          "data-[focus=true]:border-tertiary",
+          "after:bg-tertiary",
+          "group-data-[focus=true]:border-tertiary",
         ]
       }}
     />

@@ -37,6 +37,23 @@ const FeastCatalogueContentPage = () => {
     setSamples(resolveUiState(res, setUiState) ?? []);
   }
 
+  const updateSamples = async (updatedSamples: WineSample[]) => {
+    setUiState({ type: UiStateType.LOADING });
+    const res = await CatalogueRepository.updateSamples(updatedSamples);
+    if (isSuccess(res)) {
+      setUiState({ type: UiStateType.SUCCESS });
+      setSamples((prevSamples) => {
+        return prevSamples.map(sample => {
+          const updatedSample = updatedSamples.find(s => s.id === sample.id);
+          if (updatedSample) { console.log(updatedSample); }
+          return updatedSample ?? sample;
+        });
+      });
+    } else {
+      setUiState({ type: UiStateType.ERROR, message: res.message });
+    }
+  }
+
   return (
     <>
       <WineTable 
@@ -44,6 +61,7 @@ const FeastCatalogueContentPage = () => {
         uiState={uiState}
         deleteWineSample={deleteWineSample}
         autoLabelSamples={autoLabelSamples}
+        updateSamples={updateSamples}
       />
     </>
   )

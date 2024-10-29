@@ -16,9 +16,15 @@ import UsersManagementPage from './pages/usersManagement/UsersManagementPage';
 
 const AppLayout = () => {
   const location = useLocation();
-  const hideSidebarRoutes = ['/profile', '/signIn', '/register'];
+  const hideSidebarRoutes = [
+    /^\/profile$/,
+    /^\/signIn$/,
+    /^\/register$/,
+    /^\/feastCatalogues\/create$/,
+    ///^\/feastCatalogues\/.*\/edit$/,
+  ];
 
-  const isSidebarVisible = !hideSidebarRoutes.includes(location.pathname);
+  const isSidebarVisible = !hideSidebarRoutes.some((pattern) => pattern.test(location.pathname));
 
   return (
     <div className="flex">

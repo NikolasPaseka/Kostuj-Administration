@@ -7,7 +7,7 @@ import { CommunicationResult, isSuccess } from "../../communication/Communicatio
 import { Winery } from "../../model/Winery";
 import { Catalogue } from "../../model/Catalogue";
 import WineryTable from "../../components/Tables/WineryTable";
-import { resolveUiState, UiStateType } from "../../communication/UiState";
+import { resolveUiState, UiState, UiStateType } from "../../communication/UiState";
 import { useTranslation } from "react-i18next";
 import { TranslationNS } from "../../translations/i18n";
 import ImageSlider from "../../components/ImageSlider";
@@ -26,6 +26,7 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
   const { t } = useTranslation();
   const { getUserData } = useAuth();
   const [uiState, setUiState] = useState({ type: UiStateType.LOADING });
+  const [uiStateParticipated, setUiStateParticipated] = useState<UiState>({ type: UiStateType.LOADING });
 
   const [adminsWineries, setAdminsWineries] = useState<Winery[]>([]);
   const [participatedWineries, setParticipatedWineries] = useState<Winery[]>([]);
@@ -47,9 +48,7 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
 
     const fetchParticipatedWineries = async () => { 
       const res: CommunicationResult<Winery[]> = await CatalogueRepository.getParticipatedWineries(catalogue);
-      if (isSuccess(res)) {
-        setParticipatedWineries(res.data);
-      }
+      setParticipatedWineries(resolveUiState(res, setUiStateParticipated) ?? []);
     }
     
     fetchAdminsWineries();
@@ -151,9 +150,6 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
     startListening,
     stopListening,
     listening,
-    resetTranscript,
-    browserSupportsSpeechRecognition,
-    isMicrophoneAvailable
   } = useVoiceControl(sendVoiceInput);
 
   return (
@@ -267,7 +263,7 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
 
       <WineryTable 
         wineries={participatedWineries} 
-        uiState={{ type: UiStateType.SUCCESS }}
+        uiState={uiStateParticipated}
         removeWineryFromParticipated={removeWineryFromParticipated}
       />
     </div>

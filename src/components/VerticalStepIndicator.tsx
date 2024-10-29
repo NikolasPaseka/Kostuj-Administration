@@ -2,7 +2,7 @@ type Props = {
   currentStep: number;
 };
 
-const StepIndicator = ({ currentStep }: Props) => {
+const VerticalStepIndicator = ({ currentStep }: Props) => {
   const steps = [
     { id: 1, label: 'Základní informace' },
     { id: 2, label: 'Vinařství' },
@@ -10,16 +10,16 @@ const StepIndicator = ({ currentStep }: Props) => {
   ];
 
   return (
-    <div className="relative flex flex-col w-full max-w-xl mx-auto px-8">
+    <div className="relative flex h-screen px-8 py-4 pb-8">
       {/* Background Lines Layer */}
-      <div className="absolute top-3.5 left-[90px] right-[52px] flex items-center z-0">
-        <div className="flex-1 h-[6px] bg-gray-200" />
+      <div className="absolute left-[45px] top-[48px] bottom-[48px] flex flex-col z-0">
+        <div className="flex-1 w-[6px] bg-gray-200" />
       </div>
 
       {/* Steps Layer */}
-      <div className="relative flex items-center justify-between w-full z-10">
+      <div className="relative flex flex-col justify-between h-full z-10 gap-16">
         {steps.map((step, index) => (
-          <div key={step.id} className="flex flex-col items-center">
+          <div key={step.id} className="flex items-center gap-4">
             {/* Circle */}
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
@@ -43,7 +43,7 @@ const StepIndicator = ({ currentStep }: Props) => {
               </span>
             </div>
             {/* Label */}
-            <span className="mt-2 text-sm text-center text-gray-600">
+            <span className="text-sm text-gray-600">
               {step.label}
             </span>
           </div>
@@ -51,11 +51,11 @@ const StepIndicator = ({ currentStep }: Props) => {
       </div>
 
       {/* Progress Line Layer */}
-      <div className="absolute top-3.5 left-[90px] right-[52px] flex items-center z-0">
+      <div className="absolute left-[45px] top-[48px] bottom-[48px] flex flex-col z-0">
         <div 
-          className="h-[6px] bg-primary transition-all duration-300"
+          className="w-[6px] bg-primary transition-all duration-300"
           style={{
-            width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
+            height: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
           }}
         />
       </div>
@@ -63,4 +63,4 @@ const StepIndicator = ({ currentStep }: Props) => {
   );
 };
 
-export default StepIndicator;
+export default VerticalStepIndicator;

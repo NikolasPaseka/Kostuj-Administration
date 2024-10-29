@@ -6,6 +6,7 @@ import { axiosCall } from "../communication/axios";
 import { isSuccess } from "../communication/CommunicationsResult";
 import { Winery } from "../model/Winery";
 import useVoiceControl from "../hooks/useVoiceControl";
+import VerticalStepIndicator from "../components/VerticalStepIndicator";
 
 const VoiceTest = () => {
   const commands = [
@@ -168,6 +169,7 @@ const VoiceTest = () => {
           </div>}
         </div>
       </div>
+      <VerticalStepIndicator currentStep={3} />
     </div>
   );
 }

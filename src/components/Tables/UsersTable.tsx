@@ -1,12 +1,13 @@
 import React, { useCallback } from 'react'
 import { UserData } from '../../model/UserData'
 import { UiState } from '../../communication/UiState'
-import GenericTable, { getNestedValue } from './GenericTable'
+import GenericTable from './GenericTable'
 import { Tooltip, User } from '@nextui-org/react'
 import { PencilIcon } from '@heroicons/react/16/solid'
 import { AuthorizationRoles, authorizationRolesArray } from '../../model/AuthorizationRoles'
 import { ModalProps } from '../Modals/ModalProps'
 import GenericChip from '../Controls/GenericChip'
+import { getNestedValue } from './getNestedValues'
 
 type Props = {
   users: UserData[]

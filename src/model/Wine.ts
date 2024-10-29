@@ -17,7 +17,3 @@ export interface Wine {
     imageUrl?: string,
     winaryId: Winery | string
 }
-
-export const getWineSearchName = (wine: Wine): string => {
-    return `${wine.name} - ${wine.year}`;
-}

@@ -67,6 +67,10 @@ export const CatalogueRepository = {
         return await axiosCall(AxiosMethod.DELETE, `/catalogues/samples/${id}`);
     },
 
+    updateSamples : async (samples: WineSample[]): Promise<CommunicationResult<SuccessMessage>> => {
+        return await axiosCall(AxiosMethod.PUT, `wines/samples`, samples);
+    },
+
     //Images
     uploadImages: async (catalogueId: string, images: File[]): Promise<CommunicationResult<string[]>> => {
         const formData = new FormData();

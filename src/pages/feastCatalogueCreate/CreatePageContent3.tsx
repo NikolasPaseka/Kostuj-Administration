@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react"
 import PrimaryButton from "../../components/PrimaryButton"
 import CatalogueInputField from "./components/CatalogueInputField"
-import { ClipboardDocumentIcon, MicrophoneIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
+import { ClipboardDocumentIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
 import { Autocomplete, AutocompleteItem, Divider, Radio, RadioGroup, Slider } from "@nextui-org/react";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { Winery } from "../../model/Winery";
 import { Catalogue } from "../../model/Catalogue";
-import { UiStateType } from "../../communication/UiState";
+import { resolveUiState, UiState, UiStateType } from "../../communication/UiState";
 import { WineSample } from "../../model/WineSample";
-import { getWineSearchName, Wine } from "../../model/Wine";
+import { Wine } from "../../model/Wine";
 import WineTable from "../../components/Tables/WineTable";
 import { useTranslation } from "react-i18next";
 import { TranslationNS } from "../../translations/i18n";
@@ -18,19 +18,21 @@ import { WineColor } from "../../model/Domain/WineColor";
 import { axiosCall } from "../../communication/axios";
 import useVoiceControl from "../../hooks/useVoiceControl";
 import VoiceInputButton from "../../components/VoiceInputButton";
+import Fuse from 'fuse.js'
 
 type Props = { catalogue: Catalogue }
 
 const CreatePageContent3 = ({ catalogue }: Props) => {
   const { t } = useTranslation();
+  const [uiStateWineSample, setUiStateWineSample] = useState<UiState>({ type: UiStateType.LOADING });
 
   const [participatedWineries, setParticipatedWineries] = useState<Winery[]>([]);
   const [selectedWinery, setSelectedWinery] = useState<Winery | null>(null);
   const [wineryWines, setWineryWines] = useState<Wine[]>([]);
 
-  const [selectedWine, setSelectedWine] = useState<Wine | null>(null);
   const [wineSamples, setWineSamples] = useState<WineSample[]>([]);
 
+  const [wineryName, setWineryName] = useState<string>("");
   const [wineName, setWineName] = useState<string>("");
   const [sampleName, setSampleName] = useState<string>("");
   const [wineYear, setWineYear] = useState<number | null>(null);
@@ -51,9 +53,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
 
     const fetchAddedWineSamples = async () => {
       const res: CommunicationResult<WineSample[]> = await CatalogueRepository.getSamples(catalogue.id);
-      if (isSuccess(res)) {
-        setWineSamples(res.data);
-      }
+      setWineSamples(resolveUiState(res, setUiStateWineSample) ?? []);
     }
     
     fetchParticipatedWineries();
@@ -63,7 +63,17 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   const fetchWineryWines = async (winery: Winery) => {
     const res: CommunicationResult<Wine[]> = await WineryRepository.getWineryWines(winery.id);
     if (isSuccess(res)) {
+      console.log(res.data)
       setWineryWines(res.data);
+    }
+  }
+
+  const setWineryNameWithMatch = (value: string) => {
+    setWineryName(value ?? "");
+    const foundWinery = participatedWineries.find((winery) => winery.name === value) ?? null;
+    setSelectedWinery(foundWinery);
+    if (foundWinery != null) {
+      fetchWineryWines(foundWinery);
     }
   }
 
@@ -73,36 +83,21 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       const selectedItem = participatedWineries.find((option) => option.id === key);
       const result = selectedItem ?? prevState;
       if (result != null) {
+        setWineryName(result.name);
         fetchWineryWines(result);
       }
       return result;
     });
   }
 
-  const onWineSelectionChange = (key: React.Key | null) => {
-    if (key === null) { return; }
-    setSelectedWine((prevState) => {
-      const selectedItem = wineryWines.find((option) => option.id === key);
-      const result = selectedItem ?? prevState;
-      if (result != null) {
-        setWineYear(result.year);
-        setWineColor(result.color);
-        setResidualSugar(result.residualSugar ?? null);
-        setAlcoholContent(result.alcoholContent ?? null);
-        setAcidity(result.acidity ?? null);
-        setGrapeSweetness(result.grapesSweetness ?? null);
-      }
-      return result;
-    });
-  }
-
-  const isWineNew = () => { return wineryWines.find((wine) => wine.name == wineName && wine.year == wineYear) == null; }
+  const foundWine: Wine | null = wineryWines.find((wine) => wine.name == wineName && wine.year == wineYear) ?? null;
+  const isWineNew = (): Boolean => { return foundWine == null; }
 
   const createNewSample = async () => {
     const newSample: WineSample = {
       name: sampleName,
       rating: sampleRating ?? 0,
-      wineId: selectedWine?.id ?? "",
+      wineId: foundWine?.id ?? "",
       catalogueId: catalogue.id,
       // TODO
       champion: false
@@ -143,10 +138,29 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         color: string
         rating: string
       } }).entity
-      console.log(wine.color)
-      const foundWinery = participatedWineries.find(item => item.name == wine.winery) ?? null;
-      if (wine.winery != null) { setSelectedWinery(foundWinery); }
-      if (wine.wine != null) { setWineName(wine.wine); }
+      console.log(wine.winery)
+
+      let matchedWinery: Winery | null = null;
+      if (wine.winery != null) {
+        const fuse = new Fuse(participatedWineries, {
+          keys: ['name'],
+          threshold: 0.3
+        })
+        const results: Winery[] = fuse.search(wine.winery).map((item) => item.item);
+        console.log(results)
+        if (results.length > 0) {
+           matchedWinery = participatedWineries.find(item => item.id == results[0].id) ?? null; 
+        }
+      }
+
+      if (matchedWinery) { 
+        setSelectedWinery(matchedWinery);
+        setWineryName(matchedWinery.name); 
+      } else if (selectedWinery == null) { 
+        setSelectedWinery(null);
+        if (wine.winery != null) { setWineryName(wine.winery); }
+      }
+      if (wine.wine != null && wineName.isEmpty()) { setWineName(wine.wine); }
       if (wine.year != null && !isNaN(parseInt(wine.year))) { setWineYear(parseInt(wine.year)); }
       if (wine.rating != null && !isNaN(parseInt(wine.year))) { setSampleRating(parseInt(wine.rating)); }
       if (wine.color != null) { setWineColor(wine.color); }
@@ -159,36 +173,41 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     stopListening,
     listening,
   } = useVoiceControl(sendVoiceInput);
-  
+
   return (
     <div className="flex flex-col gap-4">
-      <Autocomplete 
+      <Autocomplete
+        allowsCustomValue
         label={t("winery", { ns: TranslationNS.catalogues })}
         placeholder={t("wineryPlaceholderSelect", { ns: TranslationNS.catalogues })}
-        inputValue={selectedWinery?.name ?? ""}
+        inputValue={wineryName}
+        onValueChange={setWineryNameWithMatch}
         onSelectionChange={onWinerySelectionChange}
+        isInvalid={selectedWinery == null && wineryName.length > 0}
+        errorMessage={"This winery is not in the list"}
         isRequired
         variant="faded"
         labelPlacement="outside"
         defaultItems={participatedWineries}
         startContent={<ClipboardDocumentIcon className="w-5 h-5 text-gray-600" /> }
+        inputProps={{
+          classNames: {
+            inputWrapper: [`${ selectedWinery == null && wineryName.length > 0 
+              ? "border-danger data-[hover=true]:border-danger" 
+              : "data-[hover=true]:border-tertiary data-[focus=true]:border-tertiary data-[open=true]:border-secondary" }`]
+          }
+        }}
       >
         {(item) => <AutocompleteItem key={item.id}>{item.name}</AutocompleteItem>}
       </Autocomplete>
 
-      <Autocomplete 
+      <CatalogueInputField 
         label={t("wine", { ns: TranslationNS.catalogues })}
         placeholder={t("winePlaceholder", { ns: TranslationNS.catalogues })}
-        inputValue={wineName}
-        onInputChange={setWineName}
-        allowsCustomValue
-        onSelectionChange={onWineSelectionChange}
-        //isDisabled={selectedWinery == null}
+        value={wineName}
+        onValueChange={setWineName}
         isRequired
-        variant="faded"
-        labelPlacement="outside"
-        defaultItems={wineryWines}
-        startContent={<ClipboardDocumentIcon className="w-5 h-5 text-gray-600" /> }
+        StartContent={ClipboardDocumentIcon}
         description={
           wineName.length > 0 && !isWineNew() ? (
             <p className="text-green-400">Selected wine</p>
@@ -197,13 +216,11 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           ) : ( "" )
         }
       >
-        {(item) => <AutocompleteItem key={item.id} textValue={item.name}>{getWineSearchName(item)}</AutocompleteItem>}
-      </Autocomplete>
+      </CatalogueInputField>
 
       <div className="flex flex-row gap-4">
         <CatalogueInputField
           value={sampleName}
-          //isDisabled={selectedWinery == null}
           onValueChange={setSampleName}
           label={t("sampleName", { ns: TranslationNS.catalogues })}
           placeholder={t("sampleNamePlaceholder", { ns: TranslationNS.catalogues })}
@@ -213,7 +230,6 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         <CatalogueInputField 
           type="number"
           value={wineYear == null ? "" : wineYear.toString()} 
-          //isDisabled={selectedWinery == null}
           onValueChange={(val) => setWineYear(val == "" ? null : parseInt(val))} 
           label={t("wineYear", { ns: TranslationNS.catalogues })}
           placeholder={t("wineYearPlaceholder", { ns: TranslationNS.catalogues })}
@@ -224,7 +240,6 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         <Slider 
           label={t("rating", { ns: TranslationNS.catalogues })}
           value={sampleRating ?? 0}
-          //isDisabled={selectedWinery == null}
           onChange={(value) => typeof value == "number" ? setSampleRating(value) : setSampleRating(value[0])} 
           step={1} 
           // TODO: change only to catalogue rating
@@ -232,16 +247,15 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           minValue={0} 
           defaultValue={0}
           className="max-w-md"
-          color="primary"
+          color="secondary"
         />
 
         <RadioGroup
           label={t("wineColor", { ns: TranslationNS.catalogues })}
-          isReadOnly={!isWineNew()}
-          //isDisabled={selectedWinery == null}
           orientation="horizontal"
           value={wineColor}
           onValueChange={setWineColor}
+          color="secondary"
         >
           <Radio value={WineColor.RED}>{t("redWineColor", { ns: TranslationNS.catalogues })}</Radio>
           <Radio value={WineColor.WHITE}>{t("whiteWineColor", { ns: TranslationNS.catalogues })}</Radio>
@@ -255,8 +269,6 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         <CatalogueInputField 
           type="number"
           value={residualSugar == null ? "" : residualSugar.toString()} 
-          isReadOnly={!isWineNew()}
-          //isDisabled={selectedWinery == null}
           onValueChange={(val) => setResidualSugar(val == "" ? null : parseInt(val))}     
           label={t("residualSugar", { ns: TranslationNS.catalogues })}
           placeholder={t("residualSugarPlaceholder", { ns: TranslationNS.catalogues })}
@@ -266,8 +278,6 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         <CatalogueInputField
           type="number"
           value={alcoholContent == null ? "" : alcoholContent.toString()} 
-          isReadOnly={!isWineNew()}
-          //isDisabled={selectedWinery == null}
           onValueChange={(val) => setAlcoholContent(val == "" ? null : parseInt(val))} 
           label={t("alcoholContent", { ns: TranslationNS.catalogues })}
           placeholder={t("alcoholContentPlaceholder", { ns: TranslationNS.catalogues })}
@@ -277,8 +287,6 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         <CatalogueInputField
           type="number"
           value={acidity == null ? "" : acidity.toString()} 
-          isReadOnly={!isWineNew()}
-          //isDisabled={selectedWinery == null}
           onValueChange={(val) => setAcidity(val == "" ? null : parseInt(val))} 
           label={t("acidity", { ns: TranslationNS.catalogues })}
           placeholder={t("acidityPlaceholder", { ns: TranslationNS.catalogues })}
@@ -288,8 +296,6 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         <CatalogueInputField
           type="number"
           value={grapeSweetness == null ? "" : grapeSweetness.toString()} 
-          isReadOnly={!isWineNew()}
-          //isDisabled={selectedWinery == null}
           onValueChange={(val) => setGrapeSweetness(val == "" ? null : parseInt(val))} 
           label={t("grapeSweetness", { ns: TranslationNS.catalogues })}
           placeholder={t("grapeSweetnessPlaceholder", { ns: TranslationNS.catalogues })}
@@ -316,7 +322,11 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
 
       <Divider />
 
-      <WineTable wineSamples={wineSamples} uiState={{ type: UiStateType.SUCCESS }} />
+      <WineTable 
+        wineSamples={wineSamples} 
+        uiState={uiStateWineSample}
+        showTableControls={false}
+      />
     </div>
   )
 }

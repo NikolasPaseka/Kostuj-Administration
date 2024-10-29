@@ -4,9 +4,10 @@ import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Toolt
 import { UiState } from '../../communication/UiState';
 import { Winery } from '../../model/Winery';
 import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
-import GenericTable, { getNestedValue } from './GenericTable';
+import GenericTable from './GenericTable';
 import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../translations/i18n';
+import { getNestedValue } from './getNestedValues';
 
 
 type Props = { 
@@ -23,6 +24,7 @@ const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props)
   const [searchValue, setSearchValue] = React.useState<string>(""); 
   const [wineryToRemove, setWineryToRemove] = React.useState<Winery | null>(null);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const tableColumns = [
     {name: t("winery", { ns: TranslationNS.catalogues }), uid: "name"},
     {name: t("emailAddress", { ns: TranslationNS.catalogues }), uid: "email"},
@@ -45,6 +47,15 @@ const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props)
           >
             {winery.name}
           </User>
+        );
+      case "websitesUrl":
+        return (
+          <div className="w-64">
+            <a href={cellValue} target="_blank" rel="noreferrer" className="text-red-500 break-all">
+            {cellValue}
+            </a>
+          </div>
+  
         );
       case "actions":
         return (
@@ -74,6 +85,20 @@ const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props)
     }
   }, [onOpen]);
 
+  const MemoizedGenericTable = React.useMemo(() => {
+    console.log("memo render")
+    return (
+    <GenericTable 
+      tableColumns={tableColumns}
+      data={wineries.filter((winery: Winery) => winery.name.toLowerCase().includes(searchValue.toLowerCase()))}
+      uiState={uiState}
+      renderCell={renderCell}
+    />
+    )
+  }, [wineries, searchValue, uiState, renderCell]);
+
+  //[tableColumns, wineries, uiState, renderCell, searchValue]
+
   return (
     <div>
       <div className="flex items-center py-4">
@@ -81,12 +106,7 @@ const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props)
         <SearchInput value={searchValue} onValueChange={setSearchValue} />
       </div>
 
-      <GenericTable 
-        tableColumns={tableColumns}
-        data={wineries.filter((winery: Winery) => winery.name.toLowerCase().includes(searchValue.toLowerCase()))}
-        uiState={uiState}
-        renderCell={renderCell}
-      />
+      {MemoizedGenericTable}
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
