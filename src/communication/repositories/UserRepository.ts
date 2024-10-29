@@ -1,9 +1,15 @@
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
+import { UserAuth } from "../../model/UserAuth";
 import { UserData } from "../../model/UserData";
 import { axiosCall, AxiosMethod } from "../axios";
 import { CommunicationResult } from "../CommunicationsResult";
 
 export const UserRepository = {
+    // Auth
+    login: async (email: string, password: string): Promise<CommunicationResult<UserAuth>> => {
+        return await axiosCall(AxiosMethod.POST, `/users/login`, { email, password });
+    },
+
     getAllUsers: async (): Promise<CommunicationResult<UserData[]>> => {
         return await axiosCall(AxiosMethod.GET, `/users/`);
     },

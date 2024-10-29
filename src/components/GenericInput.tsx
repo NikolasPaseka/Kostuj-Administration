@@ -11,13 +11,13 @@ type Props = {
   variant?: "flat" | "bordered" | "underlined" | "faded",
   labelPlacement?: "inside" | "outside",
   startContent?: React.ReactNode,
+  validate?: (message: string) => void
   className?: string
 }
 
-const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=undefined, labelPlacement="inside", type="text", startContent, className }: Props) => {
+const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=undefined, labelPlacement="inside", type="text", startContent, validate, className }: Props) => {
 
   const [isVisible, setIsVisible] = React.useState(false);
-  const [isFocused, setIsFocused] = React.useState(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -30,8 +30,8 @@ const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=
       placeholder={placeholder}
       labelPlacement={labelPlacement}
       type={(type === "password" && isVisible) ? "text" : type}
-      onFocusChange={setIsFocused}
-      startContent={startContent && React.cloneElement(startContent as React.ReactElement, { className: `w-5 h-5 ${isFocused ? 'text-tertiary' : 'text-gray-600'}`})}
+      //validate={}
+      startContent={startContent && React.cloneElement(startContent as React.ReactElement, { className: `w-5 h-5 text-gray-600`})}
       endContent={
         type === "password" 
         ?

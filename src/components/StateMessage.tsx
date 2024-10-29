@@ -1,4 +1,4 @@
-import React from "react"
+import React, { ReactElement } from "react"
 
 type Props = {
   stateMessageType: "warning" | "success" | "error" | "info"
@@ -37,7 +37,7 @@ const StateMessage = ({ stateMessageType, text }: Props) => {
       rounded-md border-large px-4 py-2 my-2
       ${getMessageColor()}`
     }>
-      {React.cloneElement(text, { className: getTextColor() })}
+      {React.cloneElement(text as ReactElement, { className: getTextColor() })}
     </div> 
   )
 }

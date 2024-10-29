@@ -1,5 +1,6 @@
 import './App.css'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import AppRoutes from './utils/AppRoutes';
 import Sidebar from './components/Sidebar/Sidebar'
 import HomePage from './pages/homepage/HomePage'
 import SignInPage from './pages/SignInPage';
@@ -31,25 +32,25 @@ const AppLayout = () => {
       <AuthProvider>
         {isSidebarVisible && <Sidebar />}
         <div className="flex-1 p-4 max-w-screen-2xl mx-auto">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/profile" element={
-                <ProtectedRoute> 
-                  <HomePage /> 
-                </ProtectedRoute>} 
-              />
-              <Route path="/feastCatalogues" element={<FeastCataloguesPage />} />
-              <Route path="/feastCatalogues/:id/detail" element={<FeastCatalogueDetailPage />} />
-              <Route path="/feastCatalogues/:id/content" element={<FeastCatalogueContentPage />} />
-              <Route path="/feastCatalogues/:id/edit" element={<FeastCatalogueCreatePage />} />
-              <Route path="/feastCatalogues/create" element={<FeastCatalogueCreatePage />} />
-              <Route path="/usersManagement" element={<UsersManagementPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/signIn" element={<SignInPage />} />
-              <Route path="/register" element={<RegistrationPage />} />
-              {/* TODO: Delete later */}
-              <Route path="/voiceTest" element={<VoiceTest />} />
-            </Routes>
+          <Routes>
+            <Route path={AppRoutes.HOME} element={<HomePage />} />
+            <Route path={AppRoutes.PROFILE} element={
+              <ProtectedRoute> 
+                <HomePage /> 
+              </ProtectedRoute>} 
+            />
+            <Route path={AppRoutes.FEAST_CATALOGUES} element={<FeastCataloguesPage />} />
+            <Route path={AppRoutes.FEAST_CATALOGUE_DETAIL} element={<FeastCatalogueDetailPage />} />
+            <Route path={AppRoutes.FEAST_CATALOGUE_CONTENT} element={<FeastCatalogueContentPage />} />
+            <Route path={AppRoutes.FEAST_CATALOGUE_EDIT} element={<FeastCatalogueCreatePage />} />
+            <Route path={AppRoutes.FEAST_CATALOGUE_CREATE} element={<FeastCatalogueCreatePage />} />
+            <Route path={AppRoutes.USERS_MANAGEMENT} element={<UsersManagementPage />} />
+            <Route path={AppRoutes.SETTINGS} element={<SettingsPage />} />
+            <Route path={AppRoutes.SIGN_IN} element={<SignInPage />} />
+            <Route path={AppRoutes.REGISTER} element={<RegistrationPage />} />
+            {/* TODO: Delete later */}
+            <Route path="/voiceTest" element={<VoiceTest />} />
+          </Routes>
         </div>
       </AuthProvider>
     </div>

@@ -3,11 +3,13 @@ import axios from 'axios';
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../model/UserAuth';
+import { UserRepository } from '../communication/repositories/UserRepository';
+import { CommunicationResult, isSuccess } from '../communication/CommunicationsResult';
 
 type AuthContextType = {
     accessToken: string | null,
     setAccessToken: (newToken: string | null) => void,
-    login: (email: string, password: string) => void,
+    login: (email: string, password: string) => Promise<CommunicationResult<UserAuth>>,
     logout: () => void,
     isLoggedIn: () => boolean,
     getUserData: () => UserAuth | null
@@ -33,21 +35,18 @@ export const AuthProvider = ({ children }: Props) => {
         setIsReady(true);
     }, []);
 
-    const login = async (email: string, password: string) => {
-        const res = await axios.post("/api/users/login", {
-            email: email,
-            password: password
-        });
+    const login = async (email: string, password: string): Promise<CommunicationResult<UserAuth>> => {
+        const res = await UserRepository.login(email, password);
         console.log(res)
 
-        const userAuth: UserAuth = res.data;
-    
-        if (res.status === 200) {
+        if (isSuccess(res)) {
+            const userAuth: UserAuth = res.data;
             setAccessToken(userAuth.accessToken);
             localStorage.setItem("accessToken", userAuth.accessToken);
             localStorage.setItem("userAuth", JSON.stringify(userAuth));
             navigate("/");
         }
+        return res;
     };
     
     const logout = () => {

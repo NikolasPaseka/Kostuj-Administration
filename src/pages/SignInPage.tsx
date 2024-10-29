@@ -5,8 +5,13 @@ import { useAuth } from '../context/AuthProvider';
 import GenericInput from '../components/GenericInput';
 import PrimaryButton from '../components/PrimaryButton';
 import { AtSymbolIcon, LockClosedIcon } from '@heroicons/react/24/solid';
+import AppRoutes from '../utils/AppRoutes';
+import { resolveUiState, UiState, UiStateType } from '../communication/UiState';
+import UiStateHandler from '../components/UiStateHandler';
 
 const SignInPage = () => {
+  const [uiState, setUiState] = useState<UiState>({ type: UiStateType.IDLE })
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -20,24 +25,12 @@ const SignInPage = () => {
   }, [isLoggedIn, navigate]);
 
   const handleSubmit = async () => {  
-    login(email, password);
+    setUiState({ type: UiStateType.LOADING })
+    const res = await login(email, password);
+    resolveUiState(res, setUiState);
   }
 
   return (
-    // <div className="flex w-full justify-center h-screen">
-    //   <div className="flex w-1/2 flex-col justify-center items-center gap-4">
-    //   <Input type="email" label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-    //   <Input type="password" label="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-    //   <Button 
-    //     color="primary" 
-    //     className="w-full" 
-    //     onClick={handleSubmit}
-    //   >
-    //     Sign In
-       
-    //   </Button>
-    //   </div>
-    // </div>
 
     <div className="flex w-full h-screen items-center justify-center">
       <Card className="flex-1 max-w-xl p-8">
@@ -71,7 +64,7 @@ const SignInPage = () => {
             Remember me
           </Checkbox>
           
-          <Link to={""} className="text-primary">
+          <Link to={AppRoutes.REGISTER} className="text-primary">
             Create account here
           </Link>
         </div>
@@ -81,6 +74,8 @@ const SignInPage = () => {
         >
           Sign In
         </PrimaryButton>
+
+        <UiStateHandler uiState={uiState} />
       </CardBody>
     </Card>
     </div>
