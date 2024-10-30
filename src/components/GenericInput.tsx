@@ -11,11 +11,13 @@ type Props = {
   variant?: "flat" | "bordered" | "underlined" | "faded",
   labelPlacement?: "inside" | "outside",
   startContent?: React.ReactNode,
-  validate?: (message: string) => void
+  isRequired?: boolean,
+  isInvalid?: boolean,
+  errorMessage?: string,
   className?: string
 }
 
-const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=undefined, labelPlacement="inside", type="text", startContent, validate, className }: Props) => {
+const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=undefined, labelPlacement="inside", type="text", startContent, isRequired, isInvalid, errorMessage, className }: Props) => {
 
   const [isVisible, setIsVisible] = React.useState(false);
 
@@ -30,7 +32,9 @@ const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=
       placeholder={placeholder}
       labelPlacement={labelPlacement}
       type={(type === "password" && isVisible) ? "text" : type}
-      //validate={}
+      isRequired={isRequired}
+      isInvalid={isInvalid}
+      errorMessage={isInvalid ? errorMessage : undefined}
       startContent={startContent && React.cloneElement(startContent as React.ReactElement, { className: `w-5 h-5 text-gray-600`})}
       endContent={
         type === "password" 
@@ -45,7 +49,7 @@ const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=
           </button>
         : undefined
       }
-      className={className}
+      className={`${className} py-1`}
       classNames={{
         inputWrapper: [
           "data-[hover=true]:border-tertiary",

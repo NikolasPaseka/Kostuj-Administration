@@ -7,7 +7,7 @@ import WineTable from "../../components/Tables/WineTable";
 import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 
-const FeastCatalogueContentPage = () => {
+const FeastCatalogueWineContentPage = () => {
   const { id } = useParams();
 
   const [uiState, setUiState] = useState<UiState>({ type: UiStateType.LOADING });
@@ -67,4 +67,4 @@ const FeastCatalogueContentPage = () => {
   )
 }
 
-export default FeastCatalogueContentPage
+export default FeastCatalogueWineContentPage

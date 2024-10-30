@@ -98,7 +98,7 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
       if (isWineryNew()) {
         uploadImage(imageToUpload, res.data.id);
       }
-      setWineryEntry(null);
+      clearInputData();
     }
   }
 
@@ -129,6 +129,17 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
     if (isSuccess(res)) {
       setParticipatedWineries([ ...participatedWineries.filter(w => w.id !== winery.id)]);
     }
+  }
+
+  const clearInputData = () => {
+    setWineryEntry(null);
+    setWineryTitle("");
+    setEmail("");
+    setPhoneNumber("");
+    setWebAddress("");
+    setAddress("");
+    setImage(null);
+    setImageToUpload(null);
   }
 
   const sendVoiceInput = async () => {

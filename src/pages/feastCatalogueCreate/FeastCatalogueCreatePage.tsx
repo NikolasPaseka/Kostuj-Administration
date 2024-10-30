@@ -13,6 +13,7 @@ import { notifySuccess } from "../../utils/toastNotify";
 import StepIndicator from "../../components/StepIndicator";
 import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
 import { useAuth } from "../../context/AuthProvider";
+import BackNavigation from "../../components/Sidebar/BackNavigation";
 
 const FeastCatalogueCreatePage = () => {
   const [page, setPage] = useState<number>(1);
@@ -88,7 +89,11 @@ const FeastCatalogueCreatePage = () => {
   return (
     <>
       <div className="flex flex-row mb-8 items-center">
-        <h1 className="text-2xl font-bold flex-1">Create Feast Catalogue</h1>
+        {/* <h1 className="text-2xl font-bold flex-1">Create Feast Catalogue</h1> */}
+        <BackNavigation
+          headline={<h1 className="text-2xl font-bold">Create Feast Catalogue</h1>}
+          className="flex-1"
+        />
         <StepIndicator currentStep={page} />
         <PrimaryButton onClick={() => setPage(p => p - 1)} isDisabled={ page == 1 }>&lt;</PrimaryButton>
         <PrimaryButton onClick={() => setPage(p => p + 1)} isDisabled={ page == 3 || catalogue == null }>&gt;</PrimaryButton>

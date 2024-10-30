@@ -4,7 +4,7 @@ type Props = {
   children: React.ReactNode, 
   EndContent?: React.ComponentType<{
     className?: string;
-  }> | null;  
+  }> | null;
   className?: string;
   onClick?: () => void;
   isDisabled?: boolean;
@@ -16,7 +16,17 @@ const PrimaryButton = ({ children, EndContent = null, className, onClick = () =>
   return (
     <>
       {EndContent != null ?
-        <Button onClick={onClick} variant={isSecondary ? "bordered" : "solid"} size={size} color={isSecondary? "secondary" : "primary"} endContent={<EndContent className={`size-4 ${isSecondary ? 'text-secondary': 'text-white'}`} />} className={className} isDisabled={isDisabled}>{children}</Button>
+        <Button 
+          onClick={onClick} 
+          variant={isSecondary ? "bordered" : "solid"} 
+          size={size} 
+          color={isSecondary? "secondary" : "primary"} 
+          endContent={<EndContent className={`size-4 ${isSecondary ? 'text-secondary': 'text-white'}`} />} 
+          className={className} 
+          isDisabled={isDisabled}
+        >
+          {children}
+        </Button>
         :
         <Button onClick={onClick} variant={isSecondary ? "bordered" : "solid"} size={size} color={isSecondary ? "secondary" : "primary"} className={className} isDisabled={isDisabled}>{children}</Button>
       }

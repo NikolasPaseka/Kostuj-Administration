@@ -10,6 +10,10 @@ export const UserRepository = {
         return await axiosCall(AxiosMethod.POST, `/users/login`, { email, password });
     },
 
+    register: async (email: string, password: string, firstName: string, lastName: string): Promise<CommunicationResult<UserAuth>> => {
+        return await axiosCall(AxiosMethod.POST, `/users/register`, { email, password, firstName, lastName });
+    },
+
     getAllUsers: async (): Promise<CommunicationResult<UserData[]>> => {
         return await axiosCall(AxiosMethod.GET, `/users/`);
     },

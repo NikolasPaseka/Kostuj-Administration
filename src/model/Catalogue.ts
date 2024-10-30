@@ -18,5 +18,7 @@ export type Catalogue = {
     adminId: string | UserData,
     price: number,
     downloads: number,
-    participatedWineries: string[]
+    participatedWineries: string[],
+    participatedWineriesCount?: number
+    samplesColorCounts?: { [key: string]: number }
 }

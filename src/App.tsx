@@ -10,10 +10,11 @@ import RegistrationPage from './pages/RegistrationPage';
 import FeastCataloguesPage from './pages/feastCatalogues/FeastCataloguesPage';
 import FeastCatalogueDetailPage from './pages/feastCatalogueDetail/FeastCatalogueDetailPage';
 import FeastCatalogueCreatePage from './pages/feastCatalogueCreate/FeastCatalogueCreatePage';
-import FeastCatalogueContentPage from './pages/feastCatalogueContent/FeastCatalogueContentPage';
+import FeastCatalogueWineContentPage from './pages/feastCatalogueContent/FeastCatalogueWineContentPage';
 import SettingsPage from './pages/SettingsPage';
 import VoiceTest from './pages/VoiceTest';
 import UsersManagementPage from './pages/usersManagement/UsersManagementPage';
+import FeastCatalogueWineriesContentPage from './pages/feastCatalogueContent/FeastCatalogueWineriesContentPage';
 
 const AppLayout = () => {
   const location = useLocation();
@@ -22,7 +23,7 @@ const AppLayout = () => {
     /^\/signIn$/,
     /^\/register$/,
     /^\/feastCatalogues\/create$/,
-    ///^\/feastCatalogues\/.*\/edit$/,
+    /^\/feastCatalogues\/.*\/edit$/,
   ];
 
   const isSidebarVisible = !hideSidebarRoutes.some((pattern) => pattern.test(location.pathname));
@@ -41,7 +42,8 @@ const AppLayout = () => {
             />
             <Route path={AppRoutes.FEAST_CATALOGUES} element={<FeastCataloguesPage />} />
             <Route path={AppRoutes.FEAST_CATALOGUE_DETAIL} element={<FeastCatalogueDetailPage />} />
-            <Route path={AppRoutes.FEAST_CATALOGUE_CONTENT} element={<FeastCatalogueContentPage />} />
+            <Route path={AppRoutes.FEAST_CATALOGUE_CONTENT_WINE} element={<FeastCatalogueWineContentPage />} />
+            <Route path={AppRoutes.FEAST_CATALOGUE_CONTENT_WINERY} element={<FeastCatalogueWineriesContentPage />} />
             <Route path={AppRoutes.FEAST_CATALOGUE_EDIT} element={<FeastCatalogueCreatePage />} />
             <Route path={AppRoutes.FEAST_CATALOGUE_CREATE} element={<FeastCatalogueCreatePage />} />
             <Route path={AppRoutes.USERS_MANAGEMENT} element={<UsersManagementPage />} />

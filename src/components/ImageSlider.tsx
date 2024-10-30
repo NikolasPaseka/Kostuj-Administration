@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import IconButton from './IconButton';
-import { ChevronLeftIcon, ChevronRightIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { ChevronLeftIcon, ChevronRightIcon, PhotoIcon, TrashIcon } from '@heroicons/react/24/solid';
 
 interface ImageSliderProps {
   imageUrls: string[];
@@ -17,14 +17,21 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ imageUrls, onDelete }) => {
   const goToNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex === imageUrls.length - 1 ? 0 : prevIndex + 1));
   };
-
+  
   return (
     <div className="relative w-full h-[95%]">
+
+    {imageUrls.length === 0 || (imageUrls[0].isEmpty()) ? (
+      <div className="w-full h-full rounded-lg bg-secondary flex items-center justify-center">
+        <PhotoIcon className="w-[60%] text-lightContainer" />
+      </div>
+    ) : (
       <img
-        src={imageUrls[currentIndex]}
-        alt={`Slide ${currentIndex}`}
-        className=" w-full h-full object-scale-down rounded-lg bg-secondary"
+        src={imageUrls[currentIndex] }
+        alt={`Image ${currentIndex + 1}`}
+        className="w-full h-full object-scale-down rounded-lg bg-secondary"
       />
+    )}
       { imageUrls.length > 1 && <>
           <IconButton 
             icon={<ChevronLeftIcon /> }

@@ -3,6 +3,7 @@ import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 import { Wine } from "../../model/Wine";
 import { Winery } from "../../model/Winery";
 import { WineSample } from "../../model/WineSample";
+import { TypeChecker } from "../../utils/TypeChecker";
 import { axiosCall, AxiosMethod } from "../axios";
 import { CommunicationResult } from "../CommunicationsResult";
 
@@ -37,16 +38,23 @@ export const CatalogueRepository = {
     },
 
     //Participated wineries
-    getParticipatedWineries: async (catalogue: Catalogue): Promise<CommunicationResult<Winery[]>> => {
-        return await axiosCall(AxiosMethod.GET, `/catalogues/${catalogue.id}/wineries`);
+    getParticipatedWineries: async (catalogue: Catalogue | string): Promise<CommunicationResult<Winery[]>> => {
+        const id = TypeChecker.isString(catalogue) ? catalogue : catalogue.id;
+        return await axiosCall(AxiosMethod.GET, `/catalogues/${id}/wineries`);
     },
 
     addParticipatedWinery: async (catalogue: Catalogue, winery: Winery): Promise<CommunicationResult<Winery>> => {
         return await axiosCall(AxiosMethod.POST, `/catalogues/${catalogue.id}/wineries`, winery);
     },
 
-    removeWineryFromParticipated: async (catalogue: Catalogue, winery: Winery): Promise<CommunicationResult<SuccessMessage>> => {
-        return await axiosCall(AxiosMethod.DELETE, `/catalogues/${catalogue.id}/wineries`, winery);
+    removeWineryFromParticipated: async (catalogue: Catalogue | string, winery: Winery): Promise<CommunicationResult<SuccessMessage>> => {
+        if (TypeChecker.isString(catalogue)) {
+            console.log("Catalogue is string");
+        } else {
+            console.log("Catalogue is not string");
+        }
+        const id = TypeChecker.isString(catalogue) ? catalogue : catalogue.id;
+        return await axiosCall(AxiosMethod.DELETE, `/catalogues/${id}/wineries`, winery);
     },
 
     //Samples

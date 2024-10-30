@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import PrimaryButton from "../../components/PrimaryButton"
 import CatalogueInputField from "./components/CatalogueInputField"
 import { ClipboardDocumentIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
@@ -43,6 +43,11 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   const [acidity, setAcidity] = useState<number | null>(null);
   const [grapeSweetness, setGrapeSweetness] = useState<number | null>(null);
 
+  // Input references
+  const wineryInputRef = useRef<HTMLInputElement>(null);
+  const wineInputRef = useRef<HTMLInputElement>(null);
+  const wineYearInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const fetchParticipatedWineries = async () => { 
       const res: CommunicationResult<Winery[]> = await CatalogueRepository.getParticipatedWineries(catalogue);
@@ -63,7 +68,6 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   const fetchWineryWines = async (winery: Winery) => {
     const res: CommunicationResult<Wine[]> = await WineryRepository.getWineryWines(winery.id);
     if (isSuccess(res)) {
-      console.log(res.data)
       setWineryWines(res.data);
     }
   }
@@ -75,6 +79,15 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     if (foundWinery != null) {
       fetchWineryWines(foundWinery);
     }
+  }
+
+  const onWinerySelected = (winery: Winery | null) => {
+    setSelectedWinery(winery);
+    if (winery == null) {
+      setWineryWines([]);
+      return; 
+    }
+    fetchWineryWines(winery);
   }
 
   const onWinerySelectionChange = (key: React.Key | null) => {
@@ -91,7 +104,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   }
 
   const foundWine: Wine | null = wineryWines.find((wine) => wine.name == wineName && wine.year == wineYear) ?? null;
-  const isWineNew = (): Boolean => { return foundWine == null; }
+  const isWineNew = (): boolean => { return foundWine == null; }
 
   const createNewSample = async () => {
     const newSample: WineSample = {
@@ -117,14 +130,29 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       }
       const res: CommunicationResult<WineSample> = await CatalogueRepository.createSample(newSample, newWine);
       if (isSuccess(res)) {
+        clearInputData();
         setWineSamples([...wineSamples, res.data]);
       }
     } else {
       const res: CommunicationResult<WineSample> = await CatalogueRepository.createSample(newSample);
       if (isSuccess(res)) {
+        clearInputData();
         setWineSamples([...wineSamples, res.data]);
       }
     }
+  }
+
+  const clearInputData = () => {
+    setWineryName("");
+    setWineName("");
+    setSampleName("");
+    setWineYear(null);
+    setSampleRating(null);
+    setWineColor("");
+    setResidualSugar(null);
+    setAlcoholContent(null);
+    setAcidity(null);
+    setGrapeSweetness(null);
   }
 
   const sendVoiceInput = async () => {
@@ -132,13 +160,16 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     const resWine = await axiosCall("POST", "/ner", { sentence: transcript }, undefined, "application/json", "http://localhost:8000");
     if (isSuccess(resWine)) {
       const wine = (resWine.data as { entity: {
-        winery: string,
-        wine: string,
-        year: string,
-        color: string
-        rating: string
+        winery: string | null,
+        wine: string | null,
+        year: string | null,
+        color: string | null,
+        rating: string | null
       } }).entity
-      console.log(wine.winery)
+
+      console.log(wine);
+      const notNullValuesCount = Object.values(wine).filter(value => value !== null).length;
+      console.log(`Number of null values: ${notNullValuesCount}`);
 
       let matchedWinery: Winery | null = null;
       if (wine.winery != null) {
@@ -154,15 +185,16 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       }
 
       if (matchedWinery) { 
-        setSelectedWinery(matchedWinery);
-        setWineryName(matchedWinery.name); 
-      } else if (selectedWinery == null) { 
-        setSelectedWinery(null);
+        onWinerySelected(matchedWinery)
+        setWineryName(matchedWinery.name);
+        if (notNullValuesCount == 1) { wineryInputRef.current?.focus()}
+      } else if (selectedWinery == null) {
+        onWinerySelected(null);
         if (wine.winery != null) { setWineryName(wine.winery); }
       }
-      if (wine.wine != null && wineName.isEmpty()) { setWineName(wine.wine); }
-      if (wine.year != null && !isNaN(parseInt(wine.year))) { setWineYear(parseInt(wine.year)); }
-      if (wine.rating != null && !isNaN(parseInt(wine.year))) { setSampleRating(parseInt(wine.rating)); }
+      if (wine.wine != null) { setWineName(wine.wine); if (notNullValuesCount == 1) { wineInputRef.current?.focus(); } }
+      if (wine.year != null && !isNaN(parseInt(wine.year))) { setWineYear(parseInt(wine.year)); if (notNullValuesCount == 1) { wineYearInputRef.current?.focus()} }
+      if (wine.rating != null && !isNaN(parseInt(wine.rating))) { setSampleRating(parseInt(wine.rating)); }
       if (wine.color != null) { setWineColor(wine.color); }
     }
   }
@@ -177,6 +209,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   return (
     <div className="flex flex-col gap-4">
       <Autocomplete
+        ref={wineryInputRef}
         allowsCustomValue
         label={t("winery", { ns: TranslationNS.catalogues })}
         placeholder={t("wineryPlaceholderSelect", { ns: TranslationNS.catalogues })}
@@ -201,7 +234,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         {(item) => <AutocompleteItem key={item.id}>{item.name}</AutocompleteItem>}
       </Autocomplete>
 
-      <CatalogueInputField 
+      <CatalogueInputField
+        ref={wineInputRef}
         label={t("wine", { ns: TranslationNS.catalogues })}
         placeholder={t("winePlaceholder", { ns: TranslationNS.catalogues })}
         value={wineName}
@@ -227,7 +261,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           StartContent={PencilSquareIcon}
         />
 
-        <CatalogueInputField 
+        <CatalogueInputField
+          ref={wineYearInputRef}
           type="number"
           value={wineYear == null ? "" : wineYear.toString()} 
           onValueChange={(val) => setWineYear(val == "" ? null : parseInt(val))} 

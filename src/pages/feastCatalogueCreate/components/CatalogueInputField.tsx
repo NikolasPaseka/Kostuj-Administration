@@ -1,6 +1,7 @@
 import { Input } from '@nextui-org/react'
+import { forwardRef } from 'react';
 
-type Props = { 
+type Props = {
   value?: string, 
   onValueChange?: (val: string) => void, 
   isRequired?: boolean; 
@@ -15,9 +16,10 @@ type Props = {
   description?: string | React.ReactNode;
 };
 
-const CatalogueInputField = ({ value, onValueChange, isRequired = false, isDisabled = false, isReadOnly = false, label, placeholder, type = "text", StartContent = null, description }: Props) => {
+const CatalogueInputField = forwardRef<HTMLInputElement, Props>(({ value, onValueChange, isRequired = false, isDisabled = false, isReadOnly = false, label, placeholder, type = "text", StartContent = null, description }: Props, ref) => {
   return (
     <Input
+      ref={ref}
       value={value}
       onValueChange={onValueChange}
       variant="faded"
@@ -38,6 +40,6 @@ const CatalogueInputField = ({ value, onValueChange, isRequired = false, isDisab
       description={description}
     />
   )
-}
+});
 
 export default CatalogueInputField

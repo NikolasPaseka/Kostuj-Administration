@@ -13,6 +13,7 @@ type AuthContextType = {
     logout: () => void,
     isLoggedIn: () => boolean,
     getUserData: () => UserAuth | null
+    saveAuthResult: (userAuth: UserAuth) => void
 };
 
 type Props = { children: React.ReactNode };
@@ -41,13 +42,17 @@ export const AuthProvider = ({ children }: Props) => {
 
         if (isSuccess(res)) {
             const userAuth: UserAuth = res.data;
-            setAccessToken(userAuth.accessToken);
-            localStorage.setItem("accessToken", userAuth.accessToken);
-            localStorage.setItem("userAuth", JSON.stringify(userAuth));
+            saveAuthResult(userAuth);
             navigate("/");
         }
         return res;
     };
+
+    const saveAuthResult = (userAuth: UserAuth) => {
+      setAccessToken(userAuth.accessToken);
+      localStorage.setItem("accessToken", userAuth.accessToken);
+      localStorage.setItem("userAuth", JSON.stringify(userAuth));
+    }
     
     const logout = () => {
         localStorage.removeItem("accessToken");
@@ -68,7 +73,7 @@ export const AuthProvider = ({ children }: Props) => {
 
     return (
         <AuthContext.Provider
-            value={{ accessToken, setAccessToken, logout, login, isLoggedIn, getUserData }}
+            value={{ accessToken, setAccessToken, logout, login, isLoggedIn, getUserData, saveAuthResult }}
         >
       {isReady ? children : null}
         </AuthContext.Provider>
