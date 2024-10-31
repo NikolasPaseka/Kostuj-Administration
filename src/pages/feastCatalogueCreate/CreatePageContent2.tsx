@@ -176,7 +176,6 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
           onSelectionChange={onWinerySelectionChange}
           isRequired
           variant="faded"
-          labelPlacement="outside"
           defaultItems={adminsWineries}
           description={
             wineryTitle.length > 0 && !isWineryNew() ? (

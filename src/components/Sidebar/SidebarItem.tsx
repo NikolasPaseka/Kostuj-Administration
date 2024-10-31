@@ -4,7 +4,7 @@ import AppRoutes from '../../utils/AppRoutes';
 
 interface Props {
   path: string;
-  text: string;
+  text?: string;
   Icon: React.ComponentType<{
     className?: string;
   }>;
@@ -27,7 +27,7 @@ const SidebarItem = ({ path, text, Icon }: Props) => {
         isActive() ? 'bg-primary text-onPrimary rounded-xl' : ''
       }`}
     >
-      <Icon className="w-6 h-6 mr-2" />
+      <Icon className={`w-6 h-6 ${text !== undefined ? "mr-2" : "m-auto"}`} />
       {text}
     </Link>
   )

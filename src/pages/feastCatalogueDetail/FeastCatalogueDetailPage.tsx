@@ -4,9 +4,9 @@ import { CommunicationResult, isSuccess } from '../../communication/Communicatio
 import { Catalogue } from '../../model/Catalogue';
 import { resolveUiState, UiState, UiStateType } from '../../communication/UiState';
 import UiStateHandler from '../../components/UiStateHandler';
-import { Card, CardBody, Switch, Divider, useDisclosure } from '@nextui-org/react';
+import { Card, CardBody, Switch, Divider, useDisclosure, Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem } from '@nextui-org/react';
 import CardInfoRow from './components/CardInfoRow';
-import { ArrowDownTrayIcon, CalendarDaysIcon, ChevronRightIcon, CurrencyDollarIcon, MapPinIcon, PencilSquareIcon, SparklesIcon, TrashIcon, UserIcon } from '@heroicons/react/24/solid';
+import { ArrowDownOnSquareIcon, ArrowDownTrayIcon, ArrowUpOnSquareIcon, CalendarDaysIcon, ChevronRightIcon, CurrencyDollarIcon, EllipsisVerticalIcon, MapPinIcon, PencilSquareIcon, SparklesIcon, TrashIcon, UserIcon } from '@heroicons/react/24/solid';
 import PrimaryButton from '../../components/PrimaryButton';
 import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../translations/i18n';
@@ -66,17 +66,58 @@ const FeastCatalogueDetailPage = () => {
     <div className="">
       { catalogue && <>
           <div className="flex flex-row items-center justify-end my-4">
-            <Switch isSelected={catalogue?.published} onValueChange={(state: boolean) => updatePublishState(state)}>
+            <Switch isSelected={catalogue?.published} onValueChange={(state: boolean) => updatePublishState(state)} className="px-4">
               {t("publish", { ns: TranslationNS.catalogues })}
             </Switch>
+            
             <Link to={`/feastCatalogues/${catalogue.id}/edit`}>
               <PrimaryButton className="mx-2" EndContent={PencilSquareIcon}>
                 {t("edit", { ns: TranslationNS.catalogues })}
               </PrimaryButton>
             </Link>
-            <PrimaryButton onClick={deleteCatalogue} className="mx-2 bg-danger" EndContent={TrashIcon}>
+
+            <Dropdown>
+            <DropdownTrigger className="hidden sm:flex">
+              <Button
+                size="md"
+                color="secondary"
+                variant="bordered"
+                className="min-w-4 px-2 rounded-md bg-lightContainer text-black border-lightContainer"
+              >
+                <EllipsisVerticalIcon className="w-6 h-6" />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              disallowEmptySelection
+              aria-label="Table Columns"
+            >
+              <DropdownItem
+                startContent={<ArrowDownOnSquareIcon className="w-6 h-6" />}
+                description={"Import data from excel file"}
+                onClick={onOpen}
+              >
+                {"Import"}
+              </DropdownItem>
+              <DropdownItem
+                startContent={<ArrowUpOnSquareIcon className="w-6 h-6" />}
+                description={"Export data to excel file"}
+              >
+                {"Export"}
+              </DropdownItem>
+              <DropdownItem
+                startContent={<TrashIcon className="w-6 h-6" />}
+                description={"Delete the catalogue and all its content"}
+                color='danger'
+                onClick={deleteCatalogue}
+              >
+                {"Delete"}
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+
+            {/* <PrimaryButton onClick={deleteCatalogue} className="mx-2 bg-danger" EndContent={TrashIcon}>
               {t("delete", { ns: TranslationNS.catalogues })}
-            </PrimaryButton>
+            </PrimaryButton> */}
           </div>
 
           <div className="flex gap-4"> 
@@ -115,7 +156,6 @@ const FeastCatalogueDetailPage = () => {
           
           <div className="flex items-center py-4 mt-4 px-6">
             <h1 className="text-lg font-bold">Catalogue Content</h1>
-            <PrimaryButton onClick={onOpen} className="mx-8">Import data</PrimaryButton>
           </div>
           
           <div className="flex gap-6 px-6">

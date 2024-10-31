@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import PrimaryButton from "../../components/PrimaryButton"
 import CatalogueInputField from "./components/CatalogueInputField"
 import { ClipboardDocumentIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
-import { Autocomplete, AutocompleteItem, Divider, Radio, RadioGroup, Slider } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Checkbox, Divider, Radio, RadioGroup, Slider } from "@nextui-org/react";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { Winery } from "../../model/Winery";
 import { Catalogue } from "../../model/Catalogue";
@@ -38,6 +38,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   const [wineYear, setWineYear] = useState<number | null>(null);
   const [sampleRating, setSampleRating] = useState<number | null>(null);
   const [wineColor, setWineColor] = useState<string>("");
+  const [isChampion, setIsChampion] = useState<boolean>(false);
+  const [sampleNote, setSampleNote] = useState<string>("");
   const [residualSugar, setResidualSugar] = useState<number | null>(null);
   const [alcoholContent, setAlcoholContent] = useState<number | null>(null);
   const [acidity, setAcidity] = useState<number | null>(null);
@@ -107,40 +109,35 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   const isWineNew = (): boolean => { return foundWine == null; }
 
   const createNewSample = async () => {
+    if (selectedWinery == null) { return; }
+
     const newSample: WineSample = {
       name: sampleName,
       rating: sampleRating ?? 0,
-      wineId: foundWine?.id ?? "",
+      wineId: "",
       catalogueId: catalogue.id,
-      // TODO
-      champion: false
+      champion: isChampion,
+      note: sampleNote
     }
-    let newWine: Wine;
-    if (isWineNew() && selectedWinery != null) {
-      newWine = {
-        id: "",
-        name: wineName,
-        color: wineColor,
-        year: wineYear ?? 0,
-        residualSugar: residualSugar ?? undefined,
-        alcoholContent: alcoholContent ?? undefined,
-        acidity: acidity ?? undefined,
-        grapesSweetness: grapeSweetness ?? undefined,
-        winaryId: selectedWinery.id
-      }
-      const res: CommunicationResult<WineSample> = await CatalogueRepository.createSample(newSample, newWine);
-      if (isSuccess(res)) {
-        clearInputData();
-        setWineSamples([...wineSamples, res.data]);
-      }
-    } else {
-      const res: CommunicationResult<WineSample> = await CatalogueRepository.createSample(newSample);
-      if (isSuccess(res)) {
-        clearInputData();
-        setWineSamples([...wineSamples, res.data]);
-      }
+    const wine = {
+      id: "",
+      name: wineName,
+      color: wineColor,
+      year: wineYear ?? 0,
+      residualSugar: residualSugar ?? undefined,
+      alcoholContent: alcoholContent ?? undefined,
+      acidity: acidity ?? undefined,
+      grapesSweetness: grapeSweetness ?? undefined,
+      winaryId: selectedWinery.id,
+      grapeVarietals: [{ grape: wineName }]
     }
-  }
+
+    const res: CommunicationResult<WineSample> = await CatalogueRepository.createSample(newSample, wine, selectedWinery.id);
+    if (isSuccess(res)) {
+      clearInputData();
+      setWineSamples([...wineSamples, res.data]);
+    }
+}
 
   const clearInputData = () => {
     setWineryName("");
@@ -220,7 +217,6 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         errorMessage={"This winery is not in the list"}
         isRequired
         variant="faded"
-        labelPlacement="outside"
         defaultItems={participatedWineries}
         startContent={<ClipboardDocumentIcon className="w-5 h-5 text-gray-600" /> }
         inputProps={{
@@ -233,24 +229,44 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       >
         {(item) => <AutocompleteItem key={item.id}>{item.name}</AutocompleteItem>}
       </Autocomplete>
+      
+      <div className="flex flex-row gap-4">
 
-      <CatalogueInputField
-        ref={wineInputRef}
-        label={t("wine", { ns: TranslationNS.catalogues })}
-        placeholder={t("winePlaceholder", { ns: TranslationNS.catalogues })}
-        value={wineName}
-        onValueChange={setWineName}
-        isRequired
-        StartContent={ClipboardDocumentIcon}
-        description={
-          wineName.length > 0 && !isWineNew() ? (
-            <p className="text-green-400">Selected wine</p>
-          ) : wineName.length > 0 ? (
-            <p className="text-red-400">Creating new wine</p>
-          ) : ( "" )
-        }
-      >
-      </CatalogueInputField>
+        <CatalogueInputField
+          ref={wineInputRef}
+          label={t("wine", { ns: TranslationNS.catalogues })}
+          placeholder={t("winePlaceholder", { ns: TranslationNS.catalogues })}
+          value={wineName}
+          onValueChange={setWineName}
+          isRequired
+          StartContent={ClipboardDocumentIcon}
+          className="flex-1"
+          description={
+            wineName.length > 0 && !isWineNew() ? (
+              <p className="text-green-400">Selected wine</p>
+            ) : wineName.length > 0 ? (
+              <p className="text-red-400">Creating new wine</p>
+            ) : ( "" )
+          }
+        >
+        </CatalogueInputField>
+
+        <div className="flex-1">
+        <RadioGroup
+          isRequired
+          label={t("wineColor", { ns: TranslationNS.catalogues })}
+          orientation="horizontal"
+          value={wineColor}
+          onValueChange={setWineColor}
+          color="secondary"
+          className="w-[100%]"
+        >
+          <Radio value={WineColor.RED}>{t("redWineColor", { ns: TranslationNS.catalogues })}</Radio>
+          <Radio value={WineColor.WHITE}>{t("whiteWineColor", { ns: TranslationNS.catalogues })}</Radio>
+          <Radio value={WineColor.ROSE}>{t("roseWineColor", { ns: TranslationNS.catalogues })}</Radio>
+        </RadioGroup>
+        </div>
+      </div>
 
       <div className="flex flex-row gap-4">
         <CatalogueInputField
@@ -272,31 +288,39 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         />
       </div>
       <div className="flex flex-row gap-4">
-        <Slider 
-          label={t("rating", { ns: TranslationNS.catalogues })}
-          value={sampleRating ?? 0}
-          onChange={(value) => typeof value == "number" ? setSampleRating(value) : setSampleRating(value[0])} 
-          step={1} 
-          // TODO: change only to catalogue rating
-          maxValue={catalogue.maxWineRating == 0 ? 100 : catalogue.maxWineRating} 
-          minValue={0} 
-          defaultValue={0}
-          className="max-w-md"
-          color="secondary"
-        />
-
-        <RadioGroup
-          label={t("wineColor", { ns: TranslationNS.catalogues })}
-          orientation="horizontal"
-          value={wineColor}
-          onValueChange={setWineColor}
-          color="secondary"
-        >
-          <Radio value={WineColor.RED}>{t("redWineColor", { ns: TranslationNS.catalogues })}</Radio>
-          <Radio value={WineColor.WHITE}>{t("whiteWineColor", { ns: TranslationNS.catalogues })}</Radio>
-          <Radio value={WineColor.ROSE}>{t("roseWineColor", { ns: TranslationNS.catalogues })}</Radio>
-        </RadioGroup>
+        <div className="flex-1">
+          <Slider 
+            label={t("rating", { ns: TranslationNS.catalogues })}
+            value={sampleRating ?? 0}
+            onChange={(value) => typeof value == "number" ? setSampleRating(value) : setSampleRating(value[0])} 
+            step={1} 
+            // TODO: change only to catalogue rating
+            maxValue={catalogue.maxWineRating == 0 ? 100 : catalogue.maxWineRating} 
+            minValue={0} 
+            defaultValue={0}
+            color="secondary"
+          />
+        </div>
+        
+        <div className="flex-1 flex items-center">
+          <Checkbox
+            color="secondary"
+            isSelected={isChampion}
+            onValueChange={setIsChampion}
+          >
+            Champion wine 👑
+          </Checkbox>
+        </div>
       </div> 
+
+      <CatalogueInputField
+          value={sampleNote} 
+          onValueChange={setSampleNote} 
+          label={"Note"}
+          placeholder={"Enter sample Note"}
+          StartContent={PencilSquareIcon}
+      />
+
       <h2 className="text-lg font-bold">
         {t("wineDetails", { ns: TranslationNS.catalogues })}
       </h2>

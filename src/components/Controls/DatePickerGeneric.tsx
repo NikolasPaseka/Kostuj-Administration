@@ -12,18 +12,24 @@ type Props = {
 
 const DatePickerGeneric = ({ value, onChange, label }: Props) => {
 
-  const dateForInput = value != null ? parseAbsoluteToLocal(value.toISOString()) : null;
+  const dateForInput = value != null ? parseAbsoluteToLocal(value.toISOString()) : null
   
   return (
     <I18nProvider locale="cs-CZ">
       <DatePicker 
         hideTimeZone
         value={dateForInput} 
-        onChange={(date) => onChange(new Date(date.toAbsoluteString()))} 
+        onChange={(date) => { 
+          if (date.toAbsoluteString != undefined) {
+            onChange(new Date(date.toAbsoluteString()))
+          } else {
+            onChange(new Date(date.toString()))
+          }
+        }}
         variant="faded" 
         isRequired 
         label={label}
-        labelPlacement="outside"
+        labelPlacement="inside"
         startContent={<CalendarDaysIcon className="w-5 h-5 text-gray-600" />}
         selectorIcon={<ChevronDownIcon className="w-3 h-3 text-gray-600" />}
         dateInputClassNames={{

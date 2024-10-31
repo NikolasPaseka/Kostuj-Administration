@@ -1,4 +1,4 @@
-import { Button } from '@nextui-org/react'
+import { Button, forwardRef } from '@nextui-org/react'
 
 type Props = { 
   children: React.ReactNode, 
@@ -12,11 +12,12 @@ type Props = {
   size?: "sm" | "md" | "lg";
 }
 
-const PrimaryButton = ({ children, EndContent = null, className, onClick = () => {}, isDisabled = false, isSecondary = false, size="md" }: Props) => {
+const PrimaryButton = forwardRef(({ children, EndContent = null, className, onClick = () => {}, isDisabled = false, isSecondary = false, size="md" }: Props, ref) => {
   return (
     <>
       {EndContent != null ?
         <Button 
+          ref={ref}
           onClick={onClick} 
           variant={isSecondary ? "bordered" : "solid"} 
           size={size} 
@@ -32,6 +33,6 @@ const PrimaryButton = ({ children, EndContent = null, className, onClick = () =>
       }
     </>
   )
-}
+});
 
 export default PrimaryButton

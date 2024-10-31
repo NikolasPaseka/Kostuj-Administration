@@ -62,10 +62,8 @@ export const CatalogueRepository = {
         return await axiosCall(AxiosMethod.GET, `/catalogues/${catalogueId}/samples`);
     },
 
-    createSample: async (sample: WineSample, wine?: Wine): Promise<CommunicationResult<WineSample>> => {
-        return await axiosCall(AxiosMethod.POST, `/wines?createWine=${wine ? true : false}`, 
-            wine ? { "wine": wine, "sample": sample }
-                 : sample
+    createSample: async (sample: WineSample, wine: Wine, selectedWineryId: string): Promise<CommunicationResult<WineSample>> => {
+        return await axiosCall(AxiosMethod.POST, `/wines`, { sample, wine, selectedWineryId }
         );
     },
 

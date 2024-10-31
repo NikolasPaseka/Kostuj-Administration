@@ -22,6 +22,7 @@ const tableColumns = [
   {name: "YEAR", uid: "wineId.year", allowSorting: true},
   {name: "WINERY", uid: "wineId.winaryId.name"},
   {name: "RATING", uid: "rating", allowSorting: true},
+  {name: "NOTE", uid: "note"},
   {name: "ACTIONS", uid: "actions"}
 ];
 
@@ -93,6 +94,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
   const [sampleToRemove, setSampleToRemove] = React.useState<WineSample | null>(null);
 
   useEffect(() => {
+    console.log(wineSamples)
     setWineSamplesState(wineSamples.map(sample => ({...sample, tableFlag: "display"})));
   }, [wineSamples]);
 
@@ -252,6 +254,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
           );
         } else {
           return (
+            <div className="flex items-center gap-2">
             <CircularProgress
               aria-label="Loading..."
               size="md"
@@ -263,6 +266,8 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
                 value: "text-sm font-semibold",
               }}
             />
+            {sample.champion && "👑"}
+            </div>
           )
         }
       default:

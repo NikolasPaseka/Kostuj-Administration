@@ -19,20 +19,24 @@ import FeastCatalogueWineriesContentPage from './pages/feastCatalogueContent/Fea
 const AppLayout = () => {
   const location = useLocation();
   const hideSidebarRoutes = [
-    /^\/profile$/,
     /^\/signIn$/,
     /^\/register$/,
-    /^\/feastCatalogues\/create$/,
-    /^\/feastCatalogues\/.*\/edit$/,
   ];
 
+  const smallerSidebarRoutes = [
+    /^\/profile$/,
+    /^\/feastCatalogues\/create$/,
+    /^\/feastCatalogues\/.*\/edit$/,
+  ]
+
   const isSidebarVisible = !hideSidebarRoutes.some((pattern) => pattern.test(location.pathname));
+  const isSidebarSmaller = smallerSidebarRoutes.some((pattern) => pattern.test(location.pathname));
 
   return (
     <div className="flex">
       <AuthProvider>
-        {isSidebarVisible && <Sidebar />}
-        <div className="flex-1 p-4 max-w-screen-2xl mx-auto">
+        {isSidebarVisible && <Sidebar showFull={!isSidebarSmaller} /> }
+        <div className="flex-1 py-4 px-8 max-w-screen-2xl mx-auto">
           <Routes>
             <Route path={AppRoutes.HOME} element={<HomePage />} />
             <Route path={AppRoutes.PROFILE} element={

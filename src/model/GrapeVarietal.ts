@@ -1,5 +1,5 @@
 export type GrapeVarietal = {
     grape: string,
-    shortcut: string,
+    shortcut?: string,
     color?: string,
 }

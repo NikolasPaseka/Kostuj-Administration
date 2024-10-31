@@ -105,7 +105,6 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, setCatalogue, sendCat
           variant="faded" 
           label={t("catalogueDescription", { ns: TranslationNS.catalogues })}
           placeholder={t("catalogueDescriptionPlaceholder", { ns: TranslationNS.catalogues })}
-          labelPlacement="outside"
           startContent={<PencilSquareIcon className="w-5 h-5 text-gray-600"/>}
           classNames={{
             inputWrapper: [

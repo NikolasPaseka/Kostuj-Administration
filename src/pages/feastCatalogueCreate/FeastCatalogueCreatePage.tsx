@@ -14,6 +14,7 @@ import StepIndicator from "../../components/StepIndicator";
 import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
 import { useAuth } from "../../context/AuthProvider";
 import BackNavigation from "../../components/Sidebar/BackNavigation";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 
 const FeastCatalogueCreatePage = () => {
   const [page, setPage] = useState<number>(1);
@@ -88,15 +89,17 @@ const FeastCatalogueCreatePage = () => {
 
   return (
     <>
-      <div className="flex flex-row mb-8 items-center">
+      <div className="flex flex-row mb-12 items-center">
         {/* <h1 className="text-2xl font-bold flex-1">Create Feast Catalogue</h1> */}
         <BackNavigation
           headline={<h1 className="text-2xl font-bold">Create Feast Catalogue</h1>}
           className="flex-1"
         />
         <StepIndicator currentStep={page} />
-        <PrimaryButton onClick={() => setPage(p => p - 1)} isDisabled={ page == 1 }>&lt;</PrimaryButton>
-        <PrimaryButton onClick={() => setPage(p => p + 1)} isDisabled={ page == 3 || catalogue == null }>&gt;</PrimaryButton>
+        <div className="flex gap-1 mb-4">
+          <PrimaryButton onClick={() => setPage(p => p - 1)} isDisabled={ page == 1 } className="min-w-8"> <ChevronLeftIcon className="w-5 h-5" /> </PrimaryButton>
+          <PrimaryButton onClick={() => setPage(p => p + 1)} isDisabled={ page == 3 || catalogue == null } className="min-w-8"> <ChevronRightIcon className="w-5 h-5" /> </PrimaryButton>
+        </div>
       </div>
       {page == 1 && (
         <CreatePageContent1 

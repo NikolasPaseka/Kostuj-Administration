@@ -14,9 +14,10 @@ type Props = {
     className?: string
   }> | null;
   description?: string | React.ReactNode;
+  className?: string
 };
 
-const CatalogueInputField = forwardRef<HTMLInputElement, Props>(({ value, onValueChange, isRequired = false, isDisabled = false, isReadOnly = false, label, placeholder, type = "text", StartContent = null, description }: Props, ref) => {
+const CatalogueInputField = forwardRef<HTMLInputElement, Props>(({ value, onValueChange, isRequired = false, isDisabled = false, isReadOnly = false, label, placeholder, type = "text", StartContent = null, description, className }: Props, ref) => {
   return (
     <Input
       ref={ref}
@@ -29,7 +30,8 @@ const CatalogueInputField = forwardRef<HTMLInputElement, Props>(({ value, onValu
       isReadOnly={isReadOnly}
       label={label}
       placeholder={placeholder}
-      labelPlacement="outside"
+      labelPlacement="inside"
+      className={className}
       classNames={{
           inputWrapper: [
             "data-[focus=true]:border-tertiary",
