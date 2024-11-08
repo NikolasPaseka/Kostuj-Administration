@@ -24,7 +24,6 @@ const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props)
   const [searchValue, setSearchValue] = React.useState<string>(""); 
   const [wineryToRemove, setWineryToRemove] = React.useState<Winery | null>(null);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const tableColumns = [
     {name: t("winery", { ns: TranslationNS.catalogues }), uid: "name"},
     {name: t("emailAddress", { ns: TranslationNS.catalogues }), uid: "email"},

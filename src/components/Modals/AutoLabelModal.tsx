@@ -37,11 +37,6 @@ const colorOptions = {
   },
 }
 
-const additionalOrderOptions = {
-  BY_RATING: { value: "byRating", label: "By Rating" },
-  BY_YEAR: { value: "byYear", label: "By Year" }
-};
-
 const AutoLabelModal = ({ isOpen, onOpenChange, autoLabelSamples }: Props) => {
   // Auto labeling
   const [prefixValue, setPrefixValue] = React.useState<string>("");

@@ -1,5 +1,5 @@
 import { Button, Input } from "@nextui-org/react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import GenericInput from "../components/GenericInput";
 import PrimaryButton from "../components/PrimaryButton";
 import { axiosCall } from "../communication/axios";
@@ -12,7 +12,7 @@ const VoiceTest = () => {
   const commands = [
     {
       command: 'reset',
-      callback: ({ transcript }) => { console.log("reset"); resetTranscript() }
+      callback: () => { console.log("reset"); resetTranscript() }
     },
     {
       command: 'barva vína *',

@@ -2,7 +2,8 @@ import "regenerator-runtime/runtime.js";
 import { useEffect, useRef } from "react";
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
-const useVoiceControl = (actionAfterVoiceInput: () => Promise<void>, commands?: any, ) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const useVoiceControl = (actionAfterVoiceInput: () => Promise<void>, commands?: any) => {
     const {
       transcript,
       listening,

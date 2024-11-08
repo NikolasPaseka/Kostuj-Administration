@@ -165,6 +165,9 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
 
   return (
     <div className="flex flex-col gap-4">
+      {uiState.type == UiStateType.LOADING && (
+        <p>Loading</p>
+      )}
       <div className="flex flex-row gap-4">
         <div className="flex-1 flex flex-col gap-4">
         <Autocomplete 
