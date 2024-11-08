@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react'
 import SearchInput from '../SearchInput';
-import { Button, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, Selection, Spacer, Tabs, Tab, Badge, SortDescriptor, Pagination, CircularProgress } from '@nextui-org/react';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, Selection, Spacer, Tabs, Tab, Badge, SortDescriptor, Pagination, CircularProgress } from '@nextui-org/react';
 import { UiState } from '../../communication/UiState';
 import { WineSample } from '../../model/WineSample';
 import { GrapeVarietal } from '../../model/GrapeVarietal';
@@ -13,15 +13,19 @@ import { Winery } from '../../model/Winery';
 import AutoLabelModal from '../Modals/AutoLabelModal';
 import GenericInput from '../GenericInput';
 import { getNestedValue } from './getNestedValues';
+import { TableFlag } from './TableFlagType';
+import ExportSamplesModal from '../Modals/ExportSamplesModal';
+import { WineSampleExport } from '../../model/ExportType/WineSampleExport';
 
 const tableColumns = [
   {name: "NAME", uid: "name"},
   {name: "WINENAME", uid: "wineId.name"},
   //{name: "GRAPE", uid: "wineId.grapeVarietals"},
-  {name: "COLOR", uid: "wineId.color"},
+  //{name: "COLOR", uid: "wineId.color"},
   {name: "YEAR", uid: "wineId.year", allowSorting: true},
   {name: "WINERY", uid: "wineId.winaryId.name"},
   {name: "RATING", uid: "rating", allowSorting: true},
+  {name: "COMMISSION", uid: "ratingCommission"},
   {name: "NOTE", uid: "note"},
   {name: "ACTIONS", uid: "actions"}
 ];
@@ -39,6 +43,12 @@ const actionItems = [
     label: "Edit Samples",
     description: "Switch to editing mode",
     startContent: <PencilIcon className={iconClassName} />,
+  },
+  {
+    key: "exportToExcel",
+    label: "Export to Excel",
+    description: "Export current filtered samples to Excel",
+    startContent: <AdjustmentsHorizontalIcon className={iconClassName} />,
   },
   {
     key: "autoLabel",
@@ -70,38 +80,42 @@ type Props = {
   deleteWineSample?: (wineSample: WineSample) => Promise<void>
   autoLabelSamples?: (prefix: string, orderType: string, colorOrder: string[]) => Promise<void>
   updateSamples?: (updatedSamples: WineSample[]) => void
+  exportToExcel?: (samples: WineSample[], seperateByCategory?: boolean, category?: keyof WineSampleExport) => void
   showTableControls?: boolean
 };
 
-const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, updateSamples, showTableControls=true }: Props) => {
+const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, updateSamples, exportToExcel, showTableControls=true }: Props) => {
 
   // Modals
   const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalOpenChange} = useDisclosure();
   const {isOpen: isFilterModalOpen, onOpen: onFilterModalOpen, onOpenChange: onFilterModalOpenChange} = useDisclosure();
   const {isOpen: isAutoLabelingModalOpen, onOpen: onAutoLabelingModalOpen, onOpenChange: onAutoLabelingModalOpenChange} = useDisclosure();
+  const {isOpen: isExportModalOpen, onOpen: onExportModalOpen, onOpenChange: onExportModalOpenChnage} = useDisclosure();
 
   // Table Filtering and sorting
   const [searchValue, setSearchValue] = React.useState<string>("");
   const [colorFilter, setColorFilter] = React.useState<Selection>("all");
   const [groupSelection, setGroupSelection] = React.useState<string>("wineriesOrder");
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor | undefined>(undefined);
-  // Optional pagination
-  const [page, setPage] = React.useState<number>(1);
-  const rowsPerPage = 60;
 
-  const [wineSamplesState, setWineSamplesState] = React.useState<(WineSample & { tableFlag?: "edit" | "display" | "updated" })[]>(wineSamples);
+  const [wineSamplesState, setWineSamplesState] = React.useState<(WineSample & TableFlag)[]>(wineSamples);
   const [inEditMode, setInEditMode] = React.useState<boolean>(false);
   const [sampleToRemove, setSampleToRemove] = React.useState<WineSample | null>(null);
 
+  // Optional pagination
+  const [page, setPage] = React.useState<number>(1);
+  const rowsPerPage = inEditMode ? 120 : 60;
+
   useEffect(() => {
-    console.log(wineSamples)
     setWineSamplesState(wineSamples.map(sample => ({...sample, tableFlag: "display"})));
   }, [wineSamples]);
 
   // first filter items and then sort them for final result
-  const filteredSamples = React.useMemo(() => {
+  const filteredSamples = React.useMemo(() => {  
     let filteredSamples = [...wineSamplesState];
-    setPage(1); // reset page when filtering
+    if (!inEditMode) {
+     setPage(1); // reset page when filtering
+    }
 
     if (searchValue.length > 0) {
       filteredSamples = filteredSamples.filter((sample) =>
@@ -117,7 +131,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
     }
 
     return filteredSamples;
-  }, [wineSamplesState, colorFilter, searchValue]);
+  }, [wineSamplesState, inEditMode, searchValue, colorFilter]);
 
   // sort items for final result -- this is passed to the GenericTable
   const sortedItems = React.useMemo(() => {
@@ -177,7 +191,8 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
     }
   }, [usePagination, sortedItems, page]);
 
-  const updateSample = (updatedSample: WineSample) => {
+  const updateSample = (updatedSample: WineSample & TableFlag) => {
+    updatedSample.tableFlag = "updated";
     setWineSamplesState((prevSamples) =>
       prevSamples.map((sample) =>
         sample.id === updatedSample.id ? updatedSample : sample
@@ -186,7 +201,6 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
   };
 
   const renderCell = useCallback((sample: WineSample, columnKey: React.Key) => {
-    console.log("renderCell");
     const cellValue = getNestedValue(sample, columnKey as string);
 
     switch (columnKey) {
@@ -196,15 +210,22 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
             <GenericInput 
               value={sample.name ?? ""} 
               onChange={(value) => {
-                const updatedSample = { ...sample, name: value, tableFlag: "updated" };
+                const updatedSample = { ...sample, name: value };
                 updateSample(updatedSample); // Update the state with the new value
               }}
-              className="w-32"
+              className="w-24"
             />
           );
         } else {
           return cellValue;
         }
+      case "wineId.name":
+        return (
+          <div className='flex items-center gap-2'>
+            <span className={`h-4 w-4 rounded-full bg-${wineColorChipColor[(sample.wineId as Wine).color]}`}></span>
+            {cellValue}
+          </div>
+        )
       case "actions":
         return (
           <div className=" relative flex items-center gap-2 w-0">
@@ -230,26 +251,17 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
         );
       case "wineId.grapeVarietals":
         return cellValue?.map((grape: GrapeVarietal) => grape.grape).join(", ");
-      case "wineId.color":
-        return (
-          <Chip className={`
-            capitalize text-center w-12 max-w-full bg-${wineColorChipColor[(sample.wineId as Wine).color]} ${(sample.wineId as Wine).color == WineColor.RED ? "text-white" : ""}`
-          } size="sm" variant="flat"
-          >
-            {cellValue}
-          </Chip>
-        );
       case "rating":
         if (inEditMode) {
           return (
             <GenericInput 
               value={sample.rating?.toString() ?? ""} 
               onChange={(value) => {
-                const updatedSample = { ...sample, rating: parseInt(value), tableFlag: "updated" };
+                const updatedSample = { ...sample, rating: parseInt(value) };
                 updateSample(updatedSample); // Update the state with the new value
               }}
               type='number'
-              className="w-32"
+              className='w-20'
             />
           );
         } else {
@@ -270,13 +282,43 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
             </div>
           )
         }
+    case "ratingCommission":
+      if (inEditMode) {
+        return (
+          <GenericInput 
+            value={sample.ratingCommission?.toString() ?? ""} 
+            onChange={(value) => {
+              const updatedSample = { ...sample, ratingCommission: parseInt(value) };
+              updateSample(updatedSample);
+            }}
+            type='number'
+            className="w-20"
+          />
+        );
+      } else {
+        return cellValue;
+      }
+      case "note":
+        if (inEditMode) {
+          return (
+            <GenericInput 
+              value={sample.note ?? ""} 
+              onChange={(value) => {
+                const updatedSample = { ...sample, note: value };
+                updateSample(updatedSample); 
+              }}
+              className="w-48"
+            />
+          );
+        } else {
+          return cellValue;
+        }
       default:
         return cellValue;
     }
   }, [inEditMode, onDeleteModalOpen]);
 
   const MemoizedGenericTable = React.useMemo(() => {
-    console.log("Memo render");
     return (
     <GenericTable 
         tableColumns={tableColumns}
@@ -383,6 +425,8 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
                 } else if (key === "edit") {
                   setInEditMode(true);
                   setWineSamplesState(wineSamples.map((sample) => ({...sample, tableFlag: "edit"})));
+                } else if (key === "exportToExcel") {
+                  onExportModalOpen();
                 }
               }}
             >
@@ -493,6 +537,17 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
         isOpen={isAutoLabelingModalOpen} 
         onOpenChange={onAutoLabelingModalOpenChange} 
         autoLabelSamples={autoLabelSamples}
+      />
+
+      <ExportSamplesModal 
+        isOpen={isExportModalOpen} 
+        onOpenChange={onExportModalOpenChnage} 
+        onConfirm={(onlyFilteredSamples, seperateByCategory, category) => {
+          if (!exportToExcel) { return; }
+
+          const samplesToExport = onlyFilteredSamples ? sortedItems : wineSamples;
+          exportToExcel(samplesToExport, seperateByCategory, category);
+        }}
       />
     </div>
   )

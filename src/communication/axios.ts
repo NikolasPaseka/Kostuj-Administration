@@ -13,7 +13,7 @@ type BackendError = {
     statusCode: number;
 }
 
-const baseURL = "http://localhost:3000/";
+const baseURL = import.meta.env.VITE_BE_URL;
 export const axiosInstance = axios.create({
     baseURL: baseURL,
     timeout: 10000,

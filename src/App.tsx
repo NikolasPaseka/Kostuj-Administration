@@ -16,6 +16,8 @@ import VoiceTest from './pages/VoiceTest';
 import UsersManagementPage from './pages/usersManagement/UsersManagementPage';
 import FeastCatalogueWineriesContentPage from './pages/feastCatalogueContent/FeastCatalogueWineriesContentPage';
 
+console.log(import.meta.env.VITE_BE_URL)
+
 const AppLayout = () => {
   const location = useLocation();
   const hideSidebarRoutes = [
@@ -27,6 +29,7 @@ const AppLayout = () => {
     /^\/profile$/,
     /^\/feastCatalogues\/create$/,
     /^\/feastCatalogues\/.*\/edit$/,
+    /^\/feastCatalogues\/.*\/content\/wine$/,
   ]
 
   const isSidebarVisible = !hideSidebarRoutes.some((pattern) => pattern.test(location.pathname));

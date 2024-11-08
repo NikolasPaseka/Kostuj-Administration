@@ -4,6 +4,7 @@ export type WineSample = {
     id?: string,
     name?: string,
     rating?: number,
+    ratingCommission?: number,
     champion: boolean,
     note?: string,
     catalogueId: string,

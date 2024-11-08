@@ -39,6 +39,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   const [sampleRating, setSampleRating] = useState<number | null>(null);
   const [wineColor, setWineColor] = useState<string>("");
   const [isChampion, setIsChampion] = useState<boolean>(false);
+  const [ratingCommission, setRatingCommission] = useState<number | null>(null);
   const [sampleNote, setSampleNote] = useState<string>("");
   const [residualSugar, setResidualSugar] = useState<number | null>(null);
   const [alcoholContent, setAlcoholContent] = useState<number | null>(null);
@@ -117,7 +118,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       wineId: "",
       catalogueId: catalogue.id,
       champion: isChampion,
-      note: sampleNote
+      note: sampleNote,
+      ratingCommission: ratingCommission ?? undefined
     }
     const wine = {
       id: "",
@@ -150,6 +152,9 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     setAlcoholContent(null);
     setAcidity(null);
     setGrapeSweetness(null);
+    setIsChampion(false);
+    setSampleNote("");
+    setRatingCommission(null);
   }
 
   const sendVoiceInput = async () => {
@@ -302,7 +307,17 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           />
         </div>
         
-        <div className="flex-1 flex items-center">
+        <div className="flex-1 flex items-center gap-4">
+          <CatalogueInputField
+            // TODO add ref for voice control
+            type="number"
+            value={ratingCommission == null ? "" : ratingCommission.toString()} 
+            onValueChange={(val) => setRatingCommission(val == "" ? null : parseInt(val))} 
+            label={"Rating Commission"}
+            placeholder={"Enter rating commission"}
+            StartContent={PencilSquareIcon}
+            className="flex-1"
+          />
           <Checkbox
             color="secondary"
             isSelected={isChampion}

@@ -6,11 +6,15 @@ import { WineSample } from "../../model/WineSample";
 import WineTable from "../../components/Tables/WineTable";
 import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
+import { ExcelExporter } from "../../utils/ExcelExporter";
+import { Catalogue } from "../../model/Catalogue";
+import { WineSampleExport } from "../../model/ExportType/WineSampleExport";
 
 const FeastCatalogueWineContentPage = () => {
   const { id } = useParams();
 
   const [uiState, setUiState] = useState<UiState>({ type: UiStateType.LOADING });
+  const [catalogue, setCatalogue] = useState<Catalogue | null>(null);
   const [samples, setSamples] = useState<WineSample[]>([]);
 
   useEffect(() => {
@@ -20,7 +24,14 @@ const FeastCatalogueWineContentPage = () => {
       setSamples(resolveUiState(res, setUiState) ?? []);
     }
 
+    const fetchCatalogueDetail = async () => {
+      if (id == null) { return }
+      const res: CommunicationResult<Catalogue> = await CatalogueRepository.getCatalogueDetail(id);
+      if (isSuccess(res)) { setCatalogue(res.data); } 
+    }
+
     fetchCatalogueSamples();
+    fetchCatalogueDetail();
   }, [id]);
 
   const deleteWineSample = async (sample: WineSample) => {
@@ -54,6 +65,21 @@ const FeastCatalogueWineContentPage = () => {
     }
   }
 
+  const exportToExcel = async (samples: WineSample[], seperateByCategory?: boolean, category?: keyof WineSampleExport) => {
+    const fileName = `${catalogue?.title ?? "catalogue"}-samples`;
+
+    if (seperateByCategory && category) {
+      return ExcelExporter.exportToExcelByCategory(samples.map(sample => {
+        return new WineSampleExport(sample);
+      }), fileName, category);
+
+    } else {
+      return ExcelExporter.exportToExcel(samples.map(sample => {
+        return new WineSampleExport(sample);
+      }), fileName);
+    }
+  }
+
   return (
     <>
       <WineTable 
@@ -62,6 +88,7 @@ const FeastCatalogueWineContentPage = () => {
         deleteWineSample={deleteWineSample}
         autoLabelSamples={autoLabelSamples}
         updateSamples={updateSamples}
+        exportToExcel={exportToExcel}
       />
     </>
   )
