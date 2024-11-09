@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import SearchInput from '../SearchInput';
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, Selection, Spacer, Tabs, Tab, Badge, SortDescriptor, Pagination, CircularProgress } from '@nextui-org/react';
 import { UiState } from '../../communication/UiState';
@@ -16,6 +16,8 @@ import { getNestedValue } from './getNestedValues';
 import { TableFlag } from './TableFlagType';
 import ExportSamplesModal from '../Modals/ExportSamplesModal';
 import { WineSampleExport } from '../../model/ExportType/WineSampleExport';
+import WineFilterModal from '../Modals/WineFilterModal';
+import { RangeFilter } from '../../model/Domain/RangeFilter';
 
 const tableColumns = [
   {name: "NAME", uid: "name"},
@@ -74,6 +76,12 @@ const wineColorOptions = [
 //   {name: "Wineries", uid: "wineries"},
 //   {name: "Grapes", uid: "grapes"},
 // ]
+
+// TODO change max rating
+const minRating = 0;
+const maxRating = 100;
+const maxYear = new Date().getFullYear();
+
 type Props = { 
   wineSamples: WineSample[], 
   uiState: UiState,
@@ -92,9 +100,16 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
   const {isOpen: isAutoLabelingModalOpen, onOpen: onAutoLabelingModalOpen, onOpenChange: onAutoLabelingModalOpenChange} = useDisclosure();
   const {isOpen: isExportModalOpen, onOpen: onExportModalOpen, onOpenChange: onExportModalOpenChnage} = useDisclosure();
 
+  // Filter constants
+  const [minYear, setMinYear] = React.useState<number>(0);
+  const [ratingCommissions, setRatingCommissions] = React.useState<(number | null)[]>([]);
+
   // Table Filtering and sorting
   const [searchValue, setSearchValue] = React.useState<string>("");
   const [colorFilter, setColorFilter] = React.useState<Selection>("all");
+  const [ratingFilterRange, setRatingFilterRange] = React.useState<RangeFilter>({min: minRating, max: maxRating});
+  const [yearFilterRange, setYearFilterRange] = React.useState<RangeFilter>({min: minYear, max: maxYear});
+  const [ratingCommissionFilter, setRatingCommissionFilter] = React.useState<(number | null)[]>([]);
   const [groupSelection, setGroupSelection] = React.useState<string>("wineriesOrder");
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor | undefined>(undefined);
 
@@ -104,14 +119,27 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
 
   // Optional pagination
   const [page, setPage] = React.useState<number>(1);
-  const rowsPerPage = inEditMode ? 120 : 60;
+  const rowsPerPage = inEditMode ? 60 : 60;
 
   useEffect(() => {
     setWineSamplesState(wineSamples.map(sample => ({...sample, tableFlag: "display"})));
+    setMinYear(Math.min(...wineSamples.map(sample => {
+      if ((sample.wineId as Wine).year == 0) { return Number.MAX_VALUE; }
+      return (sample.wineId as Wine).year
+    })));
+    setRatingCommissions(Array.from(new Set(wineSamples.map(sample => sample.ratingCommission ?? null))));
   }, [wineSamples]);
 
   // first filter items and then sort them for final result
-  const filteredSamples = React.useMemo(() => {  
+  const previousFilteredSamples = useRef<(WineSample & TableFlag)[]>([]);
+  const filteredSamples = React.useMemo(() => {
+    if (inEditMode) {
+      return previousFilteredSamples.current.map(sample => {
+        const updatedSample = wineSamplesState.find(s => s.id === sample.id && (s.tableFlag === "updated" || s.tableFlag === "edit"));
+        return updatedSample ? updatedSample : sample;
+      });
+    }
+    
     let filteredSamples = [...wineSamplesState];
     if (!inEditMode) {
      setPage(1); // reset page when filtering
@@ -129,9 +157,32 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
         Array.from(colorFilter).includes((sample.wineId as Wine).color),
       );
     }
+    
+    // Filter by rating
+    if (ratingFilterRange.min !== minRating || ratingFilterRange.max !== maxRating) {
+      filteredSamples = filteredSamples.filter((sample) => {
+        if (sample.rating == null) { return false; }
+        return sample.rating >= ratingFilterRange.min && sample.rating <= ratingFilterRange.max;
+      });
+    }
+    // Filter by year
+    if (yearFilterRange.min !== minYear || yearFilterRange.max !== maxYear) {
+      filteredSamples = filteredSamples.filter((sample) => {
+        const wine = sample.wineId as Wine;
+        return wine.year >= yearFilterRange.min && wine.year <= yearFilterRange.max
+      });
+    } 
+    // Filter by commission
+    if (ratingCommissionFilter.length > 0) {
+      filteredSamples = filteredSamples.filter((sample) => {
+        if (sample.ratingCommission == null) { return ratingCommissionFilter.includes(null); }
+        return ratingCommissionFilter.includes(sample.ratingCommission);
+      })
+    }
 
+    previousFilteredSamples.current = filteredSamples;
     return filteredSamples;
-  }, [wineSamplesState, inEditMode, searchValue, colorFilter]);
+  }, [wineSamplesState, inEditMode, searchValue, colorFilter, ratingFilterRange, yearFilterRange, minYear, ratingCommissionFilter]);
 
   // sort items for final result -- this is passed to the GenericTable
   const sortedItems = React.useMemo(() => {
@@ -202,7 +253,6 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
 
   const renderCell = useCallback((sample: WineSample, columnKey: React.Key) => {
     const cellValue = getNestedValue(sample, columnKey as string);
-
     switch (columnKey) {
       case "name":
         if (inEditMode) {
@@ -508,29 +558,22 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
       </Modal>
 
       {/* Modal - Filter table */}
-      <Modal isOpen={isFilterModalOpen} onOpenChange={onFilterModalOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">Filter settings</ModalHeader>
-              <ModalBody>
-                <h1>Filters</h1>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={async () => {
-                  // TODO: apply filters
-                  onClose(); 
-                }}>
-                  Apply
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+      <WineFilterModal 
+        isOpen={isFilterModalOpen}
+        onOpenChange={onFilterModalOpenChange}
+        maxRating={maxRating}
+        minYear={minYear}
+        ratingCommissions={ratingCommissions}
+        onApplyFilter={(yearRange, ratingRange, filteredCommissions) => {
+          setYearFilterRange(yearRange);
+          setRatingFilterRange(ratingRange);
+          if (filteredCommissions != null) {
+            setRatingCommissionFilter(filteredCommissions);
+          } else {
+            setRatingCommissionFilter(ratingCommissions);
+          }
+        }}
+      />
 
       {/* Modal - Auto label */}
       <AutoLabelModal 

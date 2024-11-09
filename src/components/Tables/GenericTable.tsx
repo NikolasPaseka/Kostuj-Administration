@@ -20,8 +20,6 @@ type Props<T> = {
 };
 
 const GenericTable = <T extends ItemObject>({ tableColumns, data, uiState, sortDescriptor, setSortDescriptor, renderCell, bottomContent}: Props<T>) => {
-  console.log("nested render")
-
   return (
     <div>
       <Table
@@ -43,9 +41,7 @@ const GenericTable = <T extends ItemObject>({ tableColumns, data, uiState, sortD
               <TableRow key={item.id}>
                 {(columnKey) => 
                   <TableCell>
-                    {renderCell(item, columnKey)
-                   
-                    }
+                    {renderCell(item, columnKey)}
                   </TableCell>}
               </TableRow>
             )}
