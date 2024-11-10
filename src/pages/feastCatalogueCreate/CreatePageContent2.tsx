@@ -17,7 +17,6 @@ import { CatalogueRepository } from "../../communication/repositories/CatalogueR
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 import { useAuth } from "../../context/AuthProvider";
 import useVoiceControl from "../../hooks/useVoiceControl";
-import { axiosCall } from "../../communication/axios";
 import VoiceInputButton from "../../components/VoiceInputButton";
 import { VoiceControlRepository } from "../../communication/repositories/VoiceControlRepository";
 
