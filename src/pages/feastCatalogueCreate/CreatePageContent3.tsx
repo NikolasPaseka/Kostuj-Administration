@@ -15,10 +15,10 @@ import { TranslationNS } from "../../translations/i18n";
 import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
 import { WineryRepository } from "../../communication/repositories/WineryRepository";
 import { WineColor } from "../../model/Domain/WineColor";
-import { axiosCall } from "../../communication/axios";
 import useVoiceControl from "../../hooks/useVoiceControl";
 import VoiceInputButton from "../../components/VoiceInputButton";
 import Fuse from 'fuse.js'
+import { VoiceControlRepository } from "../../communication/repositories/VoiceControlRepository";
 
 type Props = { catalogue: Catalogue }
 
@@ -159,7 +159,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
 
   const sendVoiceInput = async () => {
     if (transcript.length == 0) { return; }
-    const resWine = await axiosCall("POST", "/ner", { sentence: transcript }, undefined, "application/json", "http://localhost:8000");
+    const resWine = await VoiceControlRepository.sendWineRequest(transcript);
     if (isSuccess(resWine)) {
       const wine = (resWine.data as { entity: {
         winery: string | null,

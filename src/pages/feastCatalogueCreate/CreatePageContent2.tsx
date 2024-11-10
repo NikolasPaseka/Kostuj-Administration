@@ -19,6 +19,7 @@ import { useAuth } from "../../context/AuthProvider";
 import useVoiceControl from "../../hooks/useVoiceControl";
 import { axiosCall } from "../../communication/axios";
 import VoiceInputButton from "../../components/VoiceInputButton";
+import { VoiceControlRepository } from "../../communication/repositories/VoiceControlRepository";
 
 type Props = { catalogue: Catalogue }
 
@@ -144,7 +145,7 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
 
   const sendVoiceInput = async () => {
     if (transcript.length == 0) { return; }
-    const resWinery = await axiosCall("POST", "/ner/winery", { sentence: transcript }, undefined, "application/json", "http://localhost:8000");
+    const resWinery = await VoiceControlRepository.sendWineryRequest(transcript);
     console.log(resWinery);
     if (isSuccess(resWinery)) {
       const winery: Winery = (resWinery.data as { entity: Winery }).entity;

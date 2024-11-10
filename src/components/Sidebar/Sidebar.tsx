@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { TranslationNS } from "../../translations/i18n";
 import Logo from '../../assets/logo.svg';
 import { useEffect, useState } from 'react';
+import { TypeChecker } from '../../utils/TypeChecker';
+import AppRoutes from '../../utils/AppRoutes';
 
 const Sidebar = (
   { showFull }: { showFull?: boolean }
@@ -41,23 +43,23 @@ const Sidebar = (
       </div>
       <nav className="flex-1 flex items-center flex-col mt-4">
         <SidebarItem 
-          path="/" 
+          path={AppRoutes.HOME} 
           text={showFullFinal ? t("home", { ns: TranslationNS.sidebar }) : undefined} 
           Icon={HomeIcon} 
         />
         <SidebarItem 
-          path="/feastCatalogues" 
+          path={AppRoutes.FEAST_CATALOGUES}
           text={showFullFinal ? t("catalogues", { ns: TranslationNS.sidebar }) : undefined} 
           Icon={BookmarkSquareIcon} 
         />
         <SidebarItem 
-            path="/wineryManagement" 
+            path={AppRoutes.WINERIES_MANAGEMENT}
             text={showFullFinal ? "Správa vinařství" : undefined} 
             Icon={BuildingStorefrontIcon} 
         />
-        { userData?.authorizations.includes(100) && 
+        { userData && TypeChecker.isArray(userData.authorizations) && userData.authorizations.includes(100) && 
           <SidebarItem 
-            path="/usersManagement" 
+            path={AppRoutes.USERS_MANAGEMENT}
             text={showFullFinal ? t("usersManagement", { ns: TranslationNS.sidebar }) : undefined} 
             Icon={UserIcon} 
           />

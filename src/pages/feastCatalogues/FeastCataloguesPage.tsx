@@ -7,10 +7,11 @@ import { convertDateToTimestamp } from '../../utils/conversionUtils';
 import FeastCatalogueListCard from './components/FeastCatalogueListCard';
 import { Link } from 'react-router-dom';
 import PrimaryButton from '../../components/PrimaryButton';
-import { PlusIcon } from '@heroicons/react/24/solid';
+import { BookmarkSquareIcon, PlusIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../translations/i18n';
 import { CatalogueRepository } from '../../communication/repositories/CatalogueRepository';
+import { InfoLanding } from '../../components/InfoLanding';
 
 const FeastCataloguesPage = () => {
   const { t } = useTranslation();
@@ -49,6 +50,14 @@ const FeastCataloguesPage = () => {
       <div className="flex flex-col gap-4">
         <UiStateHandler uiState={uiState} />
         <h2 className="text-2xl font-bold">{t("upcomingCatalogues", { ns: TranslationNS.catalogues })}</h2>
+        {upcomingCatalogues.length === 0 && (
+          <InfoLanding
+            icon={<BookmarkSquareIcon />}
+            title={"No upcoming catalogues"}
+            theme={"info"}
+            useSmaller={true}
+          />
+        )}
         {upcomingCatalogues
           .filter((catalogue: Catalogue) => catalogue.title.toLowerCase().includes(searchValue.toLowerCase()))
           .map((catalogue: Catalogue) => (
@@ -61,6 +70,14 @@ const FeastCataloguesPage = () => {
         }
 
         <h2 className="text-2xl font-bold">{t("pastCatalogues", { ns: TranslationNS.catalogues })}</h2>
+        {pastCatalogues.length === 0 && (
+          <InfoLanding
+            icon={<BookmarkSquareIcon />}
+            title={"No past catalogues"}
+            theme={"info"}
+            useSmaller={true}
+          />
+        )}
         {pastCatalogues
           .filter((catalogue: Catalogue) => catalogue.title.toLowerCase().includes(searchValue.toLowerCase()))
           .map((catalogue: Catalogue) => (

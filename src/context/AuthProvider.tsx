@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../model/UserAuth';
 import { UserRepository } from '../communication/repositories/UserRepository';
 import { CommunicationResult, isSuccess } from '../communication/CommunicationsResult';
+import AppRoutes from '../utils/AppRoutes';
 
 type AuthContextType = {
     accessToken: string | null,
@@ -14,6 +15,7 @@ type AuthContextType = {
     isLoggedIn: () => boolean,
     getUserData: () => UserAuth | null
     saveAuthResult: (userAuth: UserAuth) => void
+    refreshUserAuth: () => Promise<UserAuth | null>
 };
 
 type Props = { children: React.ReactNode };
@@ -43,7 +45,7 @@ export const AuthProvider = ({ children }: Props) => {
         if (isSuccess(res)) {
             const userAuth: UserAuth = res.data;
             saveAuthResult(userAuth);
-            navigate("/");
+            navigate(AppRoutes.HOME);
         }
         return res;
     };
@@ -58,7 +60,7 @@ export const AuthProvider = ({ children }: Props) => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("userAuth");
         setAccessToken(null);
-        navigate("/signIn");
+        navigate(AppRoutes.SIGN_IN);
     };
 
     const isLoggedIn = (): boolean => { return accessToken != null; }
@@ -71,9 +73,24 @@ export const AuthProvider = ({ children }: Props) => {
         return null;
     }
 
+    const refreshUserAuth = async () => {
+      const userAuthData = getUserData();
+      if (userAuthData == null) { return null; }
+
+      const res = await UserRepository.getUserById(userAuthData.id);
+      if (isSuccess(res)) {
+        userAuthData.authorizations = res.data.authorizations;
+        userAuthData.email = res.data.email;
+        saveAuthResult(userAuthData);
+        return userAuthData;
+      }
+
+      return null;
+    }
+
     return (
         <AuthContext.Provider
-            value={{ accessToken, setAccessToken, logout, login, isLoggedIn, getUserData, saveAuthResult }}
+            value={{ accessToken, setAccessToken, logout, login, isLoggedIn, getUserData, saveAuthResult, refreshUserAuth }}
         >
       {isReady ? children : null}
         </AuthContext.Provider>
