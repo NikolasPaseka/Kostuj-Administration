@@ -24,7 +24,7 @@ const WineFilterModal = ({ isOpen, onOpenChange, maxRating, minYear, ratingCommi
   const [selectedRatingCommission, setSelectedRatingCommission] = React.useState<(number | null)[]>([]);
 
   useEffect(() => {
-    setSelectedRatingCommission(ratingCommissions);
+    setSelectedRatingCommission(ratingCommissions.sort((a, b) => (a ?? 0) - (b ?? 0)));
   }, [ratingCommissions])
 
   return (
