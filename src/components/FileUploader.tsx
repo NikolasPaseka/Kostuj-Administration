@@ -39,13 +39,11 @@ const FileUploader = ({ onDataImport }: Props) => {
 
   const handleFileSubmit = (excelFile: ArrayBuffer) => {
     const workbook = xlsx.read(excelFile, {type: 'buffer'});
-
-    const samplesWorksheet = workbook.Sheets[workbook.SheetNames[0]];
-    const wineriesWorksheet = workbook.Sheets[workbook.SheetNames[1]];
+    const samplesWorksheet = workbook.Sheets["Samples"] || workbook.Sheets["vína"] || workbook.Sheets["vina"];
+    const wineriesWorksheet = workbook.Sheets["Wineries"] || workbook.Sheets["vinařství"] || workbook.Sheets["vinarstvi"];
     const samples = xlsx.utils.sheet_to_json(samplesWorksheet) as object[];
     const wineries = xlsx.utils.sheet_to_json(wineriesWorksheet) as object[];
     onDataImport({ samples, wineries})
-    //setExcelData(data.slice(0,10));
   }
 
    /**
@@ -70,6 +68,7 @@ const FileUploader = ({ onDataImport }: Props) => {
       </div> 
       <input
         type="file"
+        accept='.xls, .xlsx, .csv'
         onChange={handleFileChange}
       >
       </input>

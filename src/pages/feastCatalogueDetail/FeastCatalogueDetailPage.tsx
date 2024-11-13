@@ -16,8 +16,8 @@ import ImportDataModal from './components/ImportDataModal';
 import WineGlassIcon from '../../components/Icons/WineGlassIcon';
 import StoreIcon from '../../components/Icons/StoreIcon';
 import { convertUnixToDateString } from '../../utils/conversionUtils';
-import { TypeChecker } from '../../utils/TypeChecker';
 import { WineColor } from '../../model/Domain/WineColor';
+import CatalogueOrganizators from './components/CatalogueOrganizators';
 
 
 const FeastCatalogueDetailPage = () => {
@@ -35,7 +35,6 @@ const FeastCatalogueDetailPage = () => {
     const fetchCatalogue = async () => {
       const res = await CatalogueRepository.getCatalogueDetail(id ?? "");
       const catalogue = resolveUiState(res, setUiState);
-      console.log(res);
       setCatalogue(catalogue);
     }
     
@@ -91,20 +90,20 @@ const FeastCatalogueDetailPage = () => {
               aria-label="Table Columns"
             >
               <DropdownItem
-                startContent={<ArrowDownOnSquareIcon className="w-6 h-6" />}
+                startContent={<ArrowDownOnSquareIcon className="w-5 h-5 text-secondary" />}
                 description={"Import data from excel file"}
                 onClick={onOpen}
               >
                 {"Import"}
               </DropdownItem>
               <DropdownItem
-                startContent={<ArrowUpOnSquareIcon className="w-6 h-6" />}
+                startContent={<ArrowUpOnSquareIcon className="w-5 h-5 text-secondary" />}
                 description={"Export data to excel file"}
               >
                 {"Export"}
               </DropdownItem>
               <DropdownItem
-                startContent={<TrashIcon className="w-6 h-6" />}
+                startContent={<TrashIcon className="w-5 h-5 text-secondary" />}
                 description={"Delete the catalogue and all its content"}
                 color='danger'
                 onClick={deleteCatalogue}
@@ -130,7 +129,7 @@ const FeastCatalogueDetailPage = () => {
                   <CardInfoRow headline={t("placeAndAddress", { ns: TranslationNS.catalogues })} body={catalogue.address} Icon={MapPinIcon} />
                   <CardInfoRow 
                     headline={t("organizer", { ns: TranslationNS.catalogues })} 
-                    body={TypeChecker.isString(catalogue.adminId) ? catalogue.adminId : `${catalogue.adminId.firstName} ${catalogue.adminId.lastName}`} 
+                    body={catalogue.fetchedAdmin ? `${catalogue.fetchedAdmin.firstName} ${catalogue.fetchedAdmin.lastName}` : catalogue.adminId as string} 
                     Icon={UserIcon} 
                   />
                   {catalogue.description &&
@@ -212,6 +211,18 @@ const FeastCatalogueDetailPage = () => {
                 </div>
               </CardBody>
             </Card>
+          </div>
+          
+          <div className="px-6 py-8 flex">
+            <CatalogueOrganizators 
+              coOrganizers={catalogue.coorganizators} 
+              catalogue={catalogue}
+              onAdd={(user) => {
+                setCatalogue({ ...catalogue, coorganizators: [...catalogue.coorganizators, user] })
+              }}
+              onRemove={() => {}} 
+              className="w-[50%]"
+            />
           </div>
 
           <ImportDataModal 

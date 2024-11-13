@@ -19,6 +19,7 @@ import { useAuth } from "../../context/AuthProvider";
 import useVoiceControl from "../../hooks/useVoiceControl";
 import VoiceInputButton from "../../components/VoiceInputButton";
 import { VoiceControlRepository } from "../../communication/repositories/VoiceControlRepository";
+import { WineryDomainUtil } from "../../model/Domain/WineryDomainUtil";
 
 type Props = { catalogue: Catalogue }
 
@@ -71,20 +72,10 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
     }
   }
 
-  const isWineryNew = () => { return adminsWineries.find((winery) => winery.name == wineryTitle) == null; }
+  const isWineryNew = () => { return adminsWineries.find((winery) => winery.name == wineryTitle && winery.address == address) == null; }
 
   const createNewWinery = () => {
-    const newWinery: Winery = {
-      id: "",
-      name: wineryTitle,
-      email: email,
-      phoneNumber: phoneNumber,
-      websitesUrl: webAddress,
-      address: address,
-      adminId: getUserData()?.id ?? "",
-      isPublic: false
-    }
-
+    const newWinery: Winery = WineryDomainUtil.createWineryEntry(wineryTitle, email, phoneNumber, webAddress, address, getUserData()?.id ?? "");
     setWineryEntry(newWinery);
     addParticipatedWinery(newWinery);
   }

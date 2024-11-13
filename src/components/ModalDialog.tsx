@@ -8,11 +8,12 @@ type Props = {
   confirmText?: string
   children?: React.ReactNode,
   scrollBehavior?: "inside" | "outside" | "default",
+  confirmButtonDisabled?: boolean
   onConfirm: () => void
   onCloseAction?: () => void
 }
 
-const ModalDialog = ({ isOpen, onOpenChange, children, size="md", header, onConfirm, onCloseAction, scrollBehavior="default", confirmText="Confirm" }: Props) => {
+const ModalDialog = ({ isOpen, onOpenChange, children, size="md", header, onConfirm, onCloseAction, scrollBehavior="default", confirmButtonDisabled=false, confirmText="Confirm" }: Props) => {
   return (
     <Modal isOpen={isOpen} onOpenChange={(isOpen) => {
       if (!isOpen && onCloseAction) { onCloseAction() }
@@ -32,7 +33,7 @@ const ModalDialog = ({ isOpen, onOpenChange, children, size="md", header, onConf
               <Button color="danger" variant="light" onPress={onClose}>
                 Close
               </Button>
-              <Button color="primary" onPress={() => onConfirm()}>
+              <Button isDisabled={confirmButtonDisabled} color="primary" onPress={() => onConfirm()}>
                 {confirmText}
               </Button>
             </ModalFooter>

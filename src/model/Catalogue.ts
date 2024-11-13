@@ -16,9 +16,11 @@ export type Catalogue = {
     locked: boolean,
     maxWineRating: number,
     adminId: string | UserData,
+    fetchedAdmin?: UserData,
     price: number,
     downloads: number,
     participatedWineries: string[],
+    coorganizators: UserData[]
     participatedWineriesCount?: number
     samplesColorCounts?: { [key: string]: number }
 }

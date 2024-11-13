@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import SearchInput from '../SearchInput';
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, User } from '@nextui-org/react';
+import { Spacer, Tooltip, useDisclosure, User } from '@nextui-org/react';
 import { UiState } from '../../communication/UiState';
 import { Winery } from '../../model/Winery';
 import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
@@ -8,30 +8,43 @@ import GenericTable from './GenericTable';
 import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../translations/i18n';
 import { getNestedValue } from './getNestedValues';
+import ModalDialog from '../ModalDialog';
+import CreateWineryModal from '../Modals/CreateWineryModal';
 
 
 type Props = { 
   wineries: Winery[], 
   uiState: UiState,
-  removeWineryFromParticipated: (winery: Winery) => Promise<void>
+  removeWineryFromParticipated?: (winery: Winery) => Promise<void>
+  deleteWinery?: (winery: Winery) => Promise<void>
+  updateWinery?: (winery: Winery) => Promise<void>
+  tableActions?: React.ReactNode
 };
 
-const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props) => {
+const WineryTable = ({ wineries, uiState, removeWineryFromParticipated, deleteWinery, updateWinery, tableActions }: Props) => {
 
   const { t } = useTranslation();
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const {isOpen: isDeleteOpen, onOpen: onDeleteOpen, onOpenChange: onDeleteOpenChange, onClose: onDeleteClose} = useDisclosure();
+  const {isOpen: isEditOpen, onOpen: onEditOpen, onOpenChange: onEditOpenChange} = useDisclosure();
 
   const [searchValue, setSearchValue] = React.useState<string>(""); 
   const [wineryToRemove, setWineryToRemove] = React.useState<Winery | null>(null);
+  const [wineryToEdit, setWineryToEdit] = React.useState<Winery | null>(null);
 
   const tableColumns = [
     {name: t("winery", { ns: TranslationNS.catalogues }), uid: "name"},
-    {name: t("emailAddress", { ns: TranslationNS.catalogues }), uid: "email"},
-    {name: t("website", { ns: TranslationNS.catalogues }), uid: "websitesUrl"},
-    {name: t("phoneNumber", { ns: TranslationNS.catalogues }), uid: "phoneNumber"},
     {name: t("placeAndAddress", { ns: TranslationNS.catalogues }), uid: "address"},
+    {name: t("emailAddress", { ns: TranslationNS.catalogues }), uid: "email"},
+    {name: t("phoneNumber", { ns: TranslationNS.catalogues }), uid: "phoneNumber"},
+    {name: t("website", { ns: TranslationNS.catalogues }), uid: "websitesUrl"},
     {name: t("actions", { ns: TranslationNS.common }), uid: "actions"}
   ];
+
+  useEffect(() => {
+    if (wineryToEdit) {
+      onEditOpen();
+    }
+  }, [onEditOpen, wineryToEdit])
 
   const renderCell = useCallback((winery: Winery, columnKey: React.Key) => {
     const cellValue = getNestedValue(winery, columnKey as string);
@@ -64,14 +77,18 @@ const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props)
                   <EyeIcon className='w-5 h-5 text-gray-600' />
               </Tooltip>
             </span>
-            <span className="cursor-pointer">
+            <span 
+              onClick={() => {
+                setWineryToEdit({ ...winery });
+              }}
+              className="cursor-pointer">
               <Tooltip content="Edit">
                   <PencilIcon className='w-5 h-5 text-gray-600' />
               </Tooltip>
             </span>
             <span onClick={() => {
               setWineryToRemove(winery);
-              onOpen() 
+              onDeleteOpen() ;
             }} className="cursor-pointer">
               <Tooltip color="danger" content="Delete">
                   <TrashIcon className='w-5 h-5 text-danger' />
@@ -82,7 +99,7 @@ const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props)
       default:
         return cellValue;
     }
-  }, [onOpen]);
+  }, [onDeleteOpen]);
 
   const MemoizedGenericTable = React.useMemo(() => {
     console.log("memo render")
@@ -99,43 +116,57 @@ const WineryTable = ({ wineries, uiState, removeWineryFromParticipated }: Props)
   //[tableColumns, wineries, uiState, renderCell, searchValue]
 
   return (
-    <div>
+    <div className="py-4">
+      <div className="flex items-center gap-4">
+        <SearchInput 
+          value={searchValue} 
+          onValueChange={setSearchValue}
+        />
+        <Spacer className="flex-1" />
+        {tableActions}
+      </div>
       <div className="flex items-center py-4">
         <p className="text-sm flex-1">Number of wineries: {wineries.length}</p>
-        <SearchInput value={searchValue} onValueChange={setSearchValue} />
       </div>
 
       {MemoizedGenericTable}
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
-              <ModalBody>
-                <h1>{wineryToRemove?.name}</h1>
-                <p> 
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={async () => {
-                  if (wineryToRemove == null) { return; }
-                  await removeWineryFromParticipated(wineryToRemove);
-                  onClose(); 
-                }}>
-                  Action
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+      {/* Delete winery dialog */}
+      <ModalDialog 
+        isOpen={isDeleteOpen}
+        onOpenChange={onDeleteOpenChange}
+        header={removeWineryFromParticipated ? "Remove Winery" : "Delete Winery"}
+        onConfirm={async () => {
+          if (wineryToRemove == null) { return; }
+          if (removeWineryFromParticipated) {
+            await removeWineryFromParticipated(wineryToRemove);
+          } else if (deleteWinery) {
+            await deleteWinery(wineryToRemove);
+          }
+          onDeleteClose(); 
+        }}
+      >
+        <h1 className="text-lg font-semibold">{wineryToRemove?.name}</h1>
+        <p> 
+          {removeWineryFromParticipated 
+            ? "Are you sure you want to remove this winery from the list?" 
+            : "Are you sure you want to delete this winery?"
+          }
+        </p>
+        <p className="">
+          {removeWineryFromParticipated 
+            ? "This action will remove the winery from the list of participated wineries and all its samples in catalogue." 
+            : "This action will delete the winery from the database and its wines in all catalogues as well."}
+        </p>
+      </ModalDialog>
+
+      {/* Edit winery dialog */}
+        <CreateWineryModal
+          winery={wineryToEdit ?? undefined}
+          isOpen={isEditOpen}
+          onOpenChange={onEditOpenChange}
+          onWineryCreateOrEdit={updateWinery ?? (() => {})}
+        />
     </div>
   )
 }

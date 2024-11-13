@@ -1,5 +1,6 @@
 import { Catalogue } from "../../model/Catalogue";
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
+import { UserData } from "../../model/UserData";
 import { Wine } from "../../model/Wine";
 import { Winery } from "../../model/Winery";
 import { WineSample } from "../../model/WineSample";
@@ -98,5 +99,10 @@ export const CatalogueRepository = {
         colorOrder: string[] = [],
     ): Promise<CommunicationResult<WineSample[]>> => {
         return await axiosCall(AxiosMethod.GET, `/catalogues/${catalogueId}/autoLabelSamples?prefix=${prefix}&order=${orderType}&colorOrder=${colorOrder.join(",")}`);
+    },
+
+    // Coorganizators
+    addCoorganizator: async (catalogueId: string, coorganizerEmail: string): Promise<CommunicationResult<UserData>> => {
+        return await axiosCall(AxiosMethod.POST, `/catalogues/${catalogueId}/coorganizators`, { email: coorganizerEmail });
     }
 }

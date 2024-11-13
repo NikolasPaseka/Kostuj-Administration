@@ -13,6 +13,22 @@ export const WineryRepository = {
         return await axiosCall(AxiosMethod.GET, `/wines/byWinery/${wineryId}`);
     },
 
+    createWinery: async (winery: Winery): Promise<CommunicationResult<Winery>> => {
+        return await axiosCall(AxiosMethod.POST, `/wineries`, winery);
+    },
+
+    deleteWinery: async (winery: Winery): Promise<CommunicationResult<{ numOfDeletedSamples: number, numOfDeletedWines: number}>> => {
+        return await axiosCall(AxiosMethod.DELETE, `/wineries/${winery.id}`, winery);
+    },
+
+    updateWinery: async (winery: Winery): Promise<CommunicationResult<Winery>> => {
+        return await axiosCall(AxiosMethod.PUT, `/wineries/${winery.id}`, winery);
+    },
+
+    importWineries: async (wineries: Winery[]): Promise<CommunicationResult<Winery[]>> => {
+        return await axiosCall(AxiosMethod.POST, `/wineries/import`, wineries);
+    },
+
     // Image
     uploadImage: async (wineryId: string, image: File): Promise<CommunicationResult<string>> => {
         const formData = new FormData();
