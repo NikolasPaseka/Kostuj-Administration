@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Catalogue } from '../../../model/Catalogue';
 import { CatalogueRepository } from '../../../communication/repositories/CatalogueRepository';
 import { resolveUiState, UiState, UiStateType } from '../../../communication/UiState';

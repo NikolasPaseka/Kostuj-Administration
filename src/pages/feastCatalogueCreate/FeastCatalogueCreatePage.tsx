@@ -57,7 +57,8 @@ const FeastCatalogueCreatePage = () => {
       adminId: getUserData()?.id ?? "",
       price: catalogue?.price ?? 0,
       downloads: catalogue?.downloads ?? 0,
-      participatedWineries: catalogue?.participatedWineries ?? []
+      participatedWineries: catalogue?.participatedWineries ?? [],
+      coorganizators: catalogue?.coorganizators ?? [],
     }
   }
 
