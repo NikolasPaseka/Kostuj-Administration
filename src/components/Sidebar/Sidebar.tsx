@@ -1,4 +1,4 @@
-import { HomeIcon, UserIcon, Cog6ToothIcon, ArrowLeftEndOnRectangleIcon, BookmarkSquareIcon, BuildingStorefrontIcon } from '@heroicons/react/24/solid';
+import { HomeIcon, UserIcon, ArrowLeftEndOnRectangleIcon, BookmarkSquareIcon, BuildingStorefrontIcon } from '@heroicons/react/24/solid';
 import { Button, Divider } from '@nextui-org/react';
 import SidebarItem from './SidebarItem';
 import { useAuth } from '../../context/AuthProvider';
@@ -67,14 +67,9 @@ const Sidebar = (
         {/* <SidebarItem path="/signIn" text={t("signIn", { ns: TranslationNS.sidebar })} Icon={KeyIcon} /> */}
         {/* <SidebarItem path="/voiceTest" text={t("home", { ns: TranslationNS.sidebar })} Icon={MicrophoneIcon} /> */}
         <SidebarItem 
-          path="/profile" 
+          path={AppRoutes.PROFILE_AND_SETTINGS} 
           text={showFullFinal ? t("profile", { ns: TranslationNS.sidebar }) : undefined} 
           Icon={UserIcon} 
-        />
-        <SidebarItem 
-          path="/settings" 
-          text={showFullFinal ? t("settings", { ns: TranslationNS.sidebar }) : undefined} 
-          Icon={Cog6ToothIcon} 
         />
       </nav>
       <Divider />

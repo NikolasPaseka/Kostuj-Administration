@@ -22,6 +22,10 @@ export const UserRepository = {
         return await axiosCall(AxiosMethod.GET, `/users/${userId}`);
     },
 
+    getUserDataById: async (userId: string): Promise<CommunicationResult<UserData>> => {
+        return await axiosCall(AxiosMethod.GET, `/users/${userId}`);
+    },
+
     updateUserAuthorizations: async (userId: string, authorizations: number[]): Promise<CommunicationResult<SuccessMessage>> => {
         return await axiosCall(AxiosMethod.PUT, `/users/${userId}/authorizations`, authorizations);
     },

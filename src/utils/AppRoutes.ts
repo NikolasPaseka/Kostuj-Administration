@@ -1,6 +1,6 @@
 enum AppRoutes {
     HOME = '/home',
-    PROFILE = '/profile',
+    PROFILE_AND_SETTINGS = '/profileAndSettings',
     FEAST_CATALOGUES = '/feastCatalogues',
     FEAST_CATALOGUE_DETAIL = '/feastCatalogues/:id/detail',
     FEAST_CATALOGUE_CONTENT_WINE = '/feastCatalogues/:id/content/wine',

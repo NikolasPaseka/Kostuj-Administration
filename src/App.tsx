@@ -4,7 +4,6 @@ import AppRoutes from './utils/AppRoutes';
 import Sidebar from './components/Sidebar/Sidebar'
 import HomePage from './pages/homepage/HomePage'
 import SignInPage from './pages/SignInPage';
-import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthProvider';
 import RegistrationPage from './pages/RegistrationPage';
 import FeastCataloguesPage from './pages/feastCatalogues/FeastCataloguesPage';
@@ -18,6 +17,7 @@ import FeastCatalogueWineriesContentPage from './pages/feastCatalogueContent/Fea
 import PrivateRoute from './components/PrivateRoute';
 import NoAuthorizationPage from './pages/NoAuthorizationPage';
 import WineriesManagementPage from './pages/wineriesManagement/WineriesManagementPage';
+import ProfileSettingsPage from './pages/profileAndSettings/ProfileAndSettingsPage';
 
 console.log(import.meta.env.VITE_BE_URL)
 
@@ -45,13 +45,9 @@ const AppLayout = () => {
         {isSidebarVisible && <Sidebar showFull={!isSidebarSmaller} /> }
         <div className="flex-1 py-4 px-8 max-w-screen-2xl mx-auto">
           <Routes>
-            <Route path={AppRoutes.PROFILE} element={
-              <ProtectedRoute> 
-                <HomePage /> 
-              </ProtectedRoute>} 
-            />
             <Route path="/" element={<PrivateRoute />}>
               <Route path={AppRoutes.HOME} element={<HomePage />} />
+              <Route path={AppRoutes.PROFILE_AND_SETTINGS} element={<ProfileSettingsPage />} />
               <Route path={AppRoutes.FEAST_CATALOGUES} element={<FeastCataloguesPage />} />
               <Route path={AppRoutes.FEAST_CATALOGUE_DETAIL} element={<FeastCatalogueDetailPage />} />
               <Route path={AppRoutes.FEAST_CATALOGUE_CONTENT_WINE} element={<FeastCatalogueWineContentPage />} />

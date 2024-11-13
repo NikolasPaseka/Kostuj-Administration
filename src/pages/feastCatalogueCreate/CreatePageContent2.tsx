@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import PrimaryButton from "../../components/PrimaryButton"
 import CatalogueInputField from "./components/CatalogueInputField"
 import { AtSymbolIcon, ClipboardDocumentIcon, MapPinIcon } from "@heroicons/react/24/solid";
@@ -31,6 +31,10 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
 
   const [adminsWineries, setAdminsWineries] = useState<Winery[]>([]);
   const [participatedWineries, setParticipatedWineries] = useState<Winery[]>([]);
+
+  const wineriesForSelection = useMemo(() => {
+    return adminsWineries.filter((winery) => !participatedWineries.some((participatedWinery) => participatedWinery.id === winery.id));
+  }, [adminsWineries, participatedWineries]);
 
   const [wineryEntry, setWineryEntry] = useState<Winery | null>( null);
   const [wineryTitle, setWineryTitle] = useState<string>("");
@@ -81,9 +85,10 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
   }
 
   const addParticipatedWinery = async (winery: Winery | null) => {
-    if (winery == null) { return; }
+    if (winery == null) { console.log("null"); return; }
 
     const res: CommunicationResult<Winery> = await CatalogueRepository.addParticipatedWinery(catalogue, winery);
+    console.log(res)
     if (isSuccess(res)) { 
       setParticipatedWineries([...participatedWineries, res.data]);
       if (isWineryNew()) {
@@ -170,7 +175,7 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
           onSelectionChange={onWinerySelectionChange}
           isRequired
           variant="faded"
-          defaultItems={adminsWineries}
+          defaultItems={wineriesForSelection}
           description={
             wineryTitle.length > 0 && !isWineryNew() ? (
               <p className="text-green-400">Selected winery</p>
