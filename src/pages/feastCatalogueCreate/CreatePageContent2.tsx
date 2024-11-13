@@ -127,6 +127,8 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
     }
   }
 
+  const areRequiredFieldsFilled = !wineryTitle.isEmpty() && !address.isEmpty();
+
   const clearInputData = () => {
     setWineryEntry(null);
     setWineryTitle("");
@@ -190,6 +192,16 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
 
         <div className="flex flex-row gap-4">
           <CatalogueInputField
+            isRequired 
+            value={address}
+            //isDisabled={!isWineryNew()}
+            onValueChange={setAddress} 
+            label={t("placeAndAddress", { ns: TranslationNS.catalogues })}
+            placeholder={t("placeAndAddressPlaceholder", { ns: TranslationNS.catalogues })}
+            StartContent={MapPinIcon}
+          />
+
+          <CatalogueInputField
             value={email}
             isDisabled={!isWineryNew()}
             onValueChange={setEmail}
@@ -198,14 +210,6 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
             StartContent={AtSymbolIcon}
           />
 
-          <CatalogueInputField 
-            value={phoneNumber} 
-            isDisabled={!isWineryNew()}
-            onValueChange={setPhoneNumber} 
-            label={t("phoneNumber", { ns: TranslationNS.catalogues })}
-            placeholder={t("phoneNumberPlaceholder", { ns: TranslationNS.catalogues })}
-            StartContent={MapPinIcon}
-          />
         </div>
         <div className="flex flex-row gap-4">
           <CatalogueInputField 
@@ -218,11 +222,11 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
           />
 
           <CatalogueInputField 
-            value={address} 
+            value={phoneNumber} 
             isDisabled={!isWineryNew()}
-            onValueChange={setAddress} 
-            label={t("placeAndAddress", { ns: TranslationNS.catalogues })}
-            placeholder={t("placeAndAddressPlaceholder", { ns: TranslationNS.catalogues })}
+            onValueChange={setPhoneNumber} 
+            label={t("phoneNumber", { ns: TranslationNS.catalogues })}
+            placeholder={t("phoneNumberPlaceholder", { ns: TranslationNS.catalogues })}
             StartContent={MapPinIcon}
           />
         </div>
@@ -237,6 +241,7 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
         {/* TODO CALL EDIT */}
         <PrimaryButton 
           className="ml-auto"
+          isDisabled={!areRequiredFieldsFilled}
           onClick={isWineryNew() ? createNewWinery : () => addParticipatedWinery(wineryEntry)}
         >
           {isWineryNew() 
