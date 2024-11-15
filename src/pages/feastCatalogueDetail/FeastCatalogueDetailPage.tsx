@@ -18,6 +18,7 @@ import StoreIcon from '../../components/Icons/StoreIcon';
 import { convertUnixToDateString } from '../../utils/conversionUtils';
 import { WineColor } from '../../model/Domain/WineColor';
 import CatalogueOrganizators from './components/CatalogueOrganizators';
+import useCatalogueOwnerCheck from '../../hooks/useCatalogueOwnerCheck';
 
 
 const FeastCatalogueDetailPage = () => {
@@ -28,6 +29,8 @@ const FeastCatalogueDetailPage = () => {
   const [uiState, setUiState] = useState<UiState>({ type: UiStateType.LOADING });
 
   const [catalogue, setCatalogue] = useState<Catalogue | null>(null);
+
+  const { isAdminOwner } = useCatalogueOwnerCheck({ catalogue });
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -64,54 +67,61 @@ const FeastCatalogueDetailPage = () => {
     <div className="">
       { catalogue && <>
           <div className="flex flex-row items-center justify-end my-4">
-            <Switch isSelected={catalogue?.published} onValueChange={(state: boolean) => updatePublishState(state)} className="px-4">
-              {t("publish", { ns: TranslationNS.catalogues })}
-            </Switch>
-            
+            {isAdminOwner() &&
+              <Switch isSelected={catalogue?.published} onValueChange={(state: boolean) => updatePublishState(state)} className="px-4">
+                {t("publish", { ns: TranslationNS.catalogues })}
+              </Switch>
+            }
+
             <Link to={`/feastCatalogues/${catalogue.id}/edit`}>
               <PrimaryButton className="mx-2" EndContent={PencilSquareIcon}>
                 {t("edit", { ns: TranslationNS.catalogues })}
               </PrimaryButton>
             </Link>
 
+
             <Dropdown>
-            <DropdownTrigger className="hidden sm:flex">
-              <Button
-                size="md"
-                color="secondary"
-                variant="bordered"
-                className="min-w-4 px-2 rounded-md bg-lightContainer text-black border-lightContainer"
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  size="md"
+                  color="secondary"
+                  variant="bordered"
+                  className="min-w-4 px-2 rounded-md bg-lightContainer text-black border-lightContainer"
+                >
+                  <EllipsisVerticalIcon className="w-6 h-6" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                disabledKeys={isAdminOwner() ? [] : ["delete"]}
               >
-                <EllipsisVerticalIcon className="w-6 h-6" />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              disallowEmptySelection
-              aria-label="Table Columns"
-            >
-              <DropdownItem
-                startContent={<ArrowDownOnSquareIcon className="w-5 h-5 text-secondary" />}
-                description={"Import data from excel file"}
-                onClick={onOpen}
-              >
-                {"Import"}
-              </DropdownItem>
-              <DropdownItem
-                startContent={<ArrowUpOnSquareIcon className="w-5 h-5 text-secondary" />}
-                description={"Export data to excel file"}
-              >
-                {"Export"}
-              </DropdownItem>
-              <DropdownItem
-                startContent={<TrashIcon className="w-5 h-5 text-secondary" />}
-                description={"Delete the catalogue and all its content"}
-                color='danger'
-                onClick={deleteCatalogue}
-              >
-                {"Delete"}
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+                <DropdownItem
+                  key={"import"}
+                  startContent={<ArrowDownOnSquareIcon className="w-5 h-5 text-secondary" />}
+                  description={"Import data from excel file"}
+                  onClick={onOpen}
+                >
+                  {"Import"}
+                </DropdownItem>
+                <DropdownItem
+                  key={"export"}
+                  startContent={<ArrowUpOnSquareIcon className="w-5 h-5 text-secondary" />}
+                  description={"Export data to excel file"}
+                >
+                  {"Export"}
+                </DropdownItem>
+                <DropdownItem
+                  key={"delete"}
+                  startContent={<TrashIcon className="w-5 h-5 text-secondary" />}
+                  description={"Delete the catalogue and all its content"}
+                  color='danger'
+                  onClick={deleteCatalogue}
+                >
+                  {"Delete"}
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
 
             {/* <PrimaryButton onClick={deleteCatalogue} className="mx-2 bg-danger" EndContent={TrashIcon}>
               {t("delete", { ns: TranslationNS.catalogues })}
@@ -220,7 +230,9 @@ const FeastCatalogueDetailPage = () => {
               onAdd={(user) => {
                 setCatalogue({ ...catalogue, coorganizators: [...catalogue.coorganizators, user] })
               }}
-              onRemove={() => {}} 
+              onRemove={(coorganizatorId) => {
+                setCatalogue({ ...catalogue, coorganizators: catalogue.coorganizators.filter(coorganizator => coorganizator.id !== coorganizatorId) })
+              }} 
               className="w-[50%]"
             />
           </div>

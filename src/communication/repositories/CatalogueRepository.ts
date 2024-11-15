@@ -104,5 +104,9 @@ export const CatalogueRepository = {
     // Coorganizators
     addCoorganizator: async (catalogueId: string, coorganizerEmail: string): Promise<CommunicationResult<UserData>> => {
         return await axiosCall(AxiosMethod.POST, `/catalogues/${catalogueId}/coorganizators`, { email: coorganizerEmail });
+    },
+
+    removeCoorganizator: async (catalogueId: string, coorganizatorId: string): Promise<CommunicationResult<SuccessMessage>> => {
+        return await axiosCall(AxiosMethod.DELETE, `/catalogues/${catalogueId}/coorganizators`, { coorganizatorId: coorganizatorId });
     }
 }
