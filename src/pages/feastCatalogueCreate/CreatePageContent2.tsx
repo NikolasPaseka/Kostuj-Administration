@@ -91,7 +91,7 @@ const CreatePageContent2 = ({ catalogue }: Props) => {
   }
 
   const addParticipatedWinery = async (winery: Winery | null) => {
-    if (winery == null) { console.log("null"); return; }
+    if (winery == null) { return; }
 
     const res: CommunicationResult<Winery> = await CatalogueRepository.addParticipatedWinery(catalogue, winery);
     if (isSuccess(res)) { 

@@ -2,22 +2,23 @@ import { Select, SelectItem } from "@nextui-org/react";
 import React from "react";
 
 type Props = {
-  key: number,
   label: string,
+  
   defaultSelectedKeys: string[],
   onSelectionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void,
   items: { value: string, label: string, startContent?: React.ReactNode }[]
+  variant?: "bordered" | "flat" | "faded"
 }
 
-const SelectionField = ({ key, label, defaultSelectedKeys, onSelectionChange, items}: Props) => {
+const SelectionField = ({ label, defaultSelectedKeys, onSelectionChange, items, variant="bordered"}: Props) => {
   
   const [selectedItem, setSelectedItem] = React.useState(items.find((item) => item.value === defaultSelectedKeys[0]));
 
   return (
     <Select 
-      key={key}
       label={label}
-      variant="bordered"
+      variant={variant}
+      placeholder="Vyberte možnost"
       defaultSelectedKeys={defaultSelectedKeys}
       onChange={(e) => {
         setSelectedItem(items.find((item) => item.value === e.target.value));

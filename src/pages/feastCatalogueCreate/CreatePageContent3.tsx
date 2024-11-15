@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react"
 import PrimaryButton from "../../components/PrimaryButton"
 import CatalogueInputField from "./components/CatalogueInputField"
-import { ClipboardDocumentIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
-import { Autocomplete, AutocompleteItem, Checkbox, Divider, Radio, RadioGroup, Slider } from "@nextui-org/react";
+import { ClipboardDocumentIcon, MicrophoneIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
+import { Accordion, AccordionItem, Autocomplete, AutocompleteItem, Checkbox, Divider, Radio, RadioGroup, Slider, useDisclosure } from "@nextui-org/react";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { Winery } from "../../model/Winery";
 import { Catalogue } from "../../model/Catalogue";
@@ -19,12 +19,23 @@ import useVoiceControl from "../../hooks/useVoiceControl";
 import VoiceInputButton from "../../components/VoiceInputButton";
 import Fuse from 'fuse.js'
 import { VoiceControlRepository } from "../../communication/repositories/VoiceControlRepository";
+import SelectionField from "../../components/Controls/SelectionField";
+import { ResultSweetnessOptions } from "../../model/Domain/ResultSweetness";
+import CreateWineryModal from "../../components/Modals/CreateWineryModal";
+
+const resultSweetnessOptions = [
+  {name: "Suché", uid: ResultSweetnessOptions.DRY},
+  {name: "Polosuché", uid: ResultSweetnessOptions.OFF_DRY},
+  {name: "Polosladké", uid: ResultSweetnessOptions.SEMI_SWEET},
+  {name: "Sladké", uid: ResultSweetnessOptions.SWEET}
+];
 
 type Props = { catalogue: Catalogue }
 
 const CreatePageContent3 = ({ catalogue }: Props) => {
   const { t } = useTranslation();
-  const [uiStateWineSample, setUiStateWineSample] = useState<UiState>({ type: UiStateType.LOADING });
+  const [uiStateWineSample, setUiStateWineSample] = useState<UiState> ({ type: UiStateType.LOADING });
+  const {isOpen: isNewWineryOpen, onOpen: onNewWineryOpen, onOpenChange: onNewWineryOpenChange} = useDisclosure();
 
   const [participatedWineries, setParticipatedWineries] = useState<Winery[]>([]);
   const [selectedWinery, setSelectedWinery] = useState<Winery | null>(null);
@@ -41,6 +52,10 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   const [isChampion, setIsChampion] = useState<boolean>(false);
   const [ratingCommission, setRatingCommission] = useState<number | null>(null);
   const [sampleNote, setSampleNote] = useState<string>("");
+  const [resultSweetness, setResultSweetness] = useState<string>("");
+  const [attribute, setAttribute] = useState<string>("");
+
+  // Wine Details
   const [residualSugar, setResidualSugar] = useState<number | null>(null);
   const [alcoholContent, setAlcoholContent] = useState<number | null>(null);
   const [acidity, setAcidity] = useState<number | null>(null);
@@ -106,6 +121,18 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     });
   }
 
+  const createNewWinery = (winery: Winery) => {
+    setSelectedWinery(winery);
+    addParticipatedWinery(winery);
+  }
+
+  const addParticipatedWinery = async (winery: Winery) => {
+    const res: CommunicationResult<Winery> = await CatalogueRepository.addParticipatedWinery(catalogue, winery);
+    if (isSuccess(res)) { 
+      setParticipatedWineries([...participatedWineries, res.data]);
+    }
+  }
+
   const foundWine: Wine | null = wineryWines.find((wine) => wine.name == wineName && wine.year == wineYear) ?? null;
   const isWineNew = (): boolean => { return foundWine == null; }
 
@@ -121,12 +148,14 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       note: sampleNote,
       ratingCommission: ratingCommission ?? undefined
     }
-    const wine = {
+    const wine: Wine = {
       id: "",
       name: wineName,
       color: wineColor,
       year: wineYear ?? 0,
+      attribute: attribute,
       residualSugar: residualSugar ?? undefined,
+      resultSweetness: resultSweetness,
       alcoholContent: alcoholContent ?? undefined,
       acidity: acidity ?? undefined,
       grapesSweetness: grapeSweetness ?? undefined,
@@ -155,6 +184,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     setIsChampion(false);
     setSampleNote("");
     setRatingCommission(null);
+    setAttribute("");
+    setResultSweetness("");
   }
 
   const sendVoiceInput = async () => {
@@ -205,11 +236,37 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     transcript,
     startListening,
     stopListening,
-    listening,
+    listening
   } = useVoiceControl(sendVoiceInput);
+
 
   return (
     <div className="flex flex-col gap-4">
+        <Accordion
+          variant="bordered"
+          className=""
+        >
+          <AccordionItem 
+            aria-label="Accordion" 
+            title="Show voice control"
+            startContent={<MicrophoneIcon className='w-5 h-5 text-secondary' />
+          }>
+            <div className="flex flex-row gap-4 ">
+              <VoiceInputButton 
+                startListening={startListening}
+                stopListening={stopListening}
+                listening={listening}
+                placeAsFixed={false}
+              />
+              <div className="flex-1">
+                <p>Microphone: {listening ? "on" : "off"}</p>
+                <p className="italic text-sm text-gray-600">Transcript: {transcript.isEmpty() ? "-" : transcript}</p>
+                {/* <Progress value={remainingTime} className="" size="sm" color="secondary"/> */}
+              </div>
+            </div>
+          </AccordionItem>
+      </Accordion>
+
       <Autocomplete
         ref={wineryInputRef}
         allowsCustomValue
@@ -219,7 +276,12 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         onValueChange={setWineryNameWithMatch}
         onSelectionChange={onWinerySelectionChange}
         isInvalid={selectedWinery == null && wineryName.length > 0}
-        errorMessage={"This winery is not in the list"}
+        errorMessage={
+          <p 
+            onClick={() => { onNewWineryOpen(); }}
+            className="text-danger cursor-pointer"
+          >This winery is not in the list! Click to create</p>
+        }
         isRequired
         variant="faded"
         defaultItems={participatedWineries}
@@ -234,7 +296,14 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       >
         {(item) => <AutocompleteItem key={item.id}>{item.name}</AutocompleteItem>}
       </Autocomplete>
-      
+
+      <CreateWineryModal
+        wineryName={wineryName}
+        isOpen={isNewWineryOpen}
+        onOpenChange={onNewWineryOpenChange}
+        onWineryCreateOrEdit={createNewWinery}
+      />
+
       <div className="flex flex-row gap-4">
 
         <CatalogueInputField
@@ -313,8 +382,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
             type="number"
             value={ratingCommission == null ? "" : ratingCommission.toString()} 
             onValueChange={(val) => setRatingCommission(val == "" ? null : parseInt(val))} 
-            label={"Rating Commission"}
-            placeholder={"Enter rating commission"}
+            label={"Hodnotící komise"}
+            placeholder={"Zadejte hodnotící komisi"}
             StartContent={PencilSquareIcon}
             className="flex-1"
           />
@@ -326,13 +395,32 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
             Champion wine 👑
           </Checkbox>
         </div>
-      </div> 
+      </div>
+
+      <div className="flex flex-row gap-4">
+        <SelectionField
+          label={"Sladkost"}
+          variant="faded"
+          items={resultSweetnessOptions.map((option) => ({ value: option.uid, label: option.name }))}
+          defaultSelectedKeys={[]}
+          onSelectionChange={(e) => setResultSweetness(e.target.value)}
+          key={1}
+        />
+
+        <CatalogueInputField
+          value={attribute} 
+          onValueChange={setAttribute} 
+          label={"Přívlastek"}
+          placeholder={"Zadejte přívlastek"}
+          StartContent={PencilSquareIcon}
+        />
+      </div>
 
       <CatalogueInputField
           value={sampleNote} 
           onValueChange={setSampleNote} 
-          label={"Note"}
-          placeholder={"Enter sample Note"}
+          label={"Poznámka"}
+          placeholder={"Zadejte poznámku"}
           StartContent={PencilSquareIcon}
       />
 
@@ -376,12 +464,6 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           StartContent={PencilSquareIcon}
         />
       </div>
-
-      <VoiceInputButton 
-        startListening={startListening}
-        stopListening={stopListening}
-        listening={listening}
-      />
 
       {/* TODO CALL EDIT */}
       <PrimaryButton 

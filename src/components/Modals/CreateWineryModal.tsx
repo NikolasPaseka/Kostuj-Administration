@@ -13,12 +13,13 @@ import StateMessage from '../StateMessage'
 
 type Props = {
   winery?: Winery,
+  wineryName?: string,
   isOpen: boolean,
   onOpenChange: () => void,
   onWineryCreateOrEdit: (winery: Winery) => void
 }
 
-const CreateWineryModal = ({ winery, isOpen, onOpenChange, onWineryCreateOrEdit }: Props) => {
+const CreateWineryModal = ({ winery, wineryName, isOpen, onOpenChange, onWineryCreateOrEdit }: Props) => {
   const { t } = useTranslation();
   const { getUserData } = useAuth();
 
@@ -44,7 +45,10 @@ const CreateWineryModal = ({ winery, isOpen, onOpenChange, onWineryCreateOrEdit 
       setWebAddress(winery.websitesUrl)
       setAddress(winery.address)
     }
-  }, [winery])
+    if (wineryName !== undefined) {
+      setWineryTitle(wineryName)
+    }
+  }, [winery, wineryName])
 
   useEffect(() => {
     fetchAdminWineries()

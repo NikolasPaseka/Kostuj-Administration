@@ -1,6 +1,7 @@
 import "regenerator-runtime/runtime.js";
 import { useEffect, useRef } from "react";
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import React from "react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const useVoiceControl = (actionAfterVoiceInput: () => Promise<void>, commands?: any) => {
@@ -12,6 +13,8 @@ const useVoiceControl = (actionAfterVoiceInput: () => Promise<void>, commands?: 
       isMicrophoneAvailable
     } = useSpeechRecognition({ commands });
 
+    const [startTime, setStartTime] = React.useState<number>(0);
+
     const startListening = () => { SpeechRecognition.startListening({ language: 'cs', continuous: true }) }
     const stopListening =  () => { SpeechRecognition.stopListening() }
   
@@ -21,16 +24,17 @@ const useVoiceControl = (actionAfterVoiceInput: () => Promise<void>, commands?: 
       if (silenceTimerRef.current) {
         clearTimeout(silenceTimerRef.current);
       }
+      setStartTime((new Date()).getTime());
       silenceTimerRef.current = setTimeout(async () => {
         console.log("Silence detected");
-        await actionAfterVoiceInput();
+        actionAfterVoiceInput();
         resetTranscript();
       }, 1500);
     };
   
     useEffect(() => {
       if (transcript.length !== 0) {
-        console.log("Transcript eff: ", transcript);
+        console.log("Transcript: ", transcript);
         resetSilenceTimer();
       }
     }, [transcript]);
@@ -42,7 +46,8 @@ const useVoiceControl = (actionAfterVoiceInput: () => Promise<void>, commands?: 
       listening,
       resetTranscript,
       browserSupportsSpeechRecognition,
-      isMicrophoneAvailable
+      isMicrophoneAvailable,
+      remainingTime: ((1500 - ((new Date()).getTime() - startTime)) / 1500) * 100,
     };
   };
   

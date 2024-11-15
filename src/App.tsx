@@ -43,7 +43,7 @@ const AppLayout = () => {
     <div className="flex">
       <AuthProvider>
         {isSidebarVisible && <Sidebar showFull={!isSidebarSmaller} /> }
-        <div className="flex-1 py-4 px-8 max-w-screen-2xl mx-auto">
+        <div className="flex-1 py-4 px-8 max-w-screen-3xl mx-auto">
           <Routes>
             <Route path="/" element={<PrivateRoute />}>
               <Route path={AppRoutes.HOME} element={<HomePage />} />

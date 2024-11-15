@@ -19,6 +19,7 @@ import { convertUnixToDateString } from '../../utils/conversionUtils';
 import { WineColor } from '../../model/Domain/WineColor';
 import CatalogueOrganizators from './components/CatalogueOrganizators';
 import useCatalogueOwnerCheck from '../../hooks/useCatalogueOwnerCheck';
+import { VoiceControlRepository } from '../../communication/repositories/VoiceControlRepository';
 
 
 const FeastCatalogueDetailPage = () => {
@@ -42,6 +43,8 @@ const FeastCatalogueDetailPage = () => {
     }
     
     fetchCatalogue();
+    //TODO ping
+    VoiceControlRepository.ping();
   }, [id]);
 
   const deleteCatalogue = async () => {

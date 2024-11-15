@@ -20,16 +20,18 @@ import WineFilterModal from '../../Modals/WineFilterModal';
 import { RangeFilter } from '../../../model/Domain/RangeFilter';
 
 const tableColumns = [
-  {name: "NAME", uid: "name"},
-  {name: "WINENAME", uid: "wineId.name"},
+  {name: "Označení", uid: "name"},
+  {name: "Víno", uid: "wineId.name"},
   //{name: "GRAPE", uid: "wineId.grapeVarietals"},
   //{name: "COLOR", uid: "wineId.color"},
-  {name: "YEAR", uid: "wineId.year", allowSorting: true},
-  {name: "WINERY", uid: "wineId.winaryId.name"},
-  {name: "RATING", uid: "rating", allowSorting: true},
-  {name: "COMMISSION", uid: "ratingCommission"},
-  {name: "NOTE", uid: "note"},
-  {name: "ACTIONS", uid: "actions"}
+  {name: "Ročník", uid: "wineId.year", allowSorting: true},
+  {name: "Vinařství", uid: "wineId.winaryId.name"},
+  {name: "Sladkost", uid: "wineId.resultSweetness"},
+  {name: "Přívlastek", uid: "wineId.attribute"},
+  {name: "Hodnocení", uid: "rating", allowSorting: true},
+  {name: "Komise", uid: "ratingCommission"},
+  {name: "Poznámka", uid: "note"},
+  {name: "Akce", uid: "actions"}
 ];
 
 const iconClassName = "w-4 h-4 text-secondary";
@@ -284,11 +286,11 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
                   <EyeIcon className='w-5 h-5 text-gray-600' />
               </Tooltip>
             </span>
-            <span className="cursor-pointer">
+            {/* <span className="cursor-pointer">
               <Tooltip content="Edit">
                   <PencilIcon className='w-5 h-5 text-gray-600' />
               </Tooltip>
-            </span>
+            </span> */}
             <span onClick={() => {
               setSampleToRemove(sample);
               onDeleteModalOpen() 

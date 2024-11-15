@@ -15,6 +15,7 @@ import { CatalogueRepository } from "../../communication/repositories/CatalogueR
 import { useAuth } from "../../context/AuthProvider";
 import BackNavigation from "../../components/Sidebar/BackNavigation";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import { VoiceControlRepository } from "../../communication/repositories/VoiceControlRepository";
 
 const FeastCatalogueCreatePage = () => {
   const [page, setPage] = useState<number>(1);
@@ -36,6 +37,8 @@ const FeastCatalogueCreatePage = () => {
     }
     
     fetchCatalogue();
+    //TODO ping
+    VoiceControlRepository.ping();
   }, [id]);
 
   const prepareCatalogueData = (catalogueData: CatalogueData): Catalogue => {
