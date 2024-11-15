@@ -1,23 +1,23 @@
 import React, { useCallback, useEffect, useRef } from 'react'
-import SearchInput from '../SearchInput';
+import SearchInput from '../../SearchInput';
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, Selection, Spacer, Tabs, Tab, Badge, SortDescriptor, Pagination, CircularProgress } from '@nextui-org/react';
-import { UiState } from '../../communication/UiState';
-import { WineSample } from '../../model/WineSample';
-import { GrapeVarietal } from '../../model/GrapeVarietal';
-import { Wine } from '../../model/Wine';
+import { UiState } from '../../../communication/UiState';
+import { WineSample } from '../../../model/WineSample';
+import { GrapeVarietal } from '../../../model/GrapeVarietal';
+import { Wine } from '../../../model/Wine';
 import { AdjustmentsHorizontalIcon, CheckIcon, ChevronDownIcon, ClipboardDocumentCheckIcon, EyeIcon, PencilIcon, PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/solid';
-import GenericTable from './GenericTable';
-import { WineColor } from '../../model/Domain/WineColor';
-import PrimaryButton from '../PrimaryButton';
-import { Winery } from '../../model/Winery';
-import AutoLabelModal from '../Modals/AutoLabelModal';
-import GenericInput from '../GenericInput';
-import { getNestedValue } from './getNestedValues';
-import { TableFlag } from './TableFlagType';
-import ExportSamplesModal from '../Modals/ExportSamplesModal';
-import { WineSampleExport } from '../../model/ExportType/WineSampleExport';
-import WineFilterModal from '../Modals/WineFilterModal';
-import { RangeFilter } from '../../model/Domain/RangeFilter';
+import GenericTable from '../GenericTable';
+import { WineColor } from '../../../model/Domain/WineColor';
+import PrimaryButton from '../../PrimaryButton';
+import { Winery } from '../../../model/Winery';
+import AutoLabelModal from '../../Modals/AutoLabelModal';
+import GenericInput from '../../GenericInput';
+import { getNestedValue } from '../getNestedValues';
+import { TableFlag } from '../TableFlagType';
+import ExportSamplesModal from '../../Modals/ExportSamplesModal';
+import { WineSampleExport } from '../../../model/ExportType/WineSampleExport';
+import WineFilterModal from '../../Modals/WineFilterModal';
+import { RangeFilter } from '../../../model/Domain/RangeFilter';
 
 const tableColumns = [
   {name: "NAME", uid: "name"},

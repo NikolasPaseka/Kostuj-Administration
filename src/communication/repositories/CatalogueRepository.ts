@@ -48,6 +48,10 @@ export const CatalogueRepository = {
         return await axiosCall(AxiosMethod.POST, `/catalogues/${catalogue.id}/wineries`, winery);
     },
 
+    addParticipatedWineries: async (catalogue: Catalogue, wineries: Winery[]): Promise<CommunicationResult<Winery[]>> => {
+        return await axiosCall(AxiosMethod.POST, `/catalogues/${catalogue.id}/wineries`, wineries);
+    },
+
     removeWineryFromParticipated: async (catalogue: Catalogue | string, winery: Winery): Promise<CommunicationResult<SuccessMessage>> => {
         if (TypeChecker.isString(catalogue)) {
             console.log("Catalogue is string");

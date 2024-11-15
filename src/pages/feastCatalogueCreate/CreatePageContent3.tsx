@@ -9,7 +9,7 @@ import { Catalogue } from "../../model/Catalogue";
 import { resolveUiState, UiState, UiStateType } from "../../communication/UiState";
 import { WineSample } from "../../model/WineSample";
 import { Wine } from "../../model/Wine";
-import WineTable from "../../components/Tables/WineTable";
+import WineTable from "../../components/Tables/WineTable/WineTable";
 import { useTranslation } from "react-i18next";
 import { TranslationNS } from "../../translations/i18n";
 import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";

@@ -3,7 +3,7 @@ import { resolveUiState, UiState, UiStateType } from "../../communication/UiStat
 import { useEffect, useState } from "react";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { WineSample } from "../../model/WineSample";
-import WineTable from "../../components/Tables/WineTable";
+import WineTable from "../../components/Tables/WineTable/WineTable";
 import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 import { ExcelExporter } from "../../utils/ExcelExporter";

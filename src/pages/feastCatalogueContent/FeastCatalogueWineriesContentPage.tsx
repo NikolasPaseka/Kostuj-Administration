@@ -4,7 +4,7 @@ import { CommunicationResult, isSuccess } from "../../communication/Communicatio
 import { CatalogueRepository } from "../../communication/repositories/CatalogueRepository";
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 import { Winery } from "../../model/Winery";
-import WineryTable from "../../components/Tables/WineryTable";
+import WineryTable from "../../components/Tables/WineryTable/WineryTable";
 import { useParams } from "react-router-dom";
 
 const FeastCatalogueWineriesContentPage = () => {

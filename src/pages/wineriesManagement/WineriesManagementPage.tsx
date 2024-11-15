@@ -1,5 +1,5 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
-import WineryTable from '../../components/Tables/WineryTable'
+import WineryTable from '../../components/Tables/WineryTable/WineryTable'
 import { Winery } from '../../model/Winery'
 import { useEffect, useState } from 'react'
 import { resolveUiState, UiState, UiStateType } from '../../communication/UiState'
