@@ -12,6 +12,8 @@ export class WineSampleExport {
     champion: boolean;
     ratingCommission?: number;
     note?: string;
+    resultSweetness?: string;
+    attribute?: string;
 
     constructor(wineSample: WineSample) {
         this.name = wineSample.name;
@@ -23,5 +25,7 @@ export class WineSampleExport {
         this.champion = wineSample.champion;
         this.ratingCommission = wineSample.ratingCommission;
         this.note = wineSample.note;
+        this.resultSweetness = (wineSample.wineId as Wine).resultSweetness;
+        this.attribute = (wineSample.wineId as Wine).attribute;
     }
 }
