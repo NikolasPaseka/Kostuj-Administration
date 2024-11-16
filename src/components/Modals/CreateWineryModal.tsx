@@ -86,7 +86,9 @@ const CreateWineryModal = ({ winery, wineryName, isOpen, onOpenChange, onWineryC
     <ModalDialog
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      onConfirm={() => createOrEditWinery()}
+      onConfirm={() => { 
+        createOrEditWinery()
+      }}
       header={inEdit ? "Edit Winery" : "Create Winery"}
       confirmButtonDisabled={!allRequiredFieldsFilled || checkWineryExists()}
       onCloseAction={() => {

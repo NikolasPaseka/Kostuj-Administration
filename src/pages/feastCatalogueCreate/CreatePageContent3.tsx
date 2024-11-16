@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import PrimaryButton from "../../components/PrimaryButton"
 import CatalogueInputField from "./components/CatalogueInputField"
 import { ClipboardDocumentIcon, MicrophoneIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
-import { Accordion, AccordionItem, Autocomplete, AutocompleteItem, Checkbox, Divider, Radio, RadioGroup, Slider, useDisclosure } from "@nextui-org/react";
+import { Accordion, AccordionItem, Autocomplete, AutocompleteItem, Checkbox, Divider, Kbd, Radio, RadioGroup, Slider, useDisclosure } from "@nextui-org/react";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { Winery } from "../../model/Winery";
 import { Catalogue } from "../../model/Catalogue";
@@ -22,6 +22,7 @@ import { VoiceControlRepository } from "../../communication/repositories/VoiceCo
 import SelectionField from "../../components/Controls/SelectionField";
 import { ResultSweetnessOptions } from "../../model/Domain/ResultSweetness";
 import CreateWineryModal from "../../components/Modals/CreateWineryModal";
+import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 
 const resultSweetnessOptions = [
   {name: "Suché", uid: ResultSweetnessOptions.DRY},
@@ -66,6 +67,14 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   const wineInputRef = useRef<HTMLInputElement>(null);
   const wineYearInputRef = useRef<HTMLInputElement>(null);
 
+  // Voice shortcut
+  // handle what happens on key press
+  // const handleKeyPress = useCallback((event: ) => {
+  //   if (event.shiftKey === true) {
+  //     console.log(`Key pressed: ${event.key}`);
+  //   }
+  // }, []);
+
   useEffect(() => {
     const fetchParticipatedWineries = async () => { 
       const res: CommunicationResult<Winery[]> = await CatalogueRepository.getParticipatedWineries(catalogue);
@@ -77,10 +86,17 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     const fetchAddedWineSamples = async () => {
       const res: CommunicationResult<WineSample[]> = await CatalogueRepository.getSamples(catalogue.id);
       setWineSamples(resolveUiState(res, setUiStateWineSample) ?? []);
-    }
+    } 
     
     fetchParticipatedWineries();
     fetchAddedWineSamples();
+
+    // // attach the event listener
+    // document.addEventListener('keydown', handleKeyPress);
+    // // remove the event listener
+    // return () => {
+    //   document.removeEventListener('keydown', handleKeyPress);
+    // };
   }, [catalogue]);
 
   const fetchWineryWines = async (winery: Winery) => {
@@ -170,6 +186,13 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     }
   }
 
+  const deleteWineSample = async (sample: WineSample) => {
+    const res: CommunicationResult<SuccessMessage> = await CatalogueRepository.deleteSample(sample); 
+    if (isSuccess(res)) {
+      setWineSamples([...wineSamples.filter(s => s.id !== sample.id)]);
+    }
+  }
+
   const areRequiredFieldsFilled = (): boolean => {
     return selectedWinery != null && wineName.length > 0 && wineYear != null && wineColor.length > 0;
   }
@@ -180,7 +203,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     setSampleName("");
     setWineYear(null);
     setSampleRating(null);
-    setWineColor("");
+    //setWineColor("");
     setResidualSugar(null);
     setAlcoholContent(null);
     setAcidity(null);
@@ -266,13 +289,14 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
             title="Show voice control"
             startContent={<MicrophoneIcon className='w-5 h-5 text-secondary' />
           }>
-            <div className="flex flex-row gap-4 ">
+            <div className="flex flex-row gap-4 items-center ">
               <VoiceInputButton 
                 startListening={startListening}
                 stopListening={stopListening}
                 listening={listening}
                 placeAsFixed={false}
               />
+              <Kbd keys={["option"]} className="h-8">M</Kbd>
               <div className="flex-1">
                 <p>Microphone: {listening ? "on" : "off"}</p>
                 <p className="italic text-sm text-gray-600">Transcript: {transcript.isEmpty() ? "-" : transcript}</p>
@@ -500,6 +524,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         wineSamples={wineSamples} 
         uiState={uiStateWineSample}
         showTableControls={false}
+        deleteWineSample={deleteWineSample}
       />
     </div>
   )
