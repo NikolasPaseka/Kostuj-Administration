@@ -199,7 +199,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
 
   const clearInputData = () => {
     setWineryName("");
-    setWineName("");
+    //setWineName("");
     setSampleName("");
     setWineYear(null);
     setSampleRating(null);
