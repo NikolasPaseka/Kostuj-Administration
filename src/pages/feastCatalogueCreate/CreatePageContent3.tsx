@@ -202,6 +202,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         year: string | null,
         color: string | null,
         rating: string | null
+        resultSweetness: string | null
       } }).entity
 
       console.log(wine);
@@ -229,10 +230,20 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         onWinerySelected(null);
         if (wine.winery != null) { setWineryName(wine.winery); }
       }
-      if (wine.wine != null) { setWineName(wine.wine); if (notNullValuesCount == 1) { wineInputRef.current?.focus(); } }
+
+      if (wine.wine != null) { 
+        // capitalize every first letter of the word
+        const words = wine.wine.split(" ");
+        for (let i = 0; i < words.length; i++) {
+            words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+        }
+        setWineName(words.join(" "));
+        if (notNullValuesCount == 1) { wineInputRef.current?.focus(); } 
+      }
       if (wine.year != null && !isNaN(parseInt(wine.year))) { setWineYear(parseInt(wine.year)); if (notNullValuesCount == 1) { wineYearInputRef.current?.focus()} }
       if (wine.rating != null && !isNaN(parseInt(wine.rating))) { setSampleRating(parseInt(wine.rating)); }
       if (wine.color != null) { setWineColor(wine.color); }
+      if (wine.resultSweetness != null) { setResultSweetness(wine.resultSweetness); }
     }
   }
 
@@ -407,7 +418,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           label={"Sladkost"}
           variant="faded"
           items={resultSweetnessOptions.map((option) => ({ value: option.uid, label: option.name }))}
-          defaultSelectedKeys={[]}
+          defaultSelectedKeys={[resultSweetness]}
+          selectedKeys={[resultSweetness]}
           onSelectionChange={(e) => setResultSweetness(e.target.value)}
           key={1}
         />

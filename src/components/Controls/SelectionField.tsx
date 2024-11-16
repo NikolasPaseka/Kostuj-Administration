@@ -3,14 +3,14 @@ import React from "react";
 
 type Props = {
   label: string,
-  
   defaultSelectedKeys: string[],
+  selectedKeys?: string[],
   onSelectionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void,
   items: { value: string, label: string, startContent?: React.ReactNode }[]
   variant?: "bordered" | "flat" | "faded"
 }
 
-const SelectionField = ({ label, defaultSelectedKeys, onSelectionChange, items, variant="bordered"}: Props) => {
+const SelectionField = ({ label, defaultSelectedKeys, onSelectionChange, items, variant="bordered", selectedKeys=[]}: Props) => {
   
   const [selectedItem, setSelectedItem] = React.useState(items.find((item) => item.value === defaultSelectedKeys[0]));
 
@@ -20,6 +20,8 @@ const SelectionField = ({ label, defaultSelectedKeys, onSelectionChange, items, 
       variant={variant}
       placeholder="Vyberte možnost"
       defaultSelectedKeys={defaultSelectedKeys}
+      selectedKeys={selectedKeys}
+      value={selectedItem?.value}
       onChange={(e) => {
         setSelectedItem(items.find((item) => item.value === e.target.value));
         onSelectionChange(e)
