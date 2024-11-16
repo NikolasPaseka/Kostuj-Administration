@@ -155,7 +155,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       year: wineYear ?? 0,
       attribute: attribute,
       residualSugar: residualSugar ?? undefined,
-      resultSweetness: resultSweetness,
+      resultSweetness: resultSweetness.isEmpty() ? undefined : resultSweetness,
       alcoholContent: alcoholContent ?? undefined,
       acidity: acidity ?? undefined,
       grapesSweetness: grapeSweetness ?? undefined,
@@ -168,7 +168,11 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       clearInputData();
       setWineSamples([...wineSamples, res.data]);
     }
-}
+  }
+
+  const areRequiredFieldsFilled = (): boolean => {
+    return selectedWinery != null && wineName.length > 0 && wineYear != null && wineColor.length > 0;
+  }
 
   const clearInputData = () => {
     setWineryName("");
@@ -353,6 +357,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
 
         <CatalogueInputField
           ref={wineYearInputRef}
+          isRequired
           type="number"
           value={wineYear == null ? "" : wineYear.toString()} 
           onValueChange={(val) => setWineYear(val == "" ? null : parseInt(val))} 
@@ -469,6 +474,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       <PrimaryButton 
         className="ml-auto" 
         onClick={createNewSample}
+        isDisabled={!areRequiredFieldsFilled()}
       >
         {isWineNew() 
           ? t("createAndAddWine", { ns: TranslationNS.catalogues })
