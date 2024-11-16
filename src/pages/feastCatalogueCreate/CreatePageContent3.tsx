@@ -23,6 +23,7 @@ import SelectionField from "../../components/Controls/SelectionField";
 import { ResultSweetnessOptions } from "../../model/Domain/ResultSweetness";
 import CreateWineryModal from "../../components/Modals/CreateWineryModal";
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
+import { notifySuccess } from "../../utils/toastNotify";
 
 const resultSweetnessOptions = [
   {name: "Suché", uid: ResultSweetnessOptions.DRY},
@@ -182,6 +183,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     const res: CommunicationResult<WineSample> = await CatalogueRepository.createSample(newSample, wine, selectedWinery.id);
     if (isSuccess(res)) {
       clearInputData();
+      notifySuccess("Víno přidáno", 3000);
       setWineSamples([...wineSamples, res.data]);
     }
   }

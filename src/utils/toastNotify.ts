@@ -1,8 +1,8 @@
 import { toast } from "react-toastify";
 
-export const notifySuccess = (message: string) => toast.success(message, {
+export const notifySuccess = (message: string, autoClose: number=5000) => toast.success(message, {
     position: "bottom-center",
-    autoClose: 5000,
+    autoClose: autoClose,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
