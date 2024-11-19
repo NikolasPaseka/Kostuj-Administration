@@ -9,6 +9,7 @@ import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 import { ExcelExporter } from "../../utils/ExcelExporter";
 import { Catalogue } from "../../model/Catalogue";
 import { WineSampleExport } from "../../model/ExportType/WineSampleExport";
+import { Wine, WineUtil } from "../../model/Wine";
 
 const FeastCatalogueWineContentPage = () => {
   const { id } = useParams();
@@ -75,6 +76,8 @@ const FeastCatalogueWineContentPage = () => {
 
     } else {
       return ExcelExporter.exportToExcel(samples.map(sample => {
+        const wine = sample.wineId as Wine;
+        wine.resultSweetness = WineUtil.getResultSweetnessLabel(wine);
         return new WineSampleExport(sample);
       }), fileName);
     }
