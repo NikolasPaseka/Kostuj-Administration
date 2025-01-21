@@ -1,6 +1,6 @@
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { CalendarDaysIcon } from '@heroicons/react/24/solid'
-import { parseAbsoluteToLocal } from '@internationalized/date'
+import { parseAbsoluteToLocal, ZonedDateTime } from '@internationalized/date'
 import { DatePicker } from "@heroui/react"
 import { I18nProvider } from '@react-aria/i18n'
 
@@ -19,7 +19,8 @@ const DatePickerGeneric = ({ value, onChange, label }: Props) => {
       <DatePicker 
         hideTimeZone
         value={dateForInput} 
-        onChange={(date) => { 
+        onChange={(date: ZonedDateTime | null) => { 
+          if (date == null) { return; }
           if (date.toAbsoluteString != undefined) {
             onChange(new Date(date.toAbsoluteString()))
           } else {

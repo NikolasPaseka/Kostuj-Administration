@@ -61,6 +61,7 @@ const WineriesManagementPage = () => {
             aria-label="Dynamic Actions" 
           >
               <DropdownItem
+                key={"newWinery"}
                 startContent={<PlusIcon className="w-5 h-5 text-secondary" />}
                 description={"Create new winery"}
                 onClick={onNewWineryOpen}
@@ -69,6 +70,7 @@ const WineriesManagementPage = () => {
               </DropdownItem>
 
               <DropdownItem
+                key={"importWineries"}
                 startContent={<ArrowUpOnSquareIcon className="w-5 h-5 text-secondary" />}
                 description={"Import wineries from excel file"}
                 onClick={onImportWineriesOpen}
