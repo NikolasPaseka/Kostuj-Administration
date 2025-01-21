@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import SearchInput from '../../SearchInput';
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, Selection, Spacer, Tabs, Tab, Badge, SortDescriptor, Pagination, CircularProgress } from '@nextui-org/react';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tooltip, useDisclosure, Selection, Spacer, Tabs, Tab, Badge, SortDescriptor, Pagination, CircularProgress } from "@heroui/react";
 import { UiState } from '../../../communication/UiState';
 import { WineSample } from '../../../model/WineSample';
 import { GrapeVarietal } from '../../../model/GrapeVarietal';

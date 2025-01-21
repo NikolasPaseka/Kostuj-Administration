@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import SearchInput from '../../SearchInput';
-import { Spacer, useDisclosure } from '@nextui-org/react';
+import { Spacer, useDisclosure } from "@heroui/react";
 import { UiState } from '../../../communication/UiState';
 import { Winery } from '../../../model/Winery';
 import GenericTable from '../GenericTable';

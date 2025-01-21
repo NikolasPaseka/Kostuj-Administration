@@ -1,4 +1,4 @@
-import { Input } from '@nextui-org/react';
+import { Input } from "@heroui/react";
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import IconButton from './IconButton';
 import { useTranslation } from 'react-i18next';

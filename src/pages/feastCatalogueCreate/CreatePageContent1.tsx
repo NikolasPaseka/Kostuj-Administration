@@ -1,4 +1,4 @@
-import { Textarea } from "@nextui-org/react";
+import { Textarea } from "@heroui/react";
 import CatalogueInputField from "./components/CatalogueInputField"
 import { useEffect, useState } from "react";
 import PrimaryButton from "../../components/PrimaryButton";
@@ -56,7 +56,7 @@ const CreatePageContent1 = ({ isEditing, catalogue = null, setCatalogue, sendCat
 
     const res: CommunicationResult<string[]> = await CatalogueRepository.uploadImages(catalogueId, files);
     if (isSuccess(res) && catalogue != null) {
-      const newImages = [...catalogue.imageUrl ?? [], ...res.data];
+      const newImages = [...(catalogue.imageUrl ?? []), ...res.data];
       setCatalogue({ ...catalogue, imageUrl: newImages });
     }
   };

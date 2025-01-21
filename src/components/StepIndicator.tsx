@@ -1,13 +1,18 @@
 type Props = {
   currentStep: number;
+  showMapCreation: boolean;
 };
 
-const StepIndicator = ({ currentStep }: Props) => {
+const StepIndicator = ({ currentStep, showMapCreation }: Props) => {
   const steps = [
     { id: 1, label: 'Základní informace' },
     { id: 2, label: 'Vinařství' },
-    { id: 3, label: 'Vzorky vín' },
+    { id: 3, label: 'Vzorky vín' }
   ];
+
+  if (showMapCreation) {
+    steps.push({ id: 4, label: 'Mapa' });
+  }
 
   return (
     <div className="relative flex flex-col w-full max-w-xl mx-auto px-8">

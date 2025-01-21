@@ -2,7 +2,7 @@ import FileUploader from '../../../components/FileUploader'
 import ModalDialog from '../../../components/ModalDialog'
 import { useState } from 'react'
 import { CatalogueImport } from '../../../model/ImportType/CatalogueImport'
-import { CircularProgress, Tab, Tabs } from '@nextui-org/react'
+import { CircularProgress, Tab, Tabs } from "@heroui/react"
 import { Winery } from '../../../model/Winery'
 import { CatalogueImportUtil } from '../../../utils/CatalogueImportUtils'
 import { WineSample } from '../../../model/WineSample'

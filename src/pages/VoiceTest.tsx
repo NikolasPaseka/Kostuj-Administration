@@ -1,4 +1,4 @@
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input } from "@heroui/react";
 import { useRef, useState } from "react";
 import GenericInput from "../components/GenericInput";
 import PrimaryButton from "../components/PrimaryButton";

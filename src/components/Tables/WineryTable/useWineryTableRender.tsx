@@ -4,7 +4,7 @@ import { EyeIcon } from '@heroicons/react/24/solid';
 import { PencilIcon } from '@heroicons/react/24/solid';
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { Winery } from '../../../model/Winery';
-import { Tooltip, User } from '@nextui-org/react';
+import { Tooltip, User } from "@heroui/react";
 import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../../translations/i18n';
 

@@ -4,7 +4,7 @@ import { CommunicationResult, isSuccess } from '../../communication/Communicatio
 import { Catalogue } from '../../model/Catalogue';
 import { resolveUiState, UiState, UiStateType } from '../../communication/UiState';
 import UiStateHandler from '../../components/UiStateHandler';
-import { Card, CardBody, Switch, Divider, useDisclosure, Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem } from '@nextui-org/react';
+import { Card, CardBody, Switch, Divider, useDisclosure, Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem } from "@heroui/react";
 import CardInfoRow from './components/CardInfoRow';
 import { ArrowDownOnSquareIcon, ArrowDownTrayIcon, ArrowUpOnSquareIcon, CalendarDaysIcon, ChevronRightIcon, CurrencyDollarIcon, EllipsisVerticalIcon, MapPinIcon, PencilSquareIcon, SparklesIcon, TrashIcon, UserIcon } from '@heroicons/react/24/solid';
 import PrimaryButton from '../../components/PrimaryButton';

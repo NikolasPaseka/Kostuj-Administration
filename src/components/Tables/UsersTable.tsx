@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import { UserData } from '../../model/UserData'
 import { UiState } from '../../communication/UiState'
 import GenericTable from './GenericTable'
-import { Tooltip, User } from '@nextui-org/react'
+import { Tooltip, User } from "@heroui/react"
 import { PencilIcon } from '@heroicons/react/16/solid'
 import { AuthorizationRoles, authorizationRolesArray } from '../../model/AuthorizationRoles'
 import { ModalProps } from '../Modals/ModalProps'

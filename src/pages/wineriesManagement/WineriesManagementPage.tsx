@@ -4,7 +4,7 @@ import { Winery } from '../../model/Winery'
 import { useEffect, useState } from 'react'
 import { resolveUiState, UiState, UiStateType } from '../../communication/UiState'
 import { WineryRepository } from '../../communication/repositories/WineryRepository'
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, useDisclosure } from '@nextui-org/react'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, useDisclosure } from "@heroui/react"
 import CreateWineryModal from '../../components/Modals/CreateWineryModal'
 import { isSuccess } from '../../communication/CommunicationsResult'
 import { ArrowUpOnSquareIcon, PlusIcon } from '@heroicons/react/24/solid'

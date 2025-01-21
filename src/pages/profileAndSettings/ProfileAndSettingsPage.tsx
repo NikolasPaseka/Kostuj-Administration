@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Card, CardBody, CardHeader,Switch,Select,SelectItem,Slider,Avatar,Divider} from "@nextui-org/react";
+import { Card, CardBody, CardHeader,Switch,Select,SelectItem,Slider,Avatar,Divider} from "@heroui/react";
 import {UserCircleIcon,Cog6ToothIcon,GlobeAltIcon,MoonIcon,SunIcon,MicrophoneIcon} from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthProvider';
 import { UserData } from '../../model/UserData';

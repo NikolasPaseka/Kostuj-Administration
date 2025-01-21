@@ -1,10 +1,11 @@
-import { Card, CardBody, Chip, Image } from '@nextui-org/react'
+import { Card, CardBody, Chip, Image } from "@heroui/react"
 import { Catalogue } from '../../../model/Catalogue'
-import { ArrowDownTrayIcon, CheckCircleIcon, ChevronRightIcon, CurrencyDollarIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import { ArrowDownTrayIcon, CheckCircleIcon, ChevronRightIcon, ClipboardDocumentListIcon, CurrencyDollarIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../../translations/i18n';
 import useCatalogueOwnerCheck from '../../../hooks/useCatalogueOwnerCheck';
+import { CatalogueType, getCatalogueTypeLabel } from '../../../model/Domain/CatalogueType';
 
 type Props = { catalogue: Catalogue; navPath: string };
 
@@ -28,18 +29,26 @@ const FeastCatalogueListCard = ({ catalogue, navPath }: Props, key: React.Key) =
               isZoomed={true}
               src={catalogue.imageUrl[0]}
               style={{ width: '180px', height: '220px', objectFit: 'cover' }}
-              // className="object-cover w-full h-full"
             />
-            // <img 
-            //   src={catalogue.imageUrl[0]}
-            //   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            // ></img>
           }
         </div>
 
         <div className="flex-1 flex-col px-6">
           <h4 className="font-bold text-large">{catalogue.title}</h4>
           <div className="flex flex-row gap-2 my-2">
+
+            <Chip 
+              variant="solid"
+              className={`px-2 
+                ${catalogue.type == CatalogueType.FEAST 
+                  ? `bg-orange-200 text-orange-800` 
+                  : `bg-blue-300 text-blue-900`}
+              `}
+              startContent={ <ClipboardDocumentListIcon className="h-5 w-5"/> }
+            >
+              {getCatalogueTypeLabel(catalogue.type)}
+            </Chip>
+
             <Chip 
               color={catalogue.published ? "success" : "warning"}
               variant="flat"
@@ -52,7 +61,7 @@ const FeastCatalogueListCard = ({ catalogue, navPath }: Props, key: React.Key) =
             <Chip 
               color={isAdminOwner() ? "success" : "primary"}
               variant="flat"
-              className="px-2"
+              className="px-2 text-primary"
               startContent={ <UserCircleIcon className="h-5 w-5"/> }
             >
               {isAdminOwner() ? "Owner" : "Co-Organizator"}

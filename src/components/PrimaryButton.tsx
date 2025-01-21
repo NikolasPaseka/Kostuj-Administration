@@ -1,4 +1,4 @@
-import { Button, forwardRef } from '@nextui-org/react'
+import { Button, forwardRef } from "@heroui/react"
 
 type Props = { 
   children: React.ReactNode, 

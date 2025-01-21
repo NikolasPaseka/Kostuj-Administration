@@ -1,8 +1,10 @@
+import { CatalogueType } from "./Domain/CatalogueType"
 import { UserData } from "./UserData"
 
 export type Catalogue = {
     id: string,
     title: string,
+    type: CatalogueType,
     description?: string,
     year: number,
     startDate: number,

@@ -31,7 +31,6 @@ export function useWineriesList({ catalogue }: Props) {
   const loadWineries = async (items: Winery[], currentOffset: number = 0) => {
     setIsLoading(true);
 
-    console.log(currentOffset, limit)
     const slicedItems = items.slice(currentOffset, currentOffset + limit);
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -47,7 +46,6 @@ export function useWineriesList({ catalogue }: Props) {
   };
 
   const onLoadMore = () => {
-    console.log("onLoadMore")
     const newOffset = offset + limit;
 
     setOffset(newOffset);

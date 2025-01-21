@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import PrimaryButton from "../../components/PrimaryButton"
 import CatalogueInputField from "./components/CatalogueInputField"
 import { AtSymbolIcon, ChevronRightIcon, ClipboardDocumentIcon, MapPinIcon, PlusIcon } from "@heroicons/react/24/solid";
-import { Accordion, AccordionItem, Autocomplete, AutocompleteItem, Divider, useDisclosure } from "@nextui-org/react";
+import { Accordion, AccordionItem, Autocomplete, AutocompleteItem, Divider, useDisclosure } from "@heroui/react";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { Winery } from "../../model/Winery";
 import { Catalogue } from "../../model/Catalogue";

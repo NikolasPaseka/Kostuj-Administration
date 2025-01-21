@@ -1,5 +1,5 @@
 import React from 'react'
-import { SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import { SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import { isStateLoading, UiState } from '../../communication/UiState';
 import VoidListImage from '../../assets/void_list.svg';
 

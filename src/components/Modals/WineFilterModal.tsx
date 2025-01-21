@@ -1,4 +1,4 @@
-import { Slider } from '@nextui-org/react';
+import { Slider } from "@heroui/react";
 import React, { useEffect } from 'react'
 import { TypeChecker } from '../../utils/TypeChecker';
 import ModalDialog from '../ModalDialog';

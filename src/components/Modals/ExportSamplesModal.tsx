@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import CheckboxGeneric from '../Controls/CheckboxGeneric'
 import ModalDialog from '../ModalDialog'
-import { Radio, RadioGroup } from '@nextui-org/react'
+import { Radio, RadioGroup } from "@heroui/react"
 import { WineSampleExport } from '../../model/ExportType/WineSampleExport'
 
 type Props = {

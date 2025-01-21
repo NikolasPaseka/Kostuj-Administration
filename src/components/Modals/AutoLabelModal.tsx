@@ -1,7 +1,7 @@
 import React from "react";
 import ModalDialog from "../ModalDialog"
 import GenericInput from "../GenericInput";
-import { CircularProgress, Radio, RadioGroup } from "@nextui-org/react";
+import { CircularProgress, Radio, RadioGroup } from "@heroui/react";
 import { isStateError, isStateLoading, isStateSuccess, UiState, UiStateType } from "../../communication/UiState";
 import StateMessage from "../StateMessage";
 import SelectionField from "../Controls/SelectionField";

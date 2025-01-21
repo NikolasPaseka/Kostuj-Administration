@@ -1,5 +1,5 @@
 import { isStateError, isStateLoading, UiState } from '../communication/UiState';
-import { Spinner } from '@nextui-org/react';
+import { Spinner } from "@heroui/react";
 import StateMessage from './StateMessage';
 
 type Props = { uiState: UiState };

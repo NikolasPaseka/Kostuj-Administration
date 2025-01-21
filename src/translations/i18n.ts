@@ -42,4 +42,8 @@ i18n
     }
 });
 
-  export default i18n;
+export const getCurrentLanguage = () => {
+    return i18n.language;
+}
+
+export default i18n;

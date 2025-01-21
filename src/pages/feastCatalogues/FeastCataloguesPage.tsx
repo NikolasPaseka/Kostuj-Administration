@@ -12,10 +12,13 @@ import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../translations/i18n';
 import { CatalogueRepository } from '../../communication/repositories/CatalogueRepository';
 import { InfoLanding } from '../../components/InfoLanding';
+import DropdownMenuCustom from '../../components/Dropdown/DropdownMenuCustom';
+import useActionItems from './useActionItems';
 
 const FeastCataloguesPage = () => {
   const { t } = useTranslation();
   const [uiState, setUiState] = useState<UiState>({ type: UiStateType.LOADING });
+  const actionItems = useActionItems();
   
   const [catalogues, setCatalogues] = useState<Catalogue[]>([]);
   const [searchValue, setSearchValue] = useState("");
@@ -42,6 +45,12 @@ const FeastCataloguesPage = () => {
     <div className="flex flex-col">
       <div className="flex items-center mt-8 mb-4 justify-end gap-4">
         <SearchInput onValueChange={setSearchValue} value={searchValue} />
+
+        <DropdownMenuCustom 
+          dropdownButtonText={t("newCatalogue", { ns: TranslationNS.catalogues })}
+          actionItems={actionItems}
+        />
+
         <Link to={"/feastCatalogues/create"}>
           <PrimaryButton EndContent={PlusIcon}>{t("newCatalogue", { ns: TranslationNS.catalogues })}</PrimaryButton>
         </Link>

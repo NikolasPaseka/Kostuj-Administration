@@ -1,5 +1,5 @@
 import React from 'react'
-import { Chip } from '@nextui-org/react'
+import { Chip } from "@heroui/react"
 
 type Props = {
   children: React.ReactNode

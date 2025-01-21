@@ -1,5 +1,5 @@
 import { HomeIcon, UserIcon, ArrowLeftEndOnRectangleIcon, BookmarkSquareIcon, BuildingStorefrontIcon } from '@heroicons/react/24/solid';
-import { Button, Divider } from '@nextui-org/react';
+import { Button, Divider } from "@heroui/react";
 import SidebarItem from './SidebarItem';
 import { useAuth } from '../../context/AuthProvider';
 import { useTranslation } from 'react-i18next';

@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { CalendarDaysIcon } from '@heroicons/react/24/solid'
 import { parseAbsoluteToLocal } from '@internationalized/date'
-import { DatePicker } from '@nextui-org/react'
+import { DatePicker } from "@heroui/react"
 import { I18nProvider } from '@react-aria/i18n'
 
 type Props = {

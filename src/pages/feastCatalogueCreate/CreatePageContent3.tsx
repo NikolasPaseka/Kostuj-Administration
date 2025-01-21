@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import PrimaryButton from "../../components/PrimaryButton"
 import CatalogueInputField from "./components/CatalogueInputField"
 import { ClipboardDocumentIcon, MicrophoneIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
-import { Accordion, AccordionItem, Autocomplete, AutocompleteItem, Checkbox, Divider, Kbd, Radio, RadioGroup, Slider, useDisclosure } from "@nextui-org/react";
+import { Accordion, AccordionItem, Autocomplete, AutocompleteItem, Checkbox, Divider, Kbd, Radio, RadioGroup, Slider, useDisclosure } from "@heroui/react";
 import { CommunicationResult, isSuccess } from "../../communication/CommunicationsResult";
 import { Winery } from "../../model/Winery";
 import { Catalogue } from "../../model/Catalogue";
@@ -279,6 +279,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     listening
   } = useVoiceControl(sendVoiceInput);
 
+  console.log(resultSweetness);
 
   return (
     <div className="flex flex-col gap-4">
@@ -438,7 +439,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
           </Checkbox>
         </div>
       </div>
-
+    
       <div className="flex flex-row gap-4">
         <SelectionField
           label={"Sladkost"}

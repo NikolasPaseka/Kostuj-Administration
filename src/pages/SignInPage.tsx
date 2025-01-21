@@ -1,4 +1,4 @@
-import { Checkbox } from '@nextui-org/react'
+import { Checkbox } from "@heroui/react"
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../context/AuthProvider';

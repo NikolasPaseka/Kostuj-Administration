@@ -5,7 +5,7 @@ import { UserData } from '../../model/UserData'
 import UsersTable from '../../components/Tables/UsersTable'
 import { UiState, UiStateType } from '../../communication/UiState'
 import ModalDialog from '../../components/ModalDialog'
-import { useDisclosure } from '@nextui-org/react'
+import { useDisclosure } from "@heroui/react"
 import RowInfo from '../../components/RowInfo'
 import ClickableChip from '../../components/Controls/ClickableChip'
 import { AuthorizationRoles, authorizationRolesArray } from '../../model/AuthorizationRoles'

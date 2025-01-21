@@ -6,7 +6,7 @@ import UiStateHandler from '../../../components/UiStateHandler';
 import { UserData } from '../../../model/UserData';
 import { isSuccess } from '../../../communication/CommunicationsResult';
 import CardGeneric from '../../../components/CardGeneric';
-import { Accordion, AccordionItem, Spacer, User } from '@nextui-org/react';
+import { Accordion, AccordionItem, Spacer, User } from "@heroui/react";
 import { ShareIcon, TrashIcon } from '@heroicons/react/24/solid';
 import useCatalogueOwnerCheck from '../../../hooks/useCatalogueOwnerCheck';
 import IconButton from '../../../components/IconButton';

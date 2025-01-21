@@ -14,6 +14,6 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    exclude: ['js-big-decimal', '@nextui-org_react.js']
+    exclude: ['js-big-decimal', '@heroui_react.js']
   }
 })
