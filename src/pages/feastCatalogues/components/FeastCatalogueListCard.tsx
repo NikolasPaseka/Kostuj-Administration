@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../../translations/i18n';
 import useCatalogueOwnerCheck from '../../../hooks/useCatalogueOwnerCheck';
-import { CatalogueType, getCatalogueTypeLabel } from '../../../model/Domain/CatalogueType';
+import { CatalogueType } from '../../../model/Domain/CatalogueType';
 
 type Props = { catalogue: Catalogue; navPath: string };
 
@@ -46,7 +46,10 @@ const FeastCatalogueListCard = ({ catalogue, navPath }: Props, key: React.Key) =
               `}
               startContent={ <ClipboardDocumentListIcon className="h-5 w-5"/> }
             >
-              {getCatalogueTypeLabel(catalogue.type)}
+              {catalogue.type == CatalogueType.FEAST
+                ? t("feastCatalogueLabel", { ns: TranslationNS.catalogues })
+                : t("openCellarCatalogueLabel", { ns: TranslationNS.catalogues })
+              }
             </Chip>
 
             <Chip 
