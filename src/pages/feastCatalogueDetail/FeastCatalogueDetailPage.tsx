@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { CommunicationResult, isSuccess } from '../../communication/CommunicationsResult';
 import { Catalogue } from '../../model/Catalogue';
 import { resolveUiState, UiState, UiStateType } from '../../communication/UiState';
@@ -23,7 +23,7 @@ import { VoiceControlRepository } from '../../communication/repositories/VoiceCo
 
 
 const FeastCatalogueDetailPage = () => {
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const { id } = useParams();
   const { t } = useTranslation();
 
@@ -48,12 +48,13 @@ const FeastCatalogueDetailPage = () => {
   }, [id]);
 
   const deleteCatalogue = async () => {
-    if (catalogue == null) { return; }
+    // TODO: uncomment and make dialog before
+    // if (catalogue == null) { return; }
 
-    const res = await CatalogueRepository.deleteCatalogue(catalogue);
-    if (isSuccess(res)) {
-      navigate("/feastCatalogues");
-    }
+    // const res = await CatalogueRepository.deleteCatalogue(catalogue);
+    // if (isSuccess(res)) {
+    //   navigate("/feastCatalogues");
+    // }
   }
 
   const updatePublishState = async (state: boolean) => {

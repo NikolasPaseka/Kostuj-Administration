@@ -4,7 +4,7 @@ import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Modal, M
 import { UiState } from '../../../communication/UiState';
 import { WineSample } from '../../../model/WineSample';
 import { GrapeVarietal } from '../../../model/GrapeVarietal';
-import { Wine } from '../../../model/Wine';
+import { Wine, WineUtil } from '../../../model/Wine';
 import { AdjustmentsHorizontalIcon, CheckIcon, ChevronDownIcon, ClipboardDocumentCheckIcon, EyeIcon, PencilIcon, PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import GenericTable from '../GenericTable';
 import { WineColor } from '../../../model/Domain/WineColor';
@@ -365,6 +365,8 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
         } else {
           return cellValue;
         }
+      case "wineId.resultSweetness":
+        return WineUtil.getResultSweetnessLabel(sample.wineId as Wine);
       default:
         return cellValue;
     }
