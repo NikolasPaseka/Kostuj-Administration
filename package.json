@@ -27,6 +27,7 @@
       "react-i18next": "^15.0.1",
       "react-leaflet": "^4.2.0",
       "react-leaflet-draw": "^0.20.4",
+      "react-leaflet-google-layer": "^3.0.0",
       "react-router-dom": "^6.24.0",
       "react-speech-recognition": "^3.10.0",
       "react-toastify": "^10.0.5",
@@ -36,6 +37,7 @@
    "devDependencies": {
       "@types/file-saver": "^2.0.7",
       "@types/leaflet": "^1.9.16",
+      "@types/leaflet-draw": "^1.0.11",
       "@types/react": "^18.3.3",
       "@types/react-dom": "^18.3.0",
       "@types/regenerator-runtime": "^0.13.7",
