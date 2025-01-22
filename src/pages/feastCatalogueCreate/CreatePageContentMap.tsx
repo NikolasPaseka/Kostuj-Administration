@@ -37,7 +37,7 @@ const CreatePageContentMap = () => {
   }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const createMarkerIcon = (color: string, iconName: IconName, zoom: number) => {
+  const createMarkerIcon = (color: string, iconName: IconName) => {
     const IconComponent = MARKER_ICONS[iconName] ?? MARKER_ICONS.star
     //const baseZoom = 13;
     //const scale = Math.pow(1.5, (zoom - baseZoom));
@@ -278,7 +278,7 @@ const CreatePageContentMap = () => {
        /> */}
 
     <ReactLeafletGoogleLayer 
-      apiKey='AIzaSyCoQYww1Z6gkJhjqxjvIxHAEC7kK2r5mZE' 
+      apiKey={import.meta.env.VITE_GOOGLE_MAP_API_KEY} 
       type={'roadmap'}
       maxZoom={25}
       maxNativeZoom={22}
@@ -311,7 +311,7 @@ const CreatePageContentMap = () => {
              <Marker
               key={marker.id}
               position={marker.position}
-              icon={createMarkerIcon(marker.color, marker.icon ?? 'star', 18)}
+              icon={createMarkerIcon(marker.color, marker.icon ?? 'star')}
             >
             {/* // <ZoomAwareMarker 
             //   position={shape.position} 
