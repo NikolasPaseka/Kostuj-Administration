@@ -2,7 +2,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 
 import L, { LatLngExpression } from "leaflet";
-import { Circle, FeatureGroup, MapContainer, Marker, Polygon, Popup } from "react-leaflet";
+import { Circle, FeatureGroup, MapContainer, Marker, Polygon, Popup, useMap } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { useEffect, useState } from "react";
 import React from "react";
@@ -105,6 +105,31 @@ const CreatePageContentMap = () => {
       iconSize: [text.length*12, 20],
       iconAnchor: [20, 10],
     });
+  };
+
+  const ZoomDependentLabel = ({ polygon }: { polygon: PolygonData }) => {
+    const map = useMap();
+    const [zoom, setZoom] = useState(map.getZoom());
+  
+    useEffect(() => {
+      const updateZoom = () => setZoom(map.getZoom());
+      map.on('zoom', updateZoom);
+      return () => {
+        map.off('zoom', updateZoom);
+      };
+    }, [map])
+  
+    return (
+      <>
+        {polygon.label && zoom > 16 && (
+          <Marker
+            position={calculatePolygonCenter(polygon.positions)}
+            icon={createLabelIcon(polygon.label)}
+            interactive={false}
+          />
+        )}
+      </>
+    );
   };
 
   // Handle new object creation
@@ -336,11 +361,12 @@ const CreatePageContentMap = () => {
                 </Popup>
               </Polygon>
               {polygon.label && (
-                <Marker
-                  position={calculatePolygonCenter(polygon.positions)}
-                  icon={createLabelIcon(polygon.label)}
-                  interactive={false}
-                />
+                // <Marker
+                //   position={calculatePolygonCenter(polygon.positions)}
+                //   icon={createLabelIcon(polygon.label)}
+                //   interactive={false}
+                // />
+                <ZoomDependentLabel polygon={polygon} />
               )}
             </React.Fragment>
           );
