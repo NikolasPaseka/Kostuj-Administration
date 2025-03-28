@@ -119,7 +119,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
   const [ratingFilterRange, setRatingFilterRange] = React.useState<RangeFilter>({min: minRating, max: maxRating});
   const [yearFilterRange, setYearFilterRange] = React.useState<RangeFilter>({min: minYear, max: maxYear});
   const [ratingCommissionFilter, setRatingCommissionFilter] = React.useState<(number | null)[]>([]);
-  const [groupSelection, setGroupSelection] = React.useState<string>("wineriesOrder");
+  const [groupSelection, setGroupSelection] = React.useState<string>("grapeOrder");
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor | undefined>(undefined);
 
   const [wineSamplesState, setWineSamplesState] = React.useState<(WineSample & TableFlag)[]>(wineSamples);
