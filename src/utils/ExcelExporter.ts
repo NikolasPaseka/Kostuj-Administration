@@ -33,8 +33,8 @@ export class ExcelExporter {
         this.saveWorkbook(workbook, fileName);  
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static async exportToExcelByCategoryFormatted<T extends Record<string, unknown>>(data: T[], fileName: string, categoryKey: keyof T) {
+        console.log(categoryKey);
         try {
             // Fetch the template file from the public folder
             const response = await fetch(`/rating_tables/kounice_vertical.xlsx`);

@@ -18,7 +18,7 @@ const useVoiceControl = (actionAfterVoiceInput: () => Promise<void>, commands?: 
     const startListening = () => { SpeechRecognition.startListening({ language: 'cs', continuous: true }) }
     const stopListening =  () => { SpeechRecognition.stopListening() }
   
-    const silenceTimerRef = useRef<number | null>(null);
+    const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
   
     const resetSilenceTimer = async () => {
       if (silenceTimerRef.current) {
