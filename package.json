@@ -3,11 +3,6 @@
    "private": true,
    "version": "0.0.0",
    "type": "module",
-   "browserslist": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-   ],
    "scripts": {
       "dev": "vite",
       "build": "tsc -b && vite build",
@@ -61,5 +56,8 @@
       "typescript": "^5.2.2",
       "vite": "^5.3.1",
       "vite-plugin-svgr": "^4.3.0"
-   }
+   },
+   "optionalDependencies": {
+      "@rollup/rollup-linux-x64-gnu": "4.9.5"
+    }
 }
