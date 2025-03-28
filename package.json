@@ -3,7 +3,11 @@
    "private": true,
    "version": "0.0.0",
    "type": "module",
-   "browserslist": [ ">0.2%", "not dead", "not op_mini all" ],
+   "browserslist": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+   ],
    "scripts": {
       "dev": "vite",
       "build": "tsc -b && vite build",
@@ -30,7 +34,6 @@
       "react-dom": "^18.3.1",
       "react-i18next": "^15.0.1",
       "react-leaflet": "^4.2.0",
-      "react-leaflet-div-icon": "^1.1.0",
       "react-leaflet-draw": "^0.20.4",
       "react-leaflet-google-layer": "^3.0.0",
       "react-router-dom": "^6.24.0",
