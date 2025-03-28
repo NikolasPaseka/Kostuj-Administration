@@ -6,11 +6,13 @@ type Props = {
   onChange: (value: boolean) => void,
   isRequired?: boolean,
   isInvalid?: boolean,
+  isDisabled?: boolean,
   errorMessage?: string,
-  className?: string
+  className?: string,
+  color?: "primary" | "default" | "secondary" | "success" | "warning" | "danger"
 }
 
-const CheckboxGeneric = ({ children, value, onChange, isInvalid, isRequired, className }: Props) => {
+const CheckboxGeneric = ({ children, value, onChange, isInvalid, isRequired, className, color="primary", isDisabled }: Props) => {
   return (
     <Checkbox 
       isSelected={value}
@@ -18,6 +20,8 @@ const CheckboxGeneric = ({ children, value, onChange, isInvalid, isRequired, cla
       isRequired={isRequired}
       isInvalid={isInvalid}
       className={className}
+      color={color}
+      isDisabled={isDisabled}
     >
       {children}
     </Checkbox>

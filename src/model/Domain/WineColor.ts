@@ -1,5 +1,6 @@
 export enum WineColor {
     RED = 'red',
     WHITE = 'white',
-    ROSE = 'rose'
+    ROSE = 'rose',
+    OTHER = 'other'
 }

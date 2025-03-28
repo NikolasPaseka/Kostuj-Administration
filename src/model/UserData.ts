@@ -1,3 +1,5 @@
+import { AuthorizationRoles } from "./AuthorizationRoles";
+
 export interface UserData {
     id: string,
     email: string;
@@ -7,5 +9,5 @@ export interface UserData {
     accountOption: string;
     createdAt: Date;
     updatedAt: Date;
-    authorizations: number[];
+    authorizations: AuthorizationRoles[];
 }

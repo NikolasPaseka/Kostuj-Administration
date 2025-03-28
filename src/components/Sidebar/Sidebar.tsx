@@ -1,10 +1,10 @@
-import { HomeIcon, UserIcon, ArrowLeftEndOnRectangleIcon, BookmarkSquareIcon, BuildingStorefrontIcon } from '@heroicons/react/24/solid';
+import { HomeIcon, UserIcon, ArrowLeftEndOnRectangleIcon, BookmarkSquareIcon, BuildingStorefrontIcon, UserGroupIcon } from '@heroicons/react/24/solid';
 import { Button, Divider } from "@heroui/react";
 import SidebarItem from './SidebarItem';
 import { useAuth } from '../../context/AuthProvider';
 import { useTranslation } from 'react-i18next';
 import { TranslationNS } from "../../translations/i18n";
-import Logo from '../../assets/logo.svg';
+import Logo from '../../assets/logo.svg?url';
 import { useEffect, useState } from 'react';
 import { TypeChecker } from '../../utils/TypeChecker';
 import AppRoutes from '../../utils/AppRoutes';
@@ -61,7 +61,7 @@ const Sidebar = (
           <SidebarItem 
             path={AppRoutes.USERS_MANAGEMENT}
             text={showFullFinal ? t("usersManagement", { ns: TranslationNS.sidebar }) : undefined} 
-            Icon={UserIcon} 
+            Icon={UserGroupIcon} 
           />
         }
         {/* <SidebarItem path="/signIn" text={t("signIn", { ns: TranslationNS.sidebar })} Icon={KeyIcon} /> */}

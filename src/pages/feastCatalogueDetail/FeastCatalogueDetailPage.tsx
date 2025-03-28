@@ -6,7 +6,7 @@ import { resolveUiState, UiState, UiStateType } from '../../communication/UiStat
 import UiStateHandler from '../../components/UiStateHandler';
 import { Card, CardBody, Switch, Divider, useDisclosure, Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem } from "@heroui/react";
 import CardInfoRow from './components/CardInfoRow';
-import { ArrowDownOnSquareIcon, ArrowDownTrayIcon, ArrowUpOnSquareIcon, CalendarDaysIcon, ChevronRightIcon, CurrencyDollarIcon, EllipsisVerticalIcon, MapPinIcon, PencilSquareIcon, SparklesIcon, TrashIcon, UserIcon } from '@heroicons/react/24/solid';
+import { ArrowDownOnSquareIcon, ArrowDownTrayIcon, ArrowUpOnSquareIcon, CalendarDaysIcon, ChevronRightIcon, CurrencyDollarIcon, EllipsisVerticalIcon, MapPinIcon, PencilSquareIcon, SparklesIcon, TrashIcon, UserIcon, UsersIcon } from '@heroicons/react/24/solid';
 import PrimaryButton from '../../components/PrimaryButton';
 import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../translations/i18n';
@@ -174,7 +174,7 @@ const FeastCatalogueDetailPage = () => {
             <Card className="flex-1 py-4">
               <CardBody>
                 <div className="flex flex-row items-center h-full gap-4 px-4">
-                  <StoreIcon color="black" size={38} />
+                  <StoreIcon color="secondary" size={38} />
                   <div className="flex-1">
                     <h4 className="text-base font-bold">Participated wineries</h4>
                     <p>Number of participated: {catalogue.participatedWineriesCount}</p>
@@ -227,7 +227,29 @@ const FeastCatalogueDetailPage = () => {
             </Card>
           </div>
           
-          <div className="px-6 py-8 flex">
+          <div className="flex gap-6 px-6 py-8">
+            <Card className="flex-1 py-4 self-start">
+              <CardBody>
+                <div className="flex flex-row items-center h-full gap-4 px-4">
+                  <UsersIcon className='w-10 h-10'/>
+                  <div className="flex-1">
+                    <h4 className="text-base font-bold">Rating commissions</h4>
+                    {/* TODO */}
+                    <p>Number of commissions: 5</p>
+                  </div>
+                  <Link to={`/feastCatalogues/${catalogue.id}/content/commission`}>
+                    <PrimaryButton 
+                      size="sm" 
+                      isSecondary
+                      EndContent={ChevronRightIcon}
+                    >
+                      Show commissions
+                    </PrimaryButton>
+                  </Link>
+                </div>
+              </CardBody>
+            </Card>
+
             <CatalogueOrganizators 
               coOrganizers={catalogue.coorganizators} 
               catalogue={catalogue}
@@ -237,7 +259,7 @@ const FeastCatalogueDetailPage = () => {
               onRemove={(coorganizatorId) => {
                 setCatalogue({ ...catalogue, coorganizators: catalogue.coorganizators.filter(coorganizator => coorganizator.id !== coorganizatorId) })
               }} 
-              className="w-[50%]"
+              className="flex-1"
             />
           </div>
 

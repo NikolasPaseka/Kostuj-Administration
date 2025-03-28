@@ -1,7 +1,7 @@
 import React from 'react'
 import { SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import { isStateLoading, UiState } from '../../communication/UiState';
-import VoidListImage from '../../assets/void_list.svg';
+import VoidListImage from '../../assets/void_list.svg?url';
 
 // Table flag is added to change the value of each data that will cause re-rendering of the table
 interface ItemObject {

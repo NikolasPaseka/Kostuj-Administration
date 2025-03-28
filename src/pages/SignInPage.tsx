@@ -10,7 +10,7 @@ import { resolveUiState, UiState, UiStateType } from '../communication/UiState';
 import UiStateHandler from '../components/UiStateHandler';
 import { validateEmailAddress, ValidationResult } from '../utils/validationUtils';
 import CardGeneric from '../components/CardGeneric';
-import Logo from '../assets/logo.svg';
+import Logo from '../assets/logo.svg?url';
 
 const SignInPage = () => {
   const [uiState, setUiState] = useState<UiState>({ type: UiStateType.IDLE })

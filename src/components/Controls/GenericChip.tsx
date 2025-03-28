@@ -7,12 +7,14 @@ type Props = {
   className?: string
 }
 
-const GenericChip= ({ children, className, variant="flat"}: Props) => {
+const GenericChip= ({ children, className, variant="solid"}: Props) => {
+  const classNameExt = variant === "flat" ? "text-black" : ""
+
   return (
     <Chip 
       color="secondary" 
       variant={variant}
-      className={className}
+      className={className + " " + classNameExt}
     >
       {children}
     </Chip>

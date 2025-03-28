@@ -100,7 +100,6 @@ const FeastCatalogueCreatePage = () => {
   return (
     <>
       <div className="flex flex-row mb-12 items-center">
-        {/* <h1 className="text-2xl font-bold flex-1">Create Feast Catalogue</h1> */}
         <BackNavigation
           headline={<h1 className="text-2xl font-bold">
             {type == CatalogueType.FEAST ? "Create Feast Catalogue" : "Create Open Cellar Catalogue"}
@@ -130,7 +129,7 @@ const FeastCatalogueCreatePage = () => {
         <CreatePageContent3 catalogue={catalogue} />
       )}
       {page == 4 && catalogue != null && isCatalogueOpenCellar() && (
-        <CreatePageContentMap />
+        <CreatePageContentMap catalogue={catalogue} />
       )}
       <ToastContainer />
     </>

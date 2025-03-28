@@ -14,7 +14,7 @@ export function useWineriesList({ catalogue }: Props) {
   const [hasMore, setHasMore] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
   const [offset, setOffset] = React.useState(0);
-  const limit = 20; // Number of items per page, adjust as necessary
+  const limit = 20;
 
   useEffect(() => {
     const fetchWineries = async () => {
@@ -37,7 +37,6 @@ export function useWineriesList({ catalogue }: Props) {
     setHasMore(items.length > paginatedItems.length);
     setPaginatedItems((prevItems) => {
       const filtered = slicedItems.filter((item) => !prevItems.some((prevItem) => prevItem.id === item.id));
-      console.log([...prevItems, ...filtered])
       return [...prevItems, ...filtered]
     }
   );

@@ -95,7 +95,7 @@ export const CatalogueRepository = {
         return await axiosCall(AxiosMethod.DELETE, `/catalogues/${catalogueId}/images`, { imageUrl });
     },
 
-    // Auto label
+    // Auto functions
     autoLabelSamples: async (
         catalogueId: string, 
         prefix: string, 
@@ -104,6 +104,11 @@ export const CatalogueRepository = {
     ): Promise<CommunicationResult<WineSample[]>> => {
         return await axiosCall(AxiosMethod.GET, `/catalogues/${catalogueId}/autoLabelSamples?prefix=${prefix}&order=${orderType}&colorOrder=${colorOrder.join(",")}`);
     },
+
+    autoAssignCommission: async (catalogueId: string, maxWineSamples: number): Promise<CommunicationResult<WineSample[]>> => {
+        return await axiosCall(AxiosMethod.POST, `/catalogues/${catalogueId}/autoAssignCommission`, { maxWineSamples });
+    },
+
 
     // Coorganizators
     addCoorganizator: async (catalogueId: string, coorganizerEmail: string): Promise<CommunicationResult<UserData>> => {

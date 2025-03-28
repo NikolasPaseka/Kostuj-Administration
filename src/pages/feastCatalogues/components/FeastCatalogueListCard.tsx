@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../../translations/i18n';
 import useCatalogueOwnerCheck from '../../../hooks/useCatalogueOwnerCheck';
 import { CatalogueType } from '../../../model/Domain/CatalogueType';
+import Logo from '../../../assets/logo.svg?url';
 
 type Props = { catalogue: Catalogue; navPath: string };
 
@@ -23,14 +24,12 @@ const FeastCatalogueListCard = ({ catalogue, navPath }: Props, key: React.Key) =
       <CardBody className="p-2 px-4 flex-row">
         
         <div className="">
-          {catalogue.imageUrl && catalogue.imageUrl.length > 0 && 
-            <Image
-              alt="Card background"
-              isZoomed={true}
-              src={catalogue.imageUrl[0]}
-              style={{ width: '180px', height: '220px', objectFit: 'cover' }}
-            />
-          }
+          <Image
+            alt="Card background"
+            isZoomed={true}
+            src={(catalogue.imageUrl && catalogue.imageUrl.length > 0) ? catalogue.imageUrl[0] : Logo}
+            style={{ width: '180px', height: '220px', objectFit: 'cover' }}
+          />
         </div>
 
         <div className="flex-1 flex-col px-6">

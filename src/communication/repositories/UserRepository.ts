@@ -1,4 +1,5 @@
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
+import { UserAdministrationSettings } from "../../model/UserAdministrationSettings";
 import { UserAuth } from "../../model/UserAuth";
 import { UserData } from "../../model/UserData";
 import { axiosCall, AxiosMethod } from "../axios";
@@ -33,5 +34,14 @@ export const UserRepository = {
     // TODO: Delete later
     resetPassword: async (userId: string, newPassword: string): Promise<CommunicationResult<SuccessMessage>> => {
         return await axiosCall(AxiosMethod.POST, `/users/resetPassword`, {userId, newPassword});
-    }
+    },
+
+    // Administration settings
+    getAdministrationSettings: async (): Promise<CommunicationResult<UserAdministrationSettings>> => {
+        return await axiosCall(AxiosMethod.GET, `/users/administrationSettings`);
+    },
+
+    updateAdministrationSettings: async (settings: UserAdministrationSettings): Promise<CommunicationResult<SuccessMessage>> => {
+        return await axiosCall(AxiosMethod.PUT, `/users/administrationSettings`, settings);
+    },
 }

@@ -11,7 +11,7 @@ type Props = {
   onClick?: () => void
 }
 
-const ClickableChip = ({ color="secondary", children, isActive, isDisabled=false, onClick }: Props) => {
+const ClickableChip = ({ color="primary", children, isActive, isDisabled=false, onClick }: Props) => {
   return (
     <Chip
       color={color}

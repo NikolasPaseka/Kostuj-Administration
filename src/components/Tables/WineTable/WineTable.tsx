@@ -18,6 +18,7 @@ import ExportSamplesModal from '../../Modals/ExportSamplesModal';
 import { WineSampleExport } from '../../../model/ExportType/WineSampleExport';
 import WineFilterModal from '../../Modals/WineFilterModal';
 import { RangeFilter } from '../../../model/Domain/RangeFilter';
+import AutoCommissionModal from '../../Modals/AutoCommissionModal';
 
 const tableColumns = [
   {name: "Označení", uid: "name"},
@@ -58,6 +59,11 @@ const actionItems = [
     key: "autoLabel",
     label: "Automatic Labeling",
     description: "Automatic label samples by prefix and order",
+    startContent: <ClipboardDocumentCheckIcon className={iconClassName} />,
+  }, {
+    key: "autoCommission",
+    label: "Auto assign commission",
+    description: "Automatically assign wine samples to commission",
     startContent: <ClipboardDocumentCheckIcon className={iconClassName} />,
   }
 ];
@@ -101,6 +107,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
   const {isOpen: isFilterModalOpen, onOpen: onFilterModalOpen, onOpenChange: onFilterModalOpenChange} = useDisclosure();
   const {isOpen: isAutoLabelingModalOpen, onOpen: onAutoLabelingModalOpen, onOpenChange: onAutoLabelingModalOpenChange} = useDisclosure();
   const {isOpen: isExportModalOpen, onOpen: onExportModalOpen, onOpenChange: onExportModalOpenChnage} = useDisclosure();
+  const {isOpen: isAutoCommissionOpen, onOpen: onAutoCommissionOpen, onOpenChange: onAutoCommissionOpenChange} = useDisclosure();
 
   // Filter constants
   const [minYear, setMinYear] = React.useState<number>(0);
@@ -481,6 +488,8 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
                   setWineSamplesState(wineSamples.map((sample) => ({...sample, tableFlag: "edit"})));
                 } else if (key === "exportToExcel") {
                   onExportModalOpen();
+                } else if (key === "autoCommission") {
+                  onAutoCommissionOpen();
                 }
               }}
             >
@@ -595,6 +604,11 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
           const samplesToExport = onlyFilteredSamples ? sortedItems : wineSamples;
           exportToExcel(samplesToExport, seperateByCategory, category);
         }}
+      />
+
+      <AutoCommissionModal 
+        isOpen={isAutoCommissionOpen}
+        onOpenChange={onAutoCommissionOpenChange} 
       />
     </div>
   )

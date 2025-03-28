@@ -4,9 +4,10 @@ export default {
         foreground: "#FFFFFF",
     },
     secondary: {
-        //DEFAULT: "#EFB8C8", // eb9db4
+        //DEFAULT: "#ed8061", //"#EFB8C8", // eb9db4
         DEFAULT: "#C55461",
         foreground: "#FFFFFF"
+        //foreground: "#000000"
     },
     tertiary: {
         DEFAULT: "#EFB8C8",

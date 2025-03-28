@@ -70,8 +70,8 @@ const FeastCatalogueWineContentPage = () => {
     const fileName = `${catalogue?.title ?? "catalogue"}-samples`;
 
     if (seperateByCategory && category) {
-      return ExcelExporter.exportToExcelByCategory(samples.map(sample => {
-        return new WineSampleExport(sample);
+      return ExcelExporter.exportToExcelByCategoryFormatted(samples.map(sample => {
+        return { ...new WineSampleExport(sample) } as Record<string, unknown>;
       }), fileName, category);
 
     } else {

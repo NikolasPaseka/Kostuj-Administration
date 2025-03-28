@@ -5,9 +5,7 @@ import UiStateHandler from '../../components/UiStateHandler';
 import SearchInput from '../../components/SearchInput';
 import { convertDateToTimestamp } from '../../utils/conversionUtils';
 import FeastCatalogueListCard from './components/FeastCatalogueListCard';
-import { Link } from 'react-router-dom';
-import PrimaryButton from '../../components/PrimaryButton';
-import { BookmarkSquareIcon, PlusIcon } from '@heroicons/react/24/solid';
+import { BookmarkSquareIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { TranslationNS } from '../../translations/i18n';
 import { CatalogueRepository } from '../../communication/repositories/CatalogueRepository';
@@ -45,15 +43,10 @@ const FeastCataloguesPage = () => {
     <div className="flex flex-col">
       <div className="flex items-center mt-8 mb-4 justify-end gap-4">
         <SearchInput onValueChange={setSearchValue} value={searchValue} />
-
         <DropdownMenuCustom 
           dropdownButtonText={t("newCatalogue", { ns: TranslationNS.catalogues })}
           actionItems={actionItems}
         />
-
-        <Link to={"/feastCatalogues/create"}>
-          <PrimaryButton EndContent={PlusIcon}>{t("newCatalogue", { ns: TranslationNS.catalogues })}</PrimaryButton>
-        </Link>
       </div>
 
       <div className="flex flex-col gap-4">

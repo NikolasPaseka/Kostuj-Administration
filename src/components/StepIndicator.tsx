@@ -27,11 +27,11 @@ const StepIndicator = ({ currentStep, showMapCreation }: Props) => {
           <div key={step.id} className="flex flex-col items-center">
             {/* Circle */}
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                currentStep > index
+              className={`w-8 h-8 rounded-full flex items-center justify-center border-3 ${
+                currentStep > index + 1
                   ? 'bg-primary border-primary'
                   : currentStep === index + 1
-                  ? 'bg-white border-primary'
+                  ? 'bg-primary border-secondary'
                   : 'bg-white border-gray-300'
               }`}
             >

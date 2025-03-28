@@ -24,6 +24,10 @@ import { ResultSweetnessOptions } from "../../model/Domain/ResultSweetness";
 import CreateWineryModal from "../../components/Modals/CreateWineryModal";
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 import { notifySuccess } from "../../utils/toastNotify";
+import { UserRepository } from "../../communication/repositories/UserRepository";
+import { UserAdministrationSettings } from "../../model/UserAdministrationSettings";
+import { GrapeVarietal } from "../../model/GrapeVarietal";
+import { WineRepository } from "../../communication/repositories/WineRepository";
 
 const resultSweetnessOptions = [
   {name: "Suché", uid: ResultSweetnessOptions.DRY},
@@ -42,11 +46,13 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   const [participatedWineries, setParticipatedWineries] = useState<Winery[]>([]);
   const [selectedWinery, setSelectedWinery] = useState<Winery | null>(null);
   const [wineryWines, setWineryWines] = useState<Wine[]>([]);
+  const [grapeVarietals, setGrapeVarietals] = useState<GrapeVarietal[]>([]);
+  const [filteredGrapeVarietals, setFilteredGrapeVarietals] = useState<GrapeVarietal[]>([]);
 
   const [wineSamples, setWineSamples] = useState<WineSample[]>([]);
 
   const [wineryName, setWineryName] = useState<string>("");
-  const [wineName, setWineName] = useState<string>("");
+  const [wineName, setWineName] = useState<GrapeVarietal | null>(null);
   const [sampleName, setSampleName] = useState<string>("");
   const [wineYear, setWineYear] = useState<number | null>(null);
   const [sampleRating, setSampleRating] = useState<number | null>(null);
@@ -68,13 +74,8 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   const wineInputRef = useRef<HTMLInputElement>(null);
   const wineYearInputRef = useRef<HTMLInputElement>(null);
 
-  // Voice shortcut
-  // handle what happens on key press
-  // const handleKeyPress = useCallback((event: ) => {
-  //   if (event.shiftKey === true) {
-  //     console.log(`Key pressed: ${event.key}`);
-  //   }
-  // }, []);
+  // User Administration Settings
+  const [userAdministrationSettings, setUserAdministrationSettings] = useState<UserAdministrationSettings | null>(null);
 
   useEffect(() => {
     const fetchParticipatedWineries = async () => { 
@@ -87,17 +88,27 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     const fetchAddedWineSamples = async () => {
       const res: CommunicationResult<WineSample[]> = await CatalogueRepository.getSamples(catalogue.id);
       setWineSamples(resolveUiState(res, setUiStateWineSample) ?? []);
-    } 
+    }
+
+    const fetchUserAdministrationSettings = async () => {
+      const res = await UserRepository.getAdministrationSettings();
+      if (isSuccess(res)) { setUserAdministrationSettings(res.data); }
+    };
+
+    const fetchGrapeVarietals = async () => {
+      const res: CommunicationResult<GrapeVarietal[]> = await WineRepository.getGrapeVarietals();
+      if (isSuccess(res)) {
+        console.log(res.data)
+        setGrapeVarietals(res.data);
+        setFilteredGrapeVarietals(res.data);
+      }
+    }
     
     fetchParticipatedWineries();
     fetchAddedWineSamples();
+    fetchUserAdministrationSettings();
+    fetchGrapeVarietals();
 
-    // // attach the event listener
-    // document.addEventListener('keydown', handleKeyPress);
-    // // remove the event listener
-    // return () => {
-    //   document.removeEventListener('keydown', handleKeyPress);
-    // };
   }, [catalogue]);
 
   const fetchWineryWines = async (winery: Winery) => {
@@ -138,6 +149,15 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     });
   }
 
+  const onGrapeVarietalSelectionChange = (key: React.Key | null) => {
+    if (key === null) { return; }
+    setWineName((prevState) => {
+      const selectedItem = grapeVarietals.find((option) => option.id === key);
+      const result = selectedItem ?? prevState;
+      return result
+    })
+  }
+
   const createNewWinery = (winery: Winery) => {
     setSelectedWinery(winery);
     addParticipatedWinery(winery);
@@ -150,11 +170,12 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     }
   }
 
-  const foundWine: Wine | null = wineryWines.find((wine) => wine.name == wineName && wine.year == wineYear) ?? null;
+  const foundWine: Wine | null = wineryWines.find((wine) => wine.name == wineName?.grape && wine.year == wineYear) ?? null;
   const isWineNew = (): boolean => { return foundWine == null; }
 
   const createNewSample = async () => {
     if (selectedWinery == null) { return; }
+    if (wineName == null) { return; }
 
     const newSample: WineSample = {
       name: sampleName,
@@ -167,7 +188,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     }
     const wine: Wine = {
       id: "",
-      name: wineName,
+      name: wineName.grape,
       color: wineColor,
       year: wineYear ?? 0,
       attribute: attribute,
@@ -177,7 +198,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
       acidity: acidity ?? undefined,
       grapesSweetness: grapeSweetness ?? undefined,
       winaryId: selectedWinery.id,
-      grapeVarietals: [{ grape: wineName }]
+      grapeVarietals: [wineName]
     }
 
     const res: CommunicationResult<WineSample> = await CatalogueRepository.createSample(newSample, wine, selectedWinery.id);
@@ -196,16 +217,20 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
   }
 
   const areRequiredFieldsFilled = (): boolean => {
-    return selectedWinery != null && wineName.length > 0 && wineYear != null && wineColor.length > 0;
+    return selectedWinery != null && wineName != null && wineYear != null && wineColor.length > 0;
   }
 
   const clearInputData = () => {
-    setWineryName("");
-    //setWineName("");
-    setSampleName("");
-    setWineYear(null);
+    if (!userAdministrationSettings?.keepWinery) { setWineryName(""); setSelectedWinery(null); }
+    if (!userAdministrationSettings?.keepWineName ) { setWineName(null); }
+    if (userAdministrationSettings?.autoIncreaseSampleNumber && !isNaN(Number(sampleName))) {
+      setSampleName((val) => (Number(val) + 1).toString());
+    } else {
+      setSampleName("");
+    } 
+    if (!userAdministrationSettings?.keepWineYear ) { setWineYear(null); }
     setSampleRating(null);
-    //setWineColor("");
+    if (!userAdministrationSettings?.keepWineColor ) { setWineColor(""); }
     setResidualSugar(null);
     setAlcoholContent(null);
     setAcidity(null);
@@ -213,7 +238,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     setIsChampion(false);
     setSampleNote("");
     setRatingCommission(null);
-    setAttribute("");
+    if (!userAdministrationSettings?.keepWineAttribute ) { setAttribute(""); }
     setResultSweetness("");
   }
 
@@ -230,7 +255,6 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         resultSweetness: string | null
       } }).entity
 
-      console.log(wine);
       const notNullValuesCount = Object.values(wine).filter(value => value !== null).length;
       console.log(`Number of null values: ${notNullValuesCount}`);
 
@@ -262,7 +286,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
         for (let i = 0; i < words.length; i++) {
             words[i] = words[i][0].toUpperCase() + words[i].substr(1);
         }
-        setWineName(words.join(" "));
+        //setWineName(words.join(" "));
         if (notNullValuesCount == 1) { wineInputRef.current?.focus(); } 
       }
       if (wine.year != null && !isNaN(parseInt(wine.year))) { setWineYear(parseInt(wine.year)); if (notNullValuesCount == 1) { wineYearInputRef.current?.focus()} }
@@ -278,8 +302,6 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
     stopListening,
     listening
   } = useVoiceControl(sendVoiceInput);
-
-  console.log(resultSweetness);
 
   return (
     <div className="flex flex-col gap-4">
@@ -348,7 +370,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
 
       <div className="flex flex-row gap-4">
 
-        <CatalogueInputField
+        {/* <CatalogueInputField
           ref={wineInputRef}
           label={t("wine", { ns: TranslationNS.catalogues })}
           placeholder={t("winePlaceholder", { ns: TranslationNS.catalogues })}
@@ -365,22 +387,46 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
             ) : ( "" )
           }
         >
-        </CatalogueInputField>
+        </CatalogueInputField> */}
+
+        <Autocomplete
+          ref={wineInputRef}
+          label={t("wine", { ns: TranslationNS.catalogues })}
+          placeholder={t("winePlaceholder", { ns: TranslationNS.catalogues })}
+          onSelectionChange={onGrapeVarietalSelectionChange}
+          isRequired
+          variant="faded"
+          defaultItems={filteredGrapeVarietals}
+          startContent={<ClipboardDocumentIcon className="w-5 h-5 text-gray-600" /> }
+          isInvalid={false}
+          onClear={() => setWineName(null)}
+          description={
+            wineName != null && !isWineNew() ? (
+              <p className="text-green-400">Selected wine</p>
+            ) : wineName?.grape && wineName.grape.length > 0 ? (
+              <p className="text-red-400">Creating new wine</p>
+            ) : ( "" )
+          }
+          className="flex-1"
+        >
+          {(item) => <AutocompleteItem key={item.id} textValue={item.grape + " - " + item.shortcut}>{item.grape} - {item.shortcut}</AutocompleteItem>}
+        </Autocomplete>
 
         <div className="flex-1">
-        <RadioGroup
-          isRequired
-          label={t("wineColor", { ns: TranslationNS.catalogues })}
-          orientation="horizontal"
-          value={wineColor}
-          onValueChange={setWineColor}
-          color="secondary"
-          className="w-[100%]"
-        >
-          <Radio value={WineColor.RED}>{t("redWineColor", { ns: TranslationNS.catalogues })}</Radio>
-          <Radio value={WineColor.WHITE}>{t("whiteWineColor", { ns: TranslationNS.catalogues })}</Radio>
-          <Radio value={WineColor.ROSE}>{t("roseWineColor", { ns: TranslationNS.catalogues })}</Radio>
-        </RadioGroup>
+          <RadioGroup
+            isRequired
+            label={t("wineColor", { ns: TranslationNS.catalogues })}
+            orientation="horizontal"
+            value={wineColor}
+            onValueChange={setWineColor}
+            color="primary"
+            className="w-[100%]"
+          >
+            <Radio value={WineColor.RED}>{t("redWineColor", { ns: TranslationNS.catalogues })}</Radio>
+            <Radio value={WineColor.WHITE}>{t("whiteWineColor", { ns: TranslationNS.catalogues })}</Radio>
+            <Radio value={WineColor.ROSE}>{t("roseWineColor", { ns: TranslationNS.catalogues })}</Radio>
+            <Radio value={WineColor.OTHER}>{'Jiná'}</Radio>
+          </RadioGroup>
         </div>
       </div>
 
@@ -415,7 +461,7 @@ const CreatePageContent3 = ({ catalogue }: Props) => {
             maxValue={catalogue.maxWineRating == 0 ? 100 : catalogue.maxWineRating} 
             minValue={0} 
             defaultValue={0}
-            color="secondary"
+            color="primary"
           />
         </div>
         

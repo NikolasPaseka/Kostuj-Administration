@@ -21,9 +21,9 @@ const PrimaryButton = forwardRef(({ children, EndContent = null, className, onCl
           onClick={onClick} 
           variant={isSecondary ? "bordered" : "solid"} 
           size={size} 
-          color={isSecondary? "secondary" : "primary"} 
-          endContent={<EndContent className={`size-4 ${isSecondary ? 'text-secondary': 'text-white'}`} />} 
-          className={className} 
+          color={isSecondary? "primary" : "primary"} 
+          endContent={<EndContent className={`size-4 ${isSecondary ? 'text-primary': 'text-white'}`} />} 
+          className={className + " " + (isSecondary ? "border-[2.5px]" : "")} 
           isDisabled={isDisabled}
         >
           {children}

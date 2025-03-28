@@ -18,6 +18,7 @@ import PrivateRoute from './components/PrivateRoute';
 import NoAuthorizationPage from './pages/NoAuthorizationPage';
 import WineriesManagementPage from './pages/wineriesManagement/WineriesManagementPage';
 import ProfileSettingsPage from './pages/profileAndSettings/ProfileAndSettingsPage';
+import FeastCatalogueCommissionPage from './pages/feastCatalogueContent/FeastCatalogueCommissionPage';
 
 console.log(import.meta.env.VITE_BE_URL)
 
@@ -52,6 +53,7 @@ const AppLayout = () => {
               <Route path={AppRoutes.FEAST_CATALOGUE_DETAIL} element={<FeastCatalogueDetailPage />} />
               <Route path={AppRoutes.FEAST_CATALOGUE_CONTENT_WINE} element={<FeastCatalogueWineContentPage />} />
               <Route path={AppRoutes.FEAST_CATALOGUE_CONTENT_WINERY} element={<FeastCatalogueWineriesContentPage />} />
+              <Route path={AppRoutes.FEAST_CATALOGUE_CONTENT_COMMISSION} element={<FeastCatalogueCommissionPage />} />
               <Route path={AppRoutes.FEAST_CATALOGUE_EDIT} element={<FeastCatalogueCreatePage />} />
               <Route path={AppRoutes.FEAST_CATALOGUE_CREATE} element={<FeastCatalogueCreatePage />} />
               <Route path={AppRoutes.WINERIES_MANAGEMENT} element={<WineriesManagementPage />} />

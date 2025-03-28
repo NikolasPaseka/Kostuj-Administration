@@ -23,8 +23,8 @@ const SidebarItem = ({ path, text, Icon }: Props) => {
   }
 
   return (
-    <Link to={path} className={`flex items-center px-4 py-2 my-2 w-5/6 hover:bg-secondary hover:text-onPrimary hover:rounded-xl ${
-        isActive() ? 'bg-primary text-onPrimary rounded-xl' : ''
+    <Link to={path} className={`flex items-center px-4 py-2 my-2 w-5/6 hover:bg-tertiary hover:text-onTertiary hover:rounded-xl ${
+        isActive() ? 'bg-primary text-onPrimary rounded-xl hover:text-black' : ''
       }`}
     >
       <Icon className={`w-6 h-6 ${text !== undefined ? "mr-2" : "m-auto"}`} />
