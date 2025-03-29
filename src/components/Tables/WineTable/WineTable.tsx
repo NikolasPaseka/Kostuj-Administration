@@ -127,6 +127,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
   const [wineSamplesState, setWineSamplesState] = React.useState<(WineSample & TableFlag)[]>(wineSamples);
   const [inEditMode, setInEditMode] = React.useState<boolean>(false);
   const [sampleToRemove, setSampleToRemove] = React.useState<WineSample | null>(null);
+  const [commissionInput, setCommissionInput] = React.useState<number>(0);
 
   // Optional pagination
   const [page, setPage] = React.useState<number>(1);
@@ -510,7 +511,32 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
         }
       </div>
       <div className="flex items-center pb-4">
-        <p className="text-sm flex-1">Number of samples: {filteredSamples.length}</p>
+        <div className='flex-1'>
+          <p className="text-sm">Počet vzorků: {filteredSamples.length}</p>
+          {inEditMode &&(
+            <div className='flex flex-row gap-2 items-center'>
+            <p className='text-sm'>Zařadit do komise č.:</p>
+            <GenericInput 
+              value={commissionInput.toString()}
+              onChange={(val) => { setCommissionInput(Number(val)); }}
+              className='w-20'
+            />
+            <PrimaryButton
+              isSecondary={true}
+              onClick={() => {
+                setWineSamplesState((prevSamples) => prevSamples.map((sample) => {
+                  if (filteredSamples.some((s) => s.id === sample.id)) {
+                    return { ...sample, ratingCommission: commissionInput, tableFlag: "updated" };
+                  }
+                  return sample;
+                }));
+              }}
+            >
+              Ok
+            </PrimaryButton>
+            </div>
+          )}
+        </div>
         {inEditMode &&
           <div className="flex gap-3">
           <PrimaryButton isSecondary
