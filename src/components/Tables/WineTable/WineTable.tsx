@@ -72,12 +72,14 @@ const wineColorChipColor: Record<string, string>  = {
   [WineColor.RED]: "redWineColor",
   [WineColor.WHITE]: "whiteWineColor",
   [WineColor.ROSE]: "roseWineColor",
+  [WineColor.OTHER]: "otherWineColor",
 };
 
 const wineColorOptions = [
   {name: "Red", uid: WineColor.RED},
   {name: "White", uid: WineColor.WHITE},
-  {name: "Rose", uid: WineColor.ROSE}
+  {name: "Rose", uid: WineColor.ROSE},
+  {name: 'Other', uid: WineColor.OTHER}
 ];
 
 // const groupSelectionOptions = [

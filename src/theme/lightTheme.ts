@@ -23,4 +23,5 @@ export default {
     redWineColor: "#B53040",
     whiteWineColor: "#F8E7B2",
     roseWineColor: "#F4C4BB",
+    otherWineColor: "#F4C4BB",
 }
