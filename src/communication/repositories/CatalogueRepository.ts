@@ -1,4 +1,5 @@
 import { Catalogue } from "../../model/Catalogue";
+import { WineColor } from "../../model/Domain/WineColor";
 import { SuccessMessage } from "../../model/ResponseObjects/SuccessMessage";
 import { UserData } from "../../model/UserData";
 import { Wine } from "../../model/Wine";
@@ -105,8 +106,8 @@ export const CatalogueRepository = {
         return await axiosCall(AxiosMethod.GET, `/catalogues/${catalogueId}/autoLabelSamples?prefix=${prefix}&order=${orderType}&colorOrder=${colorOrder.join(",")}`);
     },
 
-    autoAssignCommission: async (catalogueId: string, maxWineSamples: number): Promise<CommunicationResult<WineSample[]>> => {
-        return await axiosCall(AxiosMethod.POST, `/catalogues/${catalogueId}/autoAssignCommission`, { maxWineSamples });
+    autoAssignCommission: async (catalogueId: string, commissionsCount: { [key in WineColor]: number }): Promise<CommunicationResult<WineSample[]>> => {
+        return await axiosCall(AxiosMethod.POST, `/catalogues/${catalogueId}/autoAssignCommission`, { commissionsCount });
     },
 
 

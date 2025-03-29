@@ -11,13 +11,14 @@ type Props = {
   variant?: "flat" | "bordered" | "underlined" | "faded",
   labelPlacement?: "inside" | "outside",
   startContent?: React.ReactNode,
+  customStartContent?: boolean,
   isRequired?: boolean,
   isInvalid?: boolean,
   errorMessage?: string,
   className?: string
 }
 
-const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=undefined, labelPlacement="inside", type="text", startContent, isRequired, isInvalid, errorMessage, className }: Props) => {
+const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=undefined, labelPlacement="inside", type="text", startContent, customStartContent=false, isRequired, isInvalid, errorMessage, className }: Props) => {
 
   const [isVisible, setIsVisible] = React.useState(false);
 
@@ -35,7 +36,10 @@ const GenericInput = ({ label, value, onChange, variant="bordered", placeholder=
       isRequired={isRequired}
       isInvalid={isInvalid}
       errorMessage={isInvalid ? errorMessage : undefined}
-      startContent={startContent && React.cloneElement(startContent as React.ReactElement, { className: `w-5 h-5 text-gray-600`})}
+      startContent={
+        customStartContent 
+          ? startContent
+          : startContent && React.cloneElement(startContent as React.ReactElement, { className: `w-5 h-5 text-gray-600`})}
       endContent={
         type === "password" 
         ?

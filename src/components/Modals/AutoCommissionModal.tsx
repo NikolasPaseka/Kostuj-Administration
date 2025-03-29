@@ -1,10 +1,9 @@
 import React from 'react';
 import ModalDialog from '../ModalDialog'
 import { isStateError, isStateLoading, isStateSuccess, resolveUiState, UiState, UiStateType } from '../../communication/UiState';
-import { CircularProgress, Radio, RadioGroup } from '@heroui/react';
+import { CircularProgress } from '@heroui/react';
 import GenericInput from '../GenericInput';
 import StateMessage from '../StateMessage';
-import ClickableChip from '../Controls/ClickableChip';
 import { useParams } from 'react-router-dom';
 import { CatalogueRepository } from '../../communication/repositories/CatalogueRepository';
 
@@ -13,29 +12,23 @@ type Props = {
   onOpenChange: () => void
 }
 
-enum AssignTypeOptions {
-  BY_COMMISSION_NUMBER = "byCommissionNumber",
-  BY_SAMPLES_SIZE = "bySamplesSize"
-}
-
 const AutoCommissionModal = ({ isOpen, onOpenChange }: Props) => {
+  const { id: catalogueId } = useParams<{ id: string }>();
 
   const [uiState, setUiState] = React.useState<UiState>({ type: UiStateType.IDLE });
 
-  const [orderType, setOrderType] = React.useState<string>(AssignTypeOptions.BY_COMMISSION_NUMBER);
-  const [numberSize, setNumberSize] = React.useState<number>(0);
-
-  // TODO: refactor selectedSorts to map
-  const [byGrape, setByGrape] = React.useState<boolean>(false);
-  const [byGrapeColor, setByGrapeColor] = React.useState<boolean>(false);
-  const [byWinery, setByWinery] = React.useState<boolean>(false);
-  const [byYear, setByYear] = React.useState<boolean>(false);
-
-  const { id: catalogueId } = useParams<{ id: string }>();
+  const [redWineCommissions, setRedWineCommissions] = React.useState<number>(0);
+  const [whiteWineCommissions, setWhiteWineCommissions] = React.useState<number>(0);
+  const [roseWineCommissions, setRoseWineCommissions] = React.useState<number>(0);
 
   const handleAutoAssign = async () => {
     setUiState({ type: UiStateType.LOADING });
-    const res = await CatalogueRepository.autoAssignCommission(catalogueId ?? "", 12);
+    const res = await CatalogueRepository.autoAssignCommission(catalogueId ?? "", {
+      red: redWineCommissions,
+      white: whiteWineCommissions,
+      rose: roseWineCommissions,
+      other: 0
+    });
     resolveUiState(res, setUiState);
   }
 
@@ -54,56 +47,43 @@ const AutoCommissionModal = ({ isOpen, onOpenChange }: Props) => {
       
       {!isStateLoading(uiState) && 
       <>
-        <RadioGroup
-          label="Select labeling grouping method"
-          orientation="horizontal"
-          value={orderType}
-          onValueChange={setOrderType}
-          defaultValue={orderType}
-        >
-          <Radio value={AssignTypeOptions.BY_COMMISSION_NUMBER}>By number of commissions</Radio>
-          <Radio value={AssignTypeOptions.BY_SAMPLES_SIZE}>By wine samples size</Radio>
-        </RadioGroup>
-
-        <GenericInput 
-          label={orderType === AssignTypeOptions.BY_COMMISSION_NUMBER ? "Number of commissions" : "Number of samples"}
-          placeholder="None"
-          value={numberSize.toString()}
-          onChange={(val) => setNumberSize(Number(val))}
-        />
-
-        {/* TODO: Refactor selected sorts */}
-        <p>Select parameters to sort the automatically assigning</p>
-        <div className='flex flex-row gap-2'>
-          <ClickableChip 
-            isActive={byGrape}
-            onClick={() => setByGrape(!byGrape)}
-            color='primary'
-          >
-            Grape
-          </ClickableChip>
-
-          <ClickableChip 
-            isActive={byGrapeColor}
-            onClick={() => setByGrapeColor(!byGrapeColor)}
-          >
-            Grape Color
-          </ClickableChip>
-
-          <ClickableChip 
-            isActive={byWinery}
-            onClick={() => setByWinery(!byWinery)}
-          >
-            Winery
-          </ClickableChip>
-
-          <ClickableChip 
-            isActive={byYear}
-            onClick={() => setByYear(!byYear)}
-          >
-            Year
-          </ClickableChip>
+        <p>Vyberte počet komisí pro danou barvu vína</p>
+        <div className='flex flex-row gap-2 items-center'>
+          <p className="text-sm text-gray-500">1.</p>
+          <GenericInput 
+            label={"Červené"}
+            type='number'
+            value={redWineCommissions.toString()}
+            onChange={(val) => setRedWineCommissions(Number(val))}
+            startContent={<div className="w-3 h-3 bg-redWineColor rounded-full" />}
+            customStartContent={true}
+          />
         </div>
+
+        <div className='flex flex-row gap-2 items-center'>
+          <p className="text-sm text-gray-500">2.</p>
+          <GenericInput 
+            label={"Bílé"}
+            type='number'
+            value={whiteWineCommissions.toString()}
+            onChange={(val) => setWhiteWineCommissions(Number(val))}
+            startContent={<div className="w-3 h-3 bg-whiteWineColor rounded-full" />}
+            customStartContent={true}
+          />
+        </div>
+
+        <div className='flex flex-row gap-2 items-center'>
+          <p className="text-sm text-gray-500">3.</p>
+          <GenericInput 
+            label={"Růžové"}
+            type='number'
+            value={roseWineCommissions.toString()}
+            onChange={(val) => setRoseWineCommissions(Number(val))}
+            startContent={<div className="w-3 h-3 bg-roseWineColor rounded-full" />}
+            customStartContent={true}
+          />
+        </div>
+
 
         {isStateSuccess(uiState) && 
           <StateMessage 
