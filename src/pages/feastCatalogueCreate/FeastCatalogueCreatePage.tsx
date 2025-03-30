@@ -59,7 +59,7 @@ const FeastCatalogueCreatePage = () => {
       imageUrl: catalogue?.imageUrl ?? [],
       published: catalogue?.published ?? false,
       locked: catalogue?.locked ?? false,
-      maxWineRating: catalogue?.maxWineRating ?? 0,
+      maxWineRating: catalogue?.maxWineRating ?? 100,
       adminId: getUserData()?.id ?? "",
       price: catalogue?.price ?? 0,
       downloads: catalogue?.downloads ?? 0,

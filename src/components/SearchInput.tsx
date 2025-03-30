@@ -6,11 +6,12 @@ import { TranslationNS } from '../translations/i18n';
 
 type Props = { 
   value: string,
-  onValueChange: (newValue: string) => void
+  onValueChange: (newValue: string) => void,
+  isDisabled?: boolean
   className?: string;
 };
 
-const SearchInput = ({ value, onValueChange, className }: Props) => {
+const SearchInput = ({ value, onValueChange, isDisabled, className }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -25,6 +26,7 @@ const SearchInput = ({ value, onValueChange, className }: Props) => {
       endContent={
         <IconButton icon={<XMarkIcon/>} onClick={() => onValueChange("")} />
       }
+      isDisabled={isDisabled}
       className={`w-1/4 ${className}`}
       // classNames={{
       //   inputWrapper: [

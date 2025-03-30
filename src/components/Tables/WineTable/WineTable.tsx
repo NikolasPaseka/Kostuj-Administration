@@ -413,7 +413,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
   return (
     <div>
       <div className="flex items-center py-4 gap-4">
-        <SearchInput value={searchValue} onValueChange={setSearchValue} className='w-64' />
+        <SearchInput value={searchValue} onValueChange={setSearchValue} className='w-64' isDisabled={inEditMode} />
         <Tabs
           selectedKey={groupSelection}
           onSelectionChange={(key) => setGroupSelection(key.toString())}
@@ -421,6 +421,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
           variant="solid" 
           size="lg" 
           aria-label="Group Options"
+          isDisabled={inEditMode}
         >
           <Tab key="wineriesOrder" title="Wineries"/>
           <Tab key="grapeOrder" title="Grapes"/>
@@ -434,6 +435,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
                 color="secondary"
                 variant="bordered"
                 endContent={<ChevronDownIcon className="w-4 h-4" />}
+                isDisabled={inEditMode}
               >
                 Wine Color
               </Button>
@@ -460,6 +462,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
         <Button 
           endContent={<AdjustmentsHorizontalIcon className="w-7 h-7 text-secondary" />}
           onClick={onFilterModalOpen}
+          isDisabled={inEditMode}
           color="secondary"
           variant="bordered"
           className="min-w-10"
@@ -474,6 +477,7 @@ const WineTable = ({ wineSamples, uiState, deleteWineSample, autoLabelSamples, u
               <Button
                 color="primary"
                 endContent={<ChevronDownIcon className="w-4 h-4" />}
+                isDisabled={inEditMode}
               >
                 Samples Actions
               </Button>

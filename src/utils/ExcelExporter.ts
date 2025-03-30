@@ -37,7 +37,7 @@ export class ExcelExporter {
         console.log(categoryKey);
         try {
             // Fetch the template file from the public folder
-            const response = await fetch(`/rating_tables/kounice_vertical.xlsx`);
+            const response = await fetch(`/public/rating_tables/kounice_vertical.xlsx`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch template file: ${response.statusText}`);
             }
